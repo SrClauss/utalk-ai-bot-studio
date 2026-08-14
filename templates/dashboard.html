@@ -7,6 +7,8 @@
     <link rel="icon" href="/assets/logo.png" type="image/png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6.5.1 CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <!-- Alpine.js CDN para Reatividade Elegante -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
@@ -48,26 +50,125 @@
             -webkit-text-fill-color: transparent;
         }
 
-        .nav-tab {
+        .sidebar-item {
             transition: all 0.2s ease;
-            border-bottom: 2px solid transparent;
         }
 
-        .nav-tab.active {
-            color: #818cf8;
-            border-bottom-color: #6366f1;
-            background: rgba(99, 102, 241, 0.1);
+        .sidebar-item.active {
+            background: linear-gradient(90deg, rgba(99, 102, 241, 0.25) 0%, rgba(168, 85, 247, 0.15) 100%);
+            border-left: 3px solid #6366f1;
+            color: #ffffff;
         }
 
         [x-cloak] { display: none !important; }
     </style>
 </head>
-<body x-data="dashboardApp()" x-cloak class="min-h-screen pb-16 flex flex-col antialiased selection:bg-indigo-500/30">
+<body x-data="dashboardApp()" x-cloak class="min-h-screen flex flex-col antialiased selection:bg-indigo-500/30">
 
-    <!-- Main Container -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-20 md:pb-12 space-y-6 flex-1 w-full">
+    <!-- SIDEBAR RETRÁTIL DESKTOP (Com Ícones do Font Awesome & Transição Suave) -->
+    <aside class="hidden md:flex flex-col fixed top-0 bottom-0 left-0 z-40 bg-slate-950/95 backdrop-blur-xl border-r border-slate-800/80 transition-all duration-300 select-none shadow-2xl"
+           :class="sidebarCollapsed ? 'w-20' : 'w-64'">
+        
+        <!-- Topo da Sidebar: Logo + Botão Retrair/Expandir -->
+        <div class="p-4 flex items-center justify-between border-b border-slate-800/80">
+            <div class="flex items-center gap-3 overflow-hidden">
+                <div class="relative group cursor-pointer shrink-0">
+                    <div class="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-300"></div>
+                    <img src="/assets/logo.png" alt="Logo" class="relative w-9 h-9 rounded-lg object-cover border border-indigo-400/30">
+                </div>
+                <div x-show="!sidebarCollapsed" x-transition class="whitespace-nowrap">
+                    <h1 class="text-sm font-extrabold glow-title leading-tight">uTalk AI Studio</h1>
+                    <span class="text-[9px] font-mono text-indigo-400 font-bold">Sidebar v2.5</span>
+                </div>
+            </div>
 
-        <!-- Banner Hero Integrado (Substitui a Header antiga com as Ações e Imagem Neuronal /assets/banner.jpg) -->
+            <!-- Botão Retrair / Expandir Sidebar -->
+            <button @click="sidebarCollapsed = !sidebarCollapsed"
+                    class="w-7 h-7 rounded-lg bg-slate-900 border border-slate-800 hover:border-indigo-500/50 text-slate-400 hover:text-white flex items-center justify-center transition-colors shrink-0"
+                    :title="sidebarCollapsed ? 'Expandir Menu' : 'Recolher Menu'">
+                <i class="fa-solid" :class="sidebarCollapsed ? 'fa-angles-right' : 'fa-angles-left'"></i>
+            </button>
+        </div>
+
+        <!-- Menu de Navegação da Sidebar (Ícones Duotone em Badges Translúcidos) -->
+        <nav class="flex-1 px-2.5 py-4 space-y-2 overflow-y-auto">
+            
+            <button @click="switchTab('metrics')" 
+                    :class="{ 'active': activeTab === 'metrics' }"
+                    class="sidebar-item w-full flex items-center gap-3 px-2 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-900/60 group">
+                <div class="w-9 h-9 rounded-xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-sm">
+                    <i class="fa-solid fa-chart-pie text-indigo-400 text-sm"></i>
+                </div>
+                <span x-show="!sidebarCollapsed" x-transition class="truncate">Métricas & Dashboard</span>
+            </button>
+
+            <button @click="switchTab('rotation')" 
+                    :class="{ 'active': activeTab === 'rotation' }"
+                    class="sidebar-item w-full flex items-center gap-3 px-2 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-900/60 group">
+                <div class="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-sm">
+                    <i class="fa-solid fa-users-gear text-emerald-400 text-sm"></i>
+                </div>
+                <span x-show="!sidebarCollapsed" x-transition class="truncate">Rodízio de Atendentes</span>
+            </button>
+
+            <button @click="switchTab('prompt')" 
+                    :class="{ 'active': activeTab === 'prompt' }"
+                    class="sidebar-item w-full flex items-center gap-3 px-2 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-900/60 group">
+                <div class="w-9 h-9 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-sm">
+                    <i class="fa-solid fa-brain text-purple-400 text-sm"></i>
+                </div>
+                <span x-show="!sidebarCollapsed" x-transition class="truncate">Prompt & Funil IA</span>
+            </button>
+
+            <button @click="switchTab('credentials')" 
+                    :class="{ 'active': activeTab === 'credentials' }"
+                    class="sidebar-item w-full flex items-center gap-3 px-2 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-900/60 group">
+                <div class="w-9 h-9 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-sm">
+                    <i class="fa-solid fa-key text-amber-400 text-sm"></i>
+                </div>
+                <span x-show="!sidebarCollapsed" x-transition class="truncate">Credenciais & Acessos</span>
+            </button>
+
+            <button @click="switchTab('apis')" 
+                    :class="{ 'active': activeTab === 'apis' }"
+                    class="sidebar-item w-full flex items-center gap-3 px-2 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-900/60 group">
+                <div class="w-9 h-9 rounded-xl bg-pink-500/15 border border-pink-500/30 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-sm">
+                    <i class="fa-solid fa-plug text-pink-400 text-sm"></i>
+                </div>
+                <span x-show="!sidebarCollapsed" x-transition class="truncate">APIs Externas & Tools</span>
+            </button>
+        </nav>
+
+        <!-- Rodapé da Sidebar: Status do Robô & Logout -->
+        <div class="p-3 border-t border-slate-800/80 space-y-2">
+            <!-- Toggle Robô -->
+            <div class="glass-card p-2.5 rounded-xl border border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-2 overflow-hidden">
+                    <span class="w-2.5 h-2.5 rounded-full shrink-0" :class="config.bot_enabled ? 'bg-emerald-500 animate-pulse' : 'bg-slate-500'"></span>
+                    <span x-show="!sidebarCollapsed" x-transition class="text-[10px] font-bold tracking-wide truncate"
+                          :class="config.bot_enabled ? 'text-emerald-400' : 'text-slate-400'"
+                          x-text="config.bot_enabled ? 'ROBÔ ATIVO' : 'PAUSADO'"></span>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                    <input type="checkbox" x-model="config.bot_enabled" @change="saveConfig(false)" class="sr-only peer">
+                    <div class="w-8 h-4 bg-slate-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-indigo-600"></div>
+                </label>
+            </div>
+
+            <!-- Botão Sair -->
+            <button @click="doLogout()" 
+                    class="w-full py-2.5 px-3 bg-slate-900/90 hover:bg-rose-950/40 hover:text-rose-400 text-slate-300 text-xs font-semibold rounded-xl border border-slate-800 hover:border-rose-500/40 transition-all flex items-center justify-center gap-2">
+                <i class="fa-solid fa-right-from-bracket text-rose-400"></i>
+                <span x-show="!sidebarCollapsed" x-transition>Sair do Painel</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Container (Ajusta margem esquerda conforme expansão/recolhimento da Sidebar no Desktop) -->
+    <main class="transition-all duration-300 flex-1 w-full px-4 sm:px-6 pt-6 pb-24 md:pb-12 space-y-6"
+          :class="sidebarCollapsed ? 'md:ml-20' : 'md:ml-64'">
+
+        <!-- Banner Hero Integrado com Imagem Neuronal (/assets/banner.jpg) -->
         <div class="relative overflow-hidden rounded-2xl border border-indigo-500/30 bg-slate-900/90 shadow-2xl">
             <!-- Imagem Neuronal de Fundo -->
             <div class="absolute inset-0 z-0 opacity-40 mix-blend-luminosity">
@@ -75,7 +176,7 @@
             </div>
             
             <div class="relative z-10 p-5 md:p-8 space-y-6 bg-gradient-to-r from-slate-950/95 via-slate-950/85 to-slate-950/40">
-                <!-- Linha Superior: Logo + Título + Status Robô + Botão Sair -->
+                <!-- Linha Superior: Logo + Título + Status Robô + Botão Sair (Visível no Mobile) -->
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800/80 pb-5">
                     <div class="flex items-center gap-3.5">
                         <div class="relative group cursor-pointer shrink-0">
@@ -85,14 +186,14 @@
                         <div>
                             <div class="flex items-center gap-2 flex-wrap">
                                 <h1 class="text-xl md:text-2xl font-extrabold tracking-tight glow-title">uTalk AI Bot Studio</h1>
-                                <span class="text-[10px] font-mono font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-full uppercase tracking-wider">v2.0 Mobile</span>
+                                <span class="text-[10px] font-mono font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-full uppercase tracking-wider">v2.5 Sidebar FA</span>
                             </div>
                             <p class="text-xs text-slate-400 font-medium">Motor Multimodal Gemini & Rodízio Inteligente uTalk API</p>
                         </div>
                     </div>
 
-                    <!-- Status do Robô & Controles de Acesso -->
-                    <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                    <!-- Status do Robô & Controles de Acesso (Visível no Mobile) -->
+                    <div class="md:hidden flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
                         <div class="glass-panel px-3.5 py-1.5 rounded-xl border border-slate-800 flex items-center gap-3">
                             <div class="flex items-center gap-2">
                                 <span class="w-2.5 h-2.5 rounded-full" :class="config.bot_enabled ? 'bg-emerald-500 animate-pulse' : 'bg-slate-500'"></span>
@@ -105,7 +206,7 @@
                         </div>
 
                         <button @click="doLogout()" class="px-3.5 py-1.5 bg-slate-900/90 hover:bg-rose-950/40 hover:text-rose-400 text-slate-300 text-xs font-semibold rounded-xl border border-slate-800 hover:border-rose-500/40 transition-all flex items-center gap-1.5">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-rose-400"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                            <i class="fa-solid fa-right-from-bracket text-rose-400"></i>
                             <span>Sair</span>
                         </button>
                     </div>
@@ -137,25 +238,6 @@
             </div>
         </div>
 
-        <!-- Navigation Tabs Bar (Desktop) -->
-        <div class="hidden md:flex bg-slate-950/80 border border-slate-800/80 rounded-2xl p-1.5 items-center gap-1.5 shadow-lg">
-            <button @click="switchTab('metrics')" :class="{ 'active': activeTab === 'metrics' }" class="nav-tab flex-1 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 text-slate-300 hover:text-white">
-                📊 <span>Métricas & Dashboard</span>
-            </button>
-            <button @click="switchTab('rotation')" :class="{ 'active': activeTab === 'rotation' }" class="nav-tab flex-1 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 text-slate-300 hover:text-white">
-                🔄 <span>Rodízio de Atendentes</span>
-            </button>
-            <button @click="switchTab('prompt')" :class="{ 'active': activeTab === 'prompt' }" class="nav-tab flex-1 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 text-slate-300 hover:text-white">
-                🧠 <span>Prompt & Funil IA</span>
-            </button>
-            <button @click="switchTab('credentials')" :class="{ 'active': activeTab === 'credentials' }" class="nav-tab flex-1 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 text-slate-300 hover:text-white">
-                🔑 <span>Credenciais & Acessos</span>
-            </button>
-            <button @click="switchTab('apis')" :class="{ 'active': activeTab === 'apis' }" class="nav-tab flex-1 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 text-slate-300 hover:text-white">
-                🌐 <span>APIs Externas & Tools</span>
-            </button>
-        </div>
-
         <!-- Banner de Alertas (Alpine.js Reativo) -->
         <div x-show="alert.show" x-transition 
              :class="alert.type === 'success' ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-800' : 'bg-rose-950/80 text-rose-300 border border-rose-800'"
@@ -166,28 +248,40 @@
             <!-- Cards Estatísticos -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="glass-card p-5 rounded-2xl space-y-2 border border-slate-800">
-                    <span class="text-xs font-semibold text-slate-400">Total de Mensagens IA</span>
+                    <span class="text-xs font-semibold text-slate-400 flex items-center justify-between">
+                        Total de Mensagens IA
+                        <i class="fa-solid fa-comments text-indigo-400"></i>
+                    </span>
                     <div class="flex items-baseline justify-between">
                         <span class="text-2xl font-extrabold text-indigo-400" x-text="stats.total_messages || 0">0</span>
                         <span class="text-xs text-slate-500 font-mono">SQLite FTS5</span>
                     </div>
                 </div>
                 <div class="glass-card p-5 rounded-2xl space-y-2 border border-slate-800">
-                    <span class="text-xs font-semibold text-slate-400">Leads Transferidos</span>
+                    <span class="text-xs font-semibold text-slate-400 flex items-center justify-between">
+                        Leads Transferidos
+                        <i class="fa-solid fa-headset text-purple-400"></i>
+                    </span>
                     <div class="flex items-baseline justify-between">
                         <span class="text-2xl font-extrabold text-purple-400" x-text="stats.total_transfers || 0">0</span>
                         <span class="text-xs text-purple-400/80 font-mono">Rodízio Ativo</span>
                     </div>
                 </div>
                 <div class="glass-card p-5 rounded-2xl space-y-2 border border-slate-800">
-                    <span class="text-xs font-semibold text-slate-400">Operadores no Rodízio</span>
+                    <span class="text-xs font-semibold text-slate-400 flex items-center justify-between">
+                        Operadores no Rodízio
+                        <i class="fa-solid fa-user-check text-emerald-400"></i>
+                    </span>
                     <div class="flex items-baseline justify-between">
                         <span class="text-2xl font-extrabold text-emerald-400" x-text="config.rotation_operator_ids ? config.rotation_operator_ids.length : 0">0</span>
                         <span class="text-xs text-emerald-400/80 font-mono">uTalk API</span>
                     </div>
                 </div>
                 <div class="glass-card p-5 rounded-2xl space-y-2 border border-slate-800">
-                    <span class="text-xs font-semibold text-slate-400">Modelo em Uso</span>
+                    <span class="text-xs font-semibold text-slate-400 flex items-center justify-between">
+                        Modelo em Uso
+                        <i class="fa-solid fa-microchip text-amber-400"></i>
+                    </span>
                     <div class="flex items-baseline justify-between">
                         <span class="text-sm font-bold text-slate-200 truncate" x-text="config.gemini_model || 'Gemini 3.1'">Gemini 3.1</span>
                         <span class="text-[10px] bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded font-mono">Google</span>
@@ -201,9 +295,13 @@
                 <div class="lg:col-span-6 glass-panel p-6 rounded-2xl space-y-4">
                     <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                         <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
-                            <span>📈 Atribuições por Atendente</span>
+                            <i class="fa-solid fa-chart-column text-indigo-400"></i>
+                            <span>Atribuições por Atendente</span>
                         </h3>
-                        <button @click="loadStats()" class="text-xs text-indigo-400 hover:underline">Atualizar</button>
+                        <button @click="loadStats()" class="text-xs text-indigo-400 hover:underline flex items-center gap-1">
+                            <i class="fa-solid fa-rotate-right"></i>
+                            <span>Atualizar</span>
+                        </button>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-xs text-slate-300">
@@ -232,7 +330,8 @@
                 <div class="lg:col-span-6 glass-panel p-6 rounded-2xl space-y-4">
                     <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                         <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
-                            <span>📜 Últimos Transbordos de Atendimento</span>
+                            <i class="fa-solid fa-clock-rotate-left text-purple-400"></i>
+                            <span>Últimos Transbordos de Atendimento</span>
                         </h3>
                     </div>
                     <div class="space-y-2.5 max-h-[320px] overflow-y-auto pr-1">
@@ -259,13 +358,15 @@
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-4">
                     <div>
                         <h2 class="text-lg font-extrabold text-slate-100 flex items-center gap-2">
-                            <span>🔄 Rodízio Configurável de Atendentes Humanos</span>
+                            <i class="fa-solid fa-arrows-spin text-emerald-400"></i>
+                            <span>Rodízio Configurável de Atendentes Humanos</span>
                         </h2>
                         <p class="text-xs text-slate-400">Selecione os operadores ativos no uTalk que participarão da distribuição automática de chats.</p>
                     </div>
 
                     <button @click="fetchOperators()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl transition-all shadow-md shadow-indigo-600/25 flex items-center gap-2">
-                        <span>🔄 Sincronizar Operadores do uTalk</span>
+                        <i class="fa-solid fa-rotate-right"></i>
+                        <span>Sincronizar Operadores do uTalk</span>
                     </button>
                 </div>
 
@@ -291,7 +392,7 @@
                     </div>
 
                     <div class="glass-card p-4 rounded-xl space-y-2">
-                        <label class="block text-xs font-semibold text-slate-300">Comando / Palavra-chave de Transferência</label>
+                        <label class="block text-xs font-semibold text-slate-300">Comando de Transferência</label>
                         <input type="text" x-model="config.rotation_trigger_keyword" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs font-mono text-indigo-300 focus:outline-none focus:border-indigo-500">
                     </div>
                 </div>
@@ -333,8 +434,9 @@
                 </div>
 
                 <div class="flex justify-end pt-4 border-t border-slate-800">
-                    <button @click="saveConfig()" class="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 text-white font-semibold text-xs rounded-xl transition-all shadow-lg shadow-emerald-600/25">
-                        Salvar Configurações do Rodízio
+                    <button @click="saveConfig()" class="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 text-white font-semibold text-xs rounded-xl transition-all shadow-lg shadow-emerald-600/25 flex items-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span>Salvar Configurações do Rodízio</span>
                     </button>
                 </div>
             </div>
@@ -345,7 +447,7 @@
             <div class="glass-panel p-6 rounded-2xl space-y-6">
                 <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
                     <div class="w-9 h-9 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold text-base">
-                        🧠
+                        <i class="fa-solid fa-brain"></i>
                     </div>
                     <div>
                         <h2 class="text-lg font-extrabold text-slate-100">Prompt do Sistema & Funil de Qualificação</h2>
@@ -356,8 +458,9 @@
                 <textarea x-model="config.system_prompt" rows="12" class="w-full bg-slate-950/90 border border-slate-800 rounded-xl p-4 text-xs focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors font-mono leading-relaxed text-slate-200"></textarea>
 
                 <div class="flex justify-end">
-                    <button @click="saveConfig()" class="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold text-xs rounded-xl transition-all shadow-lg shadow-purple-600/25">
-                        Salvar Prompt de Sistema
+                    <button @click="saveConfig()" class="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold text-xs rounded-xl transition-all shadow-lg shadow-purple-600/25 flex items-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span>Salvar Prompt de Sistema</span>
                     </button>
                 </div>
             </div>
@@ -368,7 +471,7 @@
             <div class="glass-panel p-6 rounded-2xl space-y-6 max-w-3xl mx-auto">
                 <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
                     <div class="w-9 h-9 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold text-base">
-                        🔑
+                        <i class="fa-solid fa-key"></i>
                     </div>
                     <div>
                         <h2 class="text-lg font-extrabold text-slate-100">Credenciais & Acessos da Aplicação</h2>
@@ -415,8 +518,9 @@
                     </div>
 
                     <div class="pt-2">
-                        <button type="submit" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-semibold text-xs rounded-xl transition-all shadow-lg shadow-indigo-600/25">
-                            Salvar Credenciais
+                        <button type="submit" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-semibold text-xs rounded-xl transition-all shadow-lg shadow-indigo-600/25 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            <span>Salvar Credenciais</span>
                         </button>
                     </div>
                 </form>
@@ -429,7 +533,7 @@
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-4">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-600 to-pink-500 flex items-center justify-center font-bold text-base text-white shadow-md">
-                            🌐
+                            <i class="fa-solid fa-plug"></i>
                         </div>
                         <div>
                             <h2 class="text-lg font-extrabold text-slate-100">
@@ -440,7 +544,8 @@
                     </div>
 
                     <button @click="openApiModal()" class="px-4 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold text-xs rounded-xl transition-all flex items-center gap-2 shadow-lg shadow-purple-600/25">
-                        <span>+ Nova Integração API</span>
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Nova Integração API</span>
                     </button>
                 </div>
 
@@ -519,11 +624,12 @@
         </div>
     </div>
 
-    <!-- Script Alpine.js Reativo -->
+    <!-- Script Alpine.js Reativo com Estado da Sidebar Retrátil -->
     <script>
         function dashboardApp() {
             return {
                 activeTab: 'metrics',
+                sidebarCollapsed: false,
                 config: {
                     bot_enabled: true,
                     admin_username: '',
@@ -536,7 +642,7 @@
                     external_apis: [],
                     rotation_enabled: true,
                     rotation_operator_ids: [],
-                    rotation_strategy: 'round_robin',
+                    rotation_strategy: 'online_only',
                     rotation_trigger_keyword: '[TRANSFERIR]'
                 },
                 stats: {
@@ -673,26 +779,26 @@
         }
     </script>
 
-    <!-- Mobile Bottom Navigation Bar (Barra de Navegação Inferior para Dispositivos Móveis) -->
+    <!-- Mobile Bottom Navigation Bar (Barra de Navegação Inferior para Dispositivos Móveis com Font Awesome) -->
     <nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-slate-950/95 backdrop-blur-md border-t border-slate-800/80 px-2 py-2 flex justify-around items-center text-[10px] shadow-2xl">
         <button @click="switchTab('metrics')" :class="{ 'text-indigo-400 font-bold': activeTab === 'metrics', 'text-slate-400': activeTab !== 'metrics' }" class="flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition-all">
-            <span class="text-base">📊</span>
+            <i class="fa-solid fa-chart-pie text-base"></i>
             <span>Métricas</span>
         </button>
         <button @click="switchTab('rotation')" :class="{ 'text-indigo-400 font-bold': activeTab === 'rotation', 'text-slate-400': activeTab !== 'rotation' }" class="flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition-all">
-            <span class="text-base">🔄</span>
+            <i class="fa-solid fa-users-gear text-base"></i>
             <span>Rodízio</span>
         </button>
         <button @click="switchTab('prompt')" :class="{ 'text-indigo-400 font-bold': activeTab === 'prompt', 'text-slate-400': activeTab !== 'prompt' }" class="flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition-all">
-            <span class="text-base">🧠</span>
+            <i class="fa-solid fa-brain text-base"></i>
             <span>Prompt</span>
         </button>
         <button @click="switchTab('credentials')" :class="{ 'text-indigo-400 font-bold': activeTab === 'credentials', 'text-slate-400': activeTab !== 'credentials' }" class="flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition-all">
-            <span class="text-base">🔑</span>
+            <i class="fa-solid fa-key text-base"></i>
             <span>Acessos</span>
         </button>
         <button @click="switchTab('apis')" :class="{ 'text-indigo-400 font-bold': activeTab === 'apis', 'text-slate-400': activeTab !== 'apis' }" class="flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition-all">
-            <span class="text-base">🌐</span>
+            <i class="fa-solid fa-plug text-base"></i>
             <span>APIs</span>
         </button>
     </nav>
