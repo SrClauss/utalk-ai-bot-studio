@@ -304,17 +304,15 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
                 if should_transfer {
                     let mut candidate_ids = cfg_snapshot.rotation_operator_ids.clone();
 
-                    // Se a estratégia for apenas operadores online, filtra via uTalk API
-                    if cfg_snapshot.rotation_strategy == "online_only" {
-                        if let Ok(online_ids) = utalk::fetch_online_members(
-                            &cfg_snapshot.utalk_api_url,
-                            &cfg_snapshot.utalk_api_token,
-                            &cfg_snapshot.utalk_organization_id,
-                        )
-                        .await
-                        {
-                            candidate_ids.retain(|id| online_ids.contains(id));
-                        }
+                    // Filtra apenas os operadores que estão ONLINE no uTalk no momento
+                    if let Ok(online_ids) = utalk::fetch_online_members(
+                        &cfg_snapshot.utalk_api_url,
+                        &cfg_snapshot.utalk_api_token,
+                        &cfg_snapshot.utalk_organization_id,
+                    )
+                    .await
+                    {
+                        candidate_ids.retain(|id| online_ids.contains(id));
                     }
 
                     if let Some(target_operator_id) = state.db.get_next_rotation_operator(&candidate_ids) {
