@@ -205,8 +205,15 @@ pub async fn generate_gemini_response(
         ]
     }]);
 
+    let model_name = if config.gemini_model.trim().is_empty() {
+        "gemini-3.1-flash-lite"
+    } else {
+        config.gemini_model.trim()
+    };
+
     let gemini_url = format!(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={}",
+        "https://generativelanguage.googleapis.com/v1beta/models/{}:generateContent?key={}",
+        model_name,
         config.gemini_api_key
     );
 

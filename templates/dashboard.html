@@ -117,7 +117,7 @@
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 w-full md:w-auto">
                     <div class="glass-card p-3 rounded-xl border border-slate-800 text-center">
                         <span class="block text-[10px] text-slate-400 font-mono uppercase">Motor IA</span>
-                        <span class="text-xs font-bold text-indigo-400">Gemini 1.5 Pro</span>
+                        <span class="text-xs font-bold text-indigo-400" id="heroModelBadge">Gemini 3.1 Flash-Lite</span>
                     </div>
                     <div class="glass-card p-3 rounded-xl border border-slate-800 text-center">
                         <span class="block text-[10px] text-slate-400 font-mono uppercase">Busca Textual</span>
@@ -160,6 +160,17 @@
                                 <label class="block text-xs font-semibold text-slate-400 mb-1.5">Senha Admin</label>
                                 <input type="password" id="adminPass" autocomplete="current-password" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors" placeholder="••••••••">
                             </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Modelo Google Gemini</label>
+                            <select id="geminiModel" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors">
+                                <option value="gemini-3.1-flash-lite">gemini-3.1-flash-lite (Recomendado)</option>
+                                <option value="gemini-3.6-flash">gemini-3.6-flash</option>
+                                <option value="gemini-2.5-flash">gemini-2.5-flash</option>
+                                <option value="gemini-1.5-flash">gemini-1.5-flash</option>
+                                <option value="gemini-1.5-pro">gemini-1.5-pro</option>
+                            </select>
                         </div>
 
                         <div>
@@ -407,6 +418,12 @@
                     document.getElementById('adminPass').value = currentConfig.admin_password || 'admin123';
                 }
 
+                if (document.getElementById('geminiModel')) {
+                    document.getElementById('geminiModel').value = currentConfig.gemini_model || 'gemini-3.1-flash-lite';
+                    const badge = document.getElementById('heroModelBadge');
+                    if (badge) badge.innerText = currentConfig.gemini_model || 'gemini-3.1-flash-lite';
+                }
+
                 document.getElementById('geminiKey').value = currentConfig.gemini_api_key || '';
                 document.getElementById('utalkToken').value = currentConfig.utalk_api_token || '';
                 document.getElementById('utalkOrgId').value = currentConfig.utalk_organization_id || '';
@@ -445,6 +462,11 @@
             }
             if (document.getElementById('adminPass')) {
                 currentConfig.admin_password = document.getElementById('adminPass').value.trim() || 'admin123';
+            }
+            if (document.getElementById('geminiModel')) {
+                currentConfig.gemini_model = document.getElementById('geminiModel').value;
+                const badge = document.getElementById('heroModelBadge');
+                if (badge) badge.innerText = currentConfig.gemini_model;
             }
             currentConfig.gemini_api_key = document.getElementById('geminiKey').value.trim();
             currentConfig.utalk_api_token = document.getElementById('utalkToken').value.trim();
