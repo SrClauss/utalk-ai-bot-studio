@@ -75,13 +75,13 @@ async fn get_logo_asset() -> (HeaderMap, &'static [u8]) {
 
 async fn get_banner_asset() -> (HeaderMap, &'static [u8]) {
     let mut headers = HeaderMap::new();
-    if let Ok(v) = "image/png".parse() {
+    if let Ok(v) = "image/jpeg".parse() {
         headers.insert("content-type", v);
     }
     if let Ok(v) = "public, max-age=86400".parse() {
         headers.insert("cache-control", v);
     }
-    (headers, include_bytes!("../assets/banner.png"))
+    (headers, include_bytes!("../assets/banner.jpg"))
 }
 
 async fn login_handler(
@@ -270,6 +270,7 @@ async fn main() {
         .route("/", get(render_dashboard))
         .route("/assets/logo.png", get(get_logo_asset))
         .route("/assets/banner.png", get(get_banner_asset))
+        .route("/assets/banner.jpg", get(get_banner_asset))
         .route("/api/login", axum::routing::post(login_handler))
         .route("/api/logout", axum::routing::post(logout_handler))
         .route("/api/config", get(get_config_handler).post(save_config_handler))
