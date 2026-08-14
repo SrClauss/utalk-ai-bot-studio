@@ -32,6 +32,12 @@ pub struct AppConfig {
     pub utalk_api_url: String,
     pub system_prompt: String,
     pub external_apis: Vec<ExternalApiIntegration>,
+
+    // Configurações do Rodízio de Atendentes
+    pub rotation_enabled: bool,
+    pub rotation_operator_ids: Vec<String>,
+    pub rotation_strategy: String,
+    pub rotation_trigger_keyword: String,
 }
 
 impl Default for AppConfig {
@@ -55,7 +61,7 @@ impl Default for AppConfig {
             utalk_api_token: utalk_token,
             utalk_organization_id: utalk_org,
             utalk_api_url: utalk_url,
-            system_prompt: "Você é um assistente virtual atencioso e eficiente da empresa Tubarão Bombas. Seu objetivo é sanar dúvidas de clientes com clareza, consultar sistemas externos quando necessário e oferecer um atendimento excelente.".to_string(),
+            system_prompt: "Você é um assistente virtual atencioso e eficiente da empresa Tubarão Bombas. Seu objetivo é sanar dúvidas de clientes com clareza, consultar sistemas externos quando necessário e oferecer um atendimento excelente. Quando o cliente solicitar falar com um atendente humano ou se o problema for complexo, inclua o comando [TRANSFERIR] na sua resposta para encaminhar ao atendente.".to_string(),
 
             external_apis: vec![
                 ExternalApiIntegration {
@@ -72,6 +78,11 @@ impl Default for AppConfig {
                     enabled: true,
                 }
             ],
+
+            rotation_enabled: true,
+            rotation_operator_ids: Vec::new(),
+            rotation_strategy: "round_robin".to_string(),
+            rotation_trigger_keyword: "[TRANSFERIR]".to_string(),
         }
     }
 }

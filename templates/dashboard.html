@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>uTalk AI Bot Studio & APIs Integradas</title>
+    <title>uTalk AI Bot Studio & Rodízio de Atendimento</title>
     <link rel="icon" href="/assets/logo.png" type="image/png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Alpine.js CDN para Reatividade Elegante -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -46,16 +48,23 @@
             -webkit-text-fill-color: transparent;
         }
 
-        .glow-brand {
-            background: linear-gradient(135deg, #818cf8 0%, #c084fc 50%, #f472b6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .nav-tab {
+            transition: all 0.2s ease;
+            border-bottom: 2px solid transparent;
         }
+
+        .nav-tab.active {
+            color: #818cf8;
+            border-bottom-color: #6366f1;
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        [x-cloak] { display: none !important; }
     </style>
 </head>
-<body class="min-h-screen pb-16 flex flex-col antialiased selection:bg-indigo-500/30">
+<body x-data="dashboardApp()" x-cloak class="min-h-screen pb-16 flex flex-col antialiased selection:bg-indigo-500/30">
 
-    <!-- Header Navbar estilo UIDict -->
+    <!-- Header Navbar -->
     <header class="glass-panel sticky top-0 z-40 border-b border-slate-800/80 px-6 py-3.5">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
             
@@ -67,9 +76,9 @@
                 <div>
                     <div class="flex items-center gap-2">
                         <h1 class="text-xl font-extrabold tracking-tight glow-title">uTalk AI Bot Studio</h1>
-                        <span class="text-[10px] font-mono font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-full uppercase tracking-wider">Rust v0.1.0</span>
+                        <span class="text-[10px] font-mono font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-full uppercase tracking-wider">Alpine.js v3</span>
                     </div>
-                    <p class="text-xs text-slate-400 font-medium">Motor de Atendimento Multimodal & Function Calling em Rust</p>
+                    <p class="text-xs text-slate-400 font-medium">Painel Reativo de Atendimento, Métricas & Rodízio de Operadores</p>
                 </div>
             </div>
 
@@ -77,16 +86,16 @@
             <div class="flex items-center gap-3">
                 <div class="glass-panel px-4 py-2 rounded-xl border border-slate-800 flex items-center gap-3">
                     <div class="flex items-center gap-2">
-                        <span id="statusIndicator" class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                        <span id="statusText" class="text-xs font-bold text-emerald-400 tracking-wide">ROBÔ ATIVO</span>
+                        <span class="w-2.5 h-2.5 rounded-full" :class="config.bot_enabled ? 'bg-emerald-500 animate-pulse' : 'bg-slate-500'"></span>
+                        <span class="text-xs font-bold tracking-wide" :class="config.bot_enabled ? 'text-emerald-400' : 'text-slate-400'" x-text="config.bot_enabled ? 'ROBÔ ATIVO' : 'ROBÔ PAUSADO'"></span>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="botToggle" class="sr-only peer" checked onchange="toggleBotStatus()">
+                        <input type="checkbox" x-model="config.bot_enabled" @change="saveConfig(false)" class="sr-only peer">
                         <div class="w-9 h-5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
                     </label>
                 </div>
 
-                <button onclick="doLogout()" class="px-4 py-2 bg-slate-900/90 hover:bg-rose-950/40 hover:text-rose-400 text-slate-300 text-xs font-semibold rounded-xl border border-slate-800 hover:border-rose-500/40 transition-all flex items-center gap-2">
+                <button @click="doLogout()" class="px-4 py-2 bg-slate-900/90 hover:bg-rose-950/40 hover:text-rose-400 text-slate-300 text-xs font-semibold rounded-xl border border-slate-800 hover:border-rose-500/40 transition-all flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-rose-400"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
                     <span>Sair</span>
                 </button>
@@ -94,529 +103,544 @@
         </div>
     </header>
 
+    <!-- Navigation Tabs Bar -->
+    <div class="bg-slate-950/90 border-b border-slate-800 px-6">
+        <div class="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto py-2">
+            <button @click="switchTab('metrics')" :class="{ 'active': activeTab === 'metrics' }" class="nav-tab px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-2 text-slate-300 hover:text-white">
+                📊 <span>Métricas & Dashboard</span>
+            </button>
+            <button @click="switchTab('rotation')" :class="{ 'active': activeTab === 'rotation' }" class="nav-tab px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-2 text-slate-300 hover:text-white">
+                🔄 <span>Rodízio de Atendentes</span>
+            </button>
+            <button @click="switchTab('prompt')" :class="{ 'active': activeTab === 'prompt' }" class="nav-tab px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-2 text-slate-300 hover:text-white">
+                🧠 <span>Prompt & Funil IA</span>
+            </button>
+            <button @click="switchTab('credentials')" :class="{ 'active': activeTab === 'credentials' }" class="nav-tab px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-2 text-slate-300 hover:text-white">
+                🔑 <span>Credenciais & Acessos</span>
+            </button>
+            <button @click="switchTab('apis')" :class="{ 'active': activeTab === 'apis' }" class="nav-tab px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-2 text-slate-300 hover:text-white">
+                🌐 <span>APIs Externas & Tools</span>
+            </button>
+        </div>
+    </div>
+
     <main class="max-w-7xl mx-auto px-6 pt-6 space-y-8 flex-1 w-full">
 
-        <!-- Banner Hero estilo UI Encyclopedia -->
-        <div class="relative overflow-hidden rounded-2xl border border-indigo-500/20 bg-slate-900/60 shadow-2xl">
-            <div class="absolute inset-0 z-0 opacity-40 mix-blend-luminosity">
-                <img src="/assets/banner.jpg" alt="AI Neural Banner" class="w-full h-full object-cover">
-            </div>
-            <div class="relative z-10 p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-gradient-to-r from-slate-950/90 via-slate-950/70 to-transparent">
-                <div class="space-y-2 max-w-2xl">
-                    <span class="text-xs font-mono font-semibold text-indigo-400 uppercase tracking-widest bg-indigo-950/80 border border-indigo-800/60 px-3 py-1 rounded-md inline-block">
-                        ⚡ Arquitetura Multimodal & FTS5
-                    </span>
-                    <h2 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
-                        Gerenciamento de Bot & Tool Calling Dinâmico
-                    </h2>
-                    <p class="text-sm text-slate-300 leading-relaxed">
-                        Conecte a inteligência do Gemini às suas APIs corporativas (ERPs, estoques, orçamentos) e processe mensagens do WhatsApp via uTalk.
-                    </p>
+        <!-- Banner de Alertas (Alpine.js Reativo) -->
+        <div x-show="alert.show" x-transition 
+             :class="alert.type === 'success' ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-800' : 'bg-rose-950/80 text-rose-300 border border-rose-800'"
+             class="p-4 rounded-xl text-sm font-medium shadow-lg" x-text="alert.msg"></div>
+
+        <!-- TAB 1: MÉTRICAS & DASHBOARD -->
+        <div x-show="activeTab === 'metrics'" class="space-y-6">
+            <!-- Cards Estatísticos -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="glass-card p-5 rounded-2xl space-y-2 border border-slate-800">
+                    <span class="text-xs font-semibold text-slate-400">Total de Mensagens IA</span>
+                    <div class="flex items-baseline justify-between">
+                        <span class="text-2xl font-extrabold text-indigo-400" x-text="stats.total_messages || 0">0</span>
+                        <span class="text-xs text-slate-500 font-mono">SQLite FTS5</span>
+                    </div>
                 </div>
-                
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 w-full md:w-auto">
-                    <div class="glass-card p-3 rounded-xl border border-slate-800 text-center">
-                        <span class="block text-[10px] text-slate-400 font-mono uppercase">Motor IA</span>
-                        <span class="text-xs font-bold text-indigo-400" id="heroModelBadge">Gemini 3.1 Flash-Lite</span>
+                <div class="glass-card p-5 rounded-2xl space-y-2 border border-slate-800">
+                    <span class="text-xs font-semibold text-slate-400">Leads Transferidos</span>
+                    <div class="flex items-baseline justify-between">
+                        <span class="text-2xl font-extrabold text-purple-400" x-text="stats.total_transfers || 0">0</span>
+                        <span class="text-xs text-purple-400/80 font-mono">Rodízio Ativo</span>
                     </div>
-                    <div class="glass-card p-3 rounded-xl border border-slate-800 text-center">
-                        <span class="block text-[10px] text-slate-400 font-mono uppercase">Busca Textual</span>
-                        <span class="text-xs font-bold text-purple-400">SQLite FTS5</span>
+                </div>
+                <div class="glass-card p-5 rounded-2xl space-y-2 border border-slate-800">
+                    <span class="text-xs font-semibold text-slate-400">Operadores no Rodízio</span>
+                    <div class="flex items-baseline justify-between">
+                        <span class="text-2xl font-extrabold text-emerald-400" x-text="config.rotation_operator_ids ? config.rotation_operator_ids.length : 0">0</span>
+                        <span class="text-xs text-emerald-400/80 font-mono">uTalk API</span>
                     </div>
-                    <div class="glass-card p-3 rounded-xl border border-slate-800 text-center col-span-2 sm:col-span-1">
-                        <span class="block text-[10px] text-slate-400 font-mono uppercase">uTalk API</span>
-                        <span class="text-xs font-bold text-emerald-400">v1 Conectado</span>
+                </div>
+                <div class="glass-card p-5 rounded-2xl space-y-2 border border-slate-800">
+                    <span class="text-xs font-semibold text-slate-400">Modelo em Uso</span>
+                    <div class="flex items-baseline justify-between">
+                        <span class="text-sm font-bold text-slate-200 truncate" x-text="config.gemini_model || 'Gemini 3.1'">Gemini 3.1</span>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded font-mono">Google</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabela de Distribuição por Operador e Feed Recente -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Tabela por Operador -->
+                <div class="lg:col-span-6 glass-panel p-6 rounded-2xl space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+                            <span>📈 Atribuições por Atendente</span>
+                        </h3>
+                        <button @click="loadStats()" class="text-xs text-indigo-400 hover:underline">Atualizar</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-slate-300">
+                            <thead class="bg-slate-900/80 text-slate-400 font-mono uppercase text-[10px]">
+                                <tr>
+                                    <th class="p-3">Atendente</th>
+                                    <th class="p-3 text-right">Encaminhados</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-800/60">
+                                <template x-for="op in stats.transfers_by_operator" :key="op.member_id">
+                                    <tr class="hover:bg-slate-900/50">
+                                        <td class="p-3 font-medium text-slate-200" x-text="op.member_name"></td>
+                                        <td class="p-3 text-right font-mono font-bold text-purple-400" x-text="op.count"></td>
+                                    </tr>
+                                </template>
+                                <tr x-show="!stats.transfers_by_operator || stats.transfers_by_operator.length === 0">
+                                    <td colspan="2" class="p-4 text-center text-slate-500">Nenhuma transferência gravada ainda.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Feed de Transferências Recentes -->
+                <div class="lg:col-span-6 glass-panel p-6 rounded-2xl space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+                            <span>📜 Últimos Transbordos de Atendimento</span>
+                        </h3>
+                    </div>
+                    <div class="space-y-2.5 max-h-[320px] overflow-y-auto pr-1">
+                        <template x-for="item in stats.recent_transfers" :key="item.created_at + item.chat_id">
+                            <div class="glass-card p-3 rounded-xl flex items-center justify-between text-xs">
+                                <div>
+                                    <span class="font-bold text-slate-200" x-text="item.member_name"></span>
+                                    <span class="block text-[10px] text-slate-500 font-mono" x-text="'Chat ID: ' + item.chat_id"></span>
+                                </div>
+                                <span class="text-[10px] font-mono text-purple-400" x-text="new Date(item.created_at).toLocaleTimeString()"></span>
+                            </div>
+                        </template>
+                        <div x-show="!stats.recent_transfers || stats.recent_transfers.length === 0" class="p-4 text-center text-xs text-slate-500">
+                            Nenhum transbordo gravado ainda.
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Banner de Alertas -->
-        <div id="alertBox" class="hidden p-4 rounded-xl text-sm font-medium transition-all duration-300 shadow-lg"></div>
+        <!-- TAB 2: RODÍZIO DE ATENDENTES -->
+        <div x-show="activeTab === 'rotation'" class="space-y-6">
+            <div class="glass-panel p-6 rounded-2xl space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-4">
+                    <div>
+                        <h2 class="text-lg font-extrabold text-slate-100 flex items-center gap-2">
+                            <span>🔄 Rodízio Configurável de Atendentes Humanos</span>
+                        </h2>
+                        <p class="text-xs text-slate-400">Selecione os operadores ativos no uTalk que participarão da distribuição automática de chats.</p>
+                    </div>
 
-        <!-- Conteúdo Principal Dividido -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            
-            <!-- Painel Esquerdo: Credenciais & Acessos -->
-            <div class="lg:col-span-4 glass-panel p-6 rounded-2xl space-y-6 flex flex-col justify-between">
-                <div class="space-y-5">
-                    <div class="flex items-center gap-2.5 border-b border-slate-800 pb-3">
-                        <div class="w-8 h-8 rounded-lg bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold text-sm">
-                            🔑
-                        </div>
-                        <div>
-                            <h3 class="text-base font-bold text-slate-100">Credenciais Globais</h3>
-                            <p class="text-xs text-slate-400">Chaves de API e acesso ao painel</p>
+                    <button @click="fetchOperators()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl transition-all shadow-md shadow-indigo-600/25 flex items-center gap-2">
+                        <span>🔄 Sincronizar Operadores do uTalk</span>
+                    </button>
+                </div>
+
+                <!-- Painel de Regras de Distribuição -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="glass-card p-4 rounded-xl space-y-2">
+                        <label class="block text-xs font-semibold text-slate-300">Status do Rodízio</label>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold" :class="config.rotation_enabled ? 'text-emerald-400' : 'text-slate-400'" x-text="config.rotation_enabled ? 'ATIVO' : 'DESATIVADO'"></span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" x-model="config.rotation_enabled" class="sr-only peer">
+                                <div class="w-9 h-5 bg-slate-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+                            </label>
                         </div>
                     </div>
-                    
-                    <form onsubmit="event.preventDefault(); saveGlobalConfig();" class="space-y-4">
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-400 mb-1.5">Usuário Admin</label>
-                                <input type="text" id="adminUser" autocomplete="username" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors" placeholder="admin">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-400 mb-1.5">Senha Admin</label>
-                                <input type="password" id="adminPass" autocomplete="current-password" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors" placeholder="••••••••">
-                            </div>
-                        </div>
 
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Modelo Google Gemini</label>
-                            <select id="geminiModel" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors">
-                                <option value="gemini-3.1-flash-lite">gemini-3.1-flash-lite (Recomendado)</option>
-                                <option value="gemini-3.6-flash">gemini-3.6-flash</option>
-                                <option value="gemini-2.5-flash">gemini-2.5-flash</option>
-                                <option value="gemini-1.5-flash">gemini-1.5-flash</option>
-                                <option value="gemini-1.5-pro">gemini-1.5-pro</option>
-                            </select>
-                        </div>
+                    <div class="glass-card p-4 rounded-xl space-y-2">
+                        <label class="block text-xs font-semibold text-slate-300">Estratégia de Distribuição</label>
+                        <select x-model="config.rotation_strategy" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                            <option value="round_robin">Round-Robin Sequencial (Todos Selecionados)</option>
+                            <option value="online_only">Apenas Operadores ONLINE no uTalk</option>
+                        </select>
+                    </div>
 
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Gemini API Key</label>
-                            <input type="password" id="geminiKey" autocomplete="current-password" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors" placeholder="AQ.Ab8RN...">
-                        </div>
+                    <div class="glass-card p-4 rounded-xl space-y-2">
+                        <label class="block text-xs font-semibold text-slate-300">Comando / Palavra-chave de Transferência</label>
+                        <input type="text" x-model="config.rotation_trigger_keyword" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs font-mono text-indigo-300 focus:outline-none focus:border-indigo-500">
+                    </div>
+                </div>
 
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-400 mb-1.5">uTalk API Token</label>
-                            <input type="password" id="utalkToken" autocomplete="current-password" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors" placeholder="token2-2026-...">
+                <!-- Lista de Operadores -->
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Operadores Humanos Disponíveis na Organização</h3>
+                        <div class="flex items-center gap-2">
+                            <button @click="selectAllOperators(true)" class="text-xs text-indigo-400 hover:underline">Selecionar Todos</button>
+                            <span class="text-slate-600">|</span>
+                            <button @click="selectAllOperators(false)" class="text-xs text-slate-400 hover:underline">Desmarcar Todos</button>
                         </div>
+                    </div>
 
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-400 mb-1.5">uTalk Organization ID</label>
-                            <input type="text" id="utalkOrgId" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors" placeholder="aORCMR51FFkJKvJe">
-                        </div>
+                    <div x-show="loadingOperators" class="p-6 text-center text-xs text-slate-400 animate-pulse">Carregando operadores ativos do uTalk...</div>
 
-                        <button type="submit" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-semibold text-xs rounded-xl transition-all shadow-lg shadow-indigo-600/25 active:scale-[0.98]">
-                            Salvar Credenciais
-                        </button>
-                    </form>
+                    <div x-show="!loadingOperators && operators.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                        <template x-for="op in operators" :key="op.id">
+                            <label class="glass-card p-4 rounded-xl flex items-start justify-between cursor-pointer border transition-all"
+                                   :class="config.rotation_operator_ids.includes(op.id) ? 'border-indigo-500/50 bg-indigo-950/20' : 'border-slate-800'">
+                                <div class="space-y-1">
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-bold text-xs text-slate-100" x-text="op.name"></span>
+                                        <span x-show="op.is_online" class="text-[9px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.2 rounded font-bold">ONLINE</span>
+                                        <span x-show="!op.is_online" class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.2 rounded">OFFLINE</span>
+                                    </div>
+                                    <span class="block text-[11px] text-slate-400" x-text="op.email || 'Sem e-mail'"></span>
+                                    <span class="block text-[9px] font-mono text-slate-600" x-text="'ID: ' + op.id"></span>
+                                </div>
+                                <input type="checkbox" :value="op.id" x-model="config.rotation_operator_ids" class="accent-indigo-600 w-4 h-4 rounded mt-1">
+                            </label>
+                        </template>
+                    </div>
+
+                    <div x-show="!loadingOperators && operators.length === 0" class="p-6 text-center text-xs text-slate-500">
+                        Clique em "Sincronizar Operadores do uTalk" para carregar a lista.
+                    </div>
+                </div>
+
+                <div class="flex justify-end pt-4 border-t border-slate-800">
+                    <button @click="saveConfig()" class="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 text-white font-semibold text-xs rounded-xl transition-all shadow-lg shadow-emerald-600/25">
+                        Salvar Configurações do Rodízio
+                    </button>
                 </div>
             </div>
+        </div>
 
-            <!-- Painel Direito: Prompt do Sistema -->
-            <div class="lg:col-span-8 glass-panel p-6 rounded-2xl space-y-6 flex flex-col justify-between">
-                <div class="space-y-4">
-                    <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                        <div class="flex items-center gap-2.5">
-                            <div class="w-8 h-8 rounded-lg bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold text-sm">
-                                🧠
-                            </div>
-                            <div>
-                                <h3 class="text-base font-bold text-slate-100">Prompt de Sistema (Instruções da IA)</h3>
-                                <p class="text-xs text-slate-400">Personalidade, regras e comportamento do assistente virtual</p>
-                            </div>
-                        </div>
+        <!-- TAB 3: PROMPT & FUNIL IA -->
+        <div x-show="activeTab === 'prompt'" class="space-y-6">
+            <div class="glass-panel p-6 rounded-2xl space-y-6">
+                <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
+                    <div class="w-9 h-9 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold text-base">
+                        🧠
                     </div>
-
-                    <textarea id="systemPrompt" rows="10" class="w-full bg-slate-950/90 border border-slate-800 rounded-xl p-4 text-xs focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors font-mono leading-relaxed text-slate-200" placeholder="Você é o assistente virtual da empresa..."></textarea>
+                    <div>
+                        <h2 class="text-lg font-extrabold text-slate-100">Prompt do Sistema & Funil de Qualificação</h2>
+                        <p class="text-xs text-slate-400">Instruções principais do Gemini. Inclua a palavra-chave <code class="text-purple-300 font-mono" x-text="config.rotation_trigger_keyword || '[TRANSFERIR]'"></code> quando o lead for qualificado.</p>
+                    </div>
                 </div>
 
+                <textarea x-model="config.system_prompt" rows="12" class="w-full bg-slate-950/90 border border-slate-800 rounded-xl p-4 text-xs focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors font-mono leading-relaxed text-slate-200"></textarea>
+
                 <div class="flex justify-end">
-                    <button onclick="saveGlobalConfig()" class="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold text-xs rounded-xl transition-all shadow-lg shadow-purple-600/25 active:scale-[0.98]">
+                    <button @click="saveConfig()" class="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold text-xs rounded-xl transition-all shadow-lg shadow-purple-600/25">
                         Salvar Prompt de Sistema
                     </button>
                 </div>
             </div>
-
         </div>
 
-        <!-- Seção 2: Gerenciador de APIs Externas (Tool Calling) -->
-        <div class="glass-panel p-6 rounded-2xl space-y-6">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-600 to-pink-500 flex items-center justify-center font-bold text-base text-white shadow-md shadow-purple-500/20">
-                        🌐
+        <!-- TAB 4: CREDENCIAIS & ACESSOS -->
+        <div x-show="activeTab === 'credentials'" class="space-y-6">
+            <div class="glass-panel p-6 rounded-2xl space-y-6 max-w-3xl mx-auto">
+                <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
+                    <div class="w-9 h-9 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold text-base">
+                        🔑
                     </div>
                     <div>
-                        <h2 class="text-lg font-extrabold text-slate-100">
-                            APIs Externas Conectadas (`request_external_api`)
-                        </h2>
-                        <p class="text-xs text-slate-400">Cadastre integrações dinâmicas para a IA consultar estoques, fretes e ERPs em tempo real.</p>
+                        <h2 class="text-lg font-extrabold text-slate-100">Credenciais & Acessos da Aplicação</h2>
+                        <p class="text-xs text-slate-400">Gerencie as chaves de conexão com uTalk, Gemini e senha de acesso.</p>
                     </div>
                 </div>
 
-                <button onclick="openApiModal()" class="px-4 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold text-xs rounded-xl transition-all flex items-center gap-2 shadow-lg shadow-purple-600/25 active:scale-[0.98]">
-                    <span>+ Nova Integração API</span>
-                </button>
-            </div>
+                <form @submit.prevent="saveConfig()" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Usuário Admin</label>
+                            <input type="text" x-model="config.admin_username" autocomplete="username" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Senha Admin</label>
+                            <input type="password" x-model="config.admin_password" autocomplete="current-password" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                        </div>
+                    </div>
 
-            <!-- Lista de Integrações Cadastradas -->
-            <div id="apiList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Inserido dinamicamente via JavaScript -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1.5">Modelo Google Gemini</label>
+                        <select x-model="config.gemini_model" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500">
+                            <option value="gemini-3.1-flash-lite">gemini-3.1-flash-lite (Recomendado)</option>
+                            <option value="gemini-3.6-flash">gemini-3.6-flash</option>
+                            <option value="gemini-2.5-flash">gemini-2.5-flash</option>
+                            <option value="gemini-1.5-flash">gemini-1.5-flash</option>
+                            <option value="gemini-1.5-pro">gemini-1.5-pro</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1.5">Gemini API Key</label>
+                        <input type="password" x-model="config.gemini_api_key" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1.5">uTalk API Token</label>
+                        <input type="password" x-model="config.utalk_api_token" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1.5">uTalk Organization ID</label>
+                        <input type="text" x-model="config.utalk_organization_id" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500">
+                    </div>
+
+                    <div class="pt-2">
+                        <button type="submit" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-semibold text-xs rounded-xl transition-all shadow-lg shadow-indigo-600/25">
+                            Salvar Credenciais
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- TAB 5: APIS EXTERNAS & TOOLS -->
+        <div x-show="activeTab === 'apis'" class="space-y-6">
+            <div class="glass-panel p-6 rounded-2xl space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-600 to-pink-500 flex items-center justify-center font-bold text-base text-white shadow-md">
+                            🌐
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-extrabold text-slate-100">
+                                APIs Externas Conectadas (`request_external_api`)
+                            </h2>
+                            <p class="text-xs text-slate-400">Cadastre integrações dinâmicas para a IA consultar estoques, fretes e ERPs em tempo real.</p>
+                        </div>
+                    </div>
+
+                    <button @click="openApiModal()" class="px-4 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold text-xs rounded-xl transition-all flex items-center gap-2 shadow-lg shadow-purple-600/25">
+                        <span>+ Nova Integração API</span>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <template x-for="api in config.external_apis" :key="api.id">
+                        <div class="glass-card p-4 rounded-xl space-y-3 border border-slate-800">
+                            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-bold text-slate-100" x-text="api.name"></span>
+                                    <span class="text-[9px] font-mono px-2 py-0.5 rounded" :class="api.enabled ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-800 text-slate-500'" x-text="api.enabled ? 'ATIVA' : 'PAUSADA'"></span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button @click="editApi(api)" class="text-xs text-indigo-400 hover:underline">Editar</button>
+                                    <button @click="deleteApi(api.id)" class="text-xs text-rose-400 hover:underline">Excluir</button>
+                                </div>
+                            </div>
+                            <div class="text-[11px] font-mono text-purple-300 truncate" x-text="api.base_url"></div>
+                            <div class="text-xs text-slate-400 bg-slate-950 p-2.5 rounded-lg border border-slate-900 font-mono text-[10px] leading-relaxed max-h-20 overflow-y-auto" x-text="api.documentation"></div>
+                        </div>
+                    </template>
+                    <div x-show="!config.external_apis || config.external_apis.length === 0" class="p-6 text-center text-xs text-slate-500 col-span-full">
+                        Nenhuma API cadastrada.
+                    </div>
+                </div>
             </div>
         </div>
 
     </main>
 
-    <!-- Modal de Cadastro / Edição de API Externa -->
-    <div id="apiModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-4 z-50">
-        <div class="glass-panel p-6 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto space-y-5 border border-slate-800 shadow-2xl">
+    <!-- Modal de API Externa (Alpine.js Modal) -->
+    <div x-show="apiModalOpen" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
+        <div class="glass-panel p-6 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto space-y-5 border border-slate-800 shadow-2xl" @click.away="apiModalOpen = false">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 id="modalTitle" class="text-base font-bold text-purple-400">Cadastrar Nova Integração de API</h3>
-                <button onclick="closeApiModal()" class="text-slate-400 hover:text-white text-lg">✕</button>
+                <h3 class="text-base font-bold text-purple-400" x-text="editingApi.id ? 'Editar Integração de API' : 'Cadastrar Nova Integração de API'"></h3>
+                <button @click="apiModalOpen = false" class="text-slate-400 hover:text-white text-lg">✕</button>
             </div>
 
-            <form id="apiForm" onsubmit="saveApiIntegration(event)" class="space-y-4">
-                <input type="hidden" id="apiId">
-
+            <form @submit.prevent="saveApiModal()" class="space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-semibold text-slate-400 mb-1">Nome da API / Serviço</label>
-                        <input type="text" id="apiName" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-purple-500" placeholder="Ex: Consulta de Estoque ERP">
+                        <input type="text" x-model="editingApi.name" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-purple-500">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-400 mb-1">Base URL</label>
-                        <input type="text" id="apiBaseUrl" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-purple-500 font-mono" placeholder="https://api.empresa.com/v1">
+                        <input type="text" x-model="editingApi.base_url" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-purple-500 font-mono">
                     </div>
                 </div>
 
-                <!-- Cabeçalhos HTTP (Headers) -->
                 <div>
                     <div class="flex justify-between items-center mb-2">
                         <label class="block text-xs font-semibold text-slate-400">Cabeçalhos HTTP (Headers)</label>
-                        <button type="button" onclick="addHeaderRow()" class="text-xs text-purple-400 hover:underline">+ Adicionar Header</button>
+                        <button type="button" @click="editingApi.headers.push({ key: '', value: '' })" class="text-xs text-purple-400 hover:underline">+ Adicionar Header</button>
                     </div>
-                    <div id="headersContainer" class="space-y-2">
-                        <!-- Linhas de headers adicionadas via JS -->
+                    <div class="space-y-2">
+                        <template x-for="(hdr, idx) in editingApi.headers" :key="idx">
+                            <div class="flex items-center gap-2">
+                                <input type="text" placeholder="Key (ex: Authorization)" x-model="hdr.key" class="w-1/2 bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 font-mono">
+                                <input type="text" placeholder="Value (ex: Bearer token)" x-model="hdr.value" class="w-1/2 bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 font-mono">
+                                <button type="button" @click="editingApi.headers.splice(idx, 1)" class="text-rose-400 hover:text-rose-300 text-xs px-1">✕</button>
+                            </div>
+                        </template>
                     </div>
                 </div>
 
-                <!-- Documentação para o Gemini -->
                 <div>
-                    <label class="block text-xs font-semibold text-slate-400 mb-1">Documentação & Instruções dos Endpoints para a IA</label>
-                    <textarea id="apiDoc" rows="4" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-slate-200 focus:outline-none focus:border-purple-500" placeholder="Descreva os endpoints que a IA pode chamar. Ex:
-- GET /produtos?busca={nome}: Retorna o estoque e preço.
-- POST /pedidos: Cria um novo pedido com payload {'codigo': '123'}"></textarea>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Documentação para a IA</label>
+                    <textarea x-model="editingApi.documentation" rows="4" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-slate-200 focus:outline-none focus:border-purple-500"></textarea>
                 </div>
 
                 <div class="flex justify-end gap-3 pt-4 border-t border-slate-800">
-                    <button type="button" onclick="closeApiModal()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs font-semibold rounded-xl border border-slate-800">Cancelar</button>
-                    <button type="submit" class="px-5 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-semibold rounded-xl shadow-lg shadow-purple-600/25">Salvar Integração</button>
+                    <button type="button" @click="apiModalOpen = false" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs font-semibold rounded-xl border border-slate-800">Cancelar</button>
+                    <button type="submit" class="px-5 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-semibold rounded-xl">Salvar Integração</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal de Login estilo UIDict -->
-    <div id="loginModal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-lg flex items-center justify-center p-4 z-[100]">
-        <div class="glass-panel p-8 rounded-2xl w-full max-w-md space-y-6 shadow-2xl border border-slate-800 relative">
-            <div class="text-center space-y-3">
-                <img src="/assets/logo.png" alt="uTalk Bot Avatar" class="w-16 h-16 rounded-2xl mx-auto shadow-xl shadow-indigo-500/20 border border-indigo-400/30 object-cover">
-                <div>
-                    <h2 class="text-2xl font-extrabold glow-title">uTalk AI Bot Studio</h2>
-                    <p class="text-xs text-slate-400 mt-1">Insira suas credenciais para acessar o painel</p>
-                </div>
-            </div>
-
-            <div id="loginError" class="hidden p-3 rounded-xl bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-semibold text-center"></div>
-
-            <form onsubmit="doLogin(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 mb-1.5">Usuário Administrador</label>
-                    <input type="text" id="loginUser" required autocomplete="username" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors" placeholder="admin">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 mb-1.5">Senha</label>
-                    <input type="password" id="loginPass" required autocomplete="current-password" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors" placeholder="••••••••">
-                </div>
-
-                <button type="submit" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold text-xs rounded-xl transition-all shadow-lg shadow-indigo-600/30 active:scale-[0.98]">
-                    Entrar no Painel
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Scripts JavaScript do Dashboard -->
+    <!-- Script Alpine.js Reativo -->
     <script>
-        let currentConfig = null;
-
-        function getAuthHeaders() {
-            const token = localStorage.getItem('session_token') || '';
+        function dashboardApp() {
             return {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token
+                activeTab: 'metrics',
+                config: {
+                    bot_enabled: true,
+                    admin_username: '',
+                    admin_password: '',
+                    gemini_model: 'gemini-3.1-flash-lite',
+                    gemini_api_key: '',
+                    utalk_api_token: '',
+                    utalk_organization_id: '',
+                    system_prompt: '',
+                    external_apis: [],
+                    rotation_enabled: true,
+                    rotation_operator_ids: [],
+                    rotation_strategy: 'round_robin',
+                    rotation_trigger_keyword: '[TRANSFERIR]'
+                },
+                stats: {
+                    total_messages: 0,
+                    total_transfers: 0,
+                    transfers_by_operator: [],
+                    recent_transfers: []
+                },
+                operators: [],
+                loadingOperators: false,
+                alert: { show: false, msg: '', type: 'success' },
+                apiModalOpen: false,
+                editingApi: { id: '', name: '', base_url: '', headers: [], documentation: '', enabled: true },
+
+                init() {
+                    this.loadConfig();
+                },
+
+                switchTab(tabId) {
+                    this.activeTab = tabId;
+                    if (tabId === 'metrics') this.loadStats();
+                    if (tabId === 'rotation' && this.operators.length === 0) this.fetchOperators();
+                },
+
+                showAlert(msg, type = 'success') {
+                    this.alert = { show: true, msg, type };
+                    setTimeout(() => this.alert.show = false, 4000);
+                },
+
+                async loadConfig() {
+                    try {
+                        const res = await fetch('/api/config');
+                        if (res.status === 401) {
+                            window.location.href = '/';
+                            return;
+                        }
+                        const data = await res.json();
+                        this.config = { ...this.config, ...data };
+                        if (!this.config.rotation_operator_ids) this.config.rotation_operator_ids = [];
+                        if (!this.config.external_apis) this.config.external_apis = [];
+                        this.loadStats();
+                    } catch (err) {
+                        console.error('Erro ao carregar configurações:', err);
+                    }
+                },
+
+                async saveConfig(showMsg = true) {
+                    try {
+                        const res = await fetch('/api/config', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(this.config)
+                        });
+                        if (res.ok) {
+                            if (showMsg) this.showAlert('Configurações salvas com sucesso!');
+                            this.loadStats();
+                        } else {
+                            this.showAlert('Erro ao salvar configurações.', 'error');
+                        }
+                    } catch (err) {
+                        this.showAlert('Falha de conexão.', 'error');
+                    }
+                },
+
+                async loadStats() {
+                    try {
+                        const res = await fetch('/api/stats');
+                        if (res.ok) {
+                            this.stats = await res.json();
+                        }
+                    } catch (err) {
+                        console.error('Erro ao carregar estatísticas:', err);
+                    }
+                },
+
+                async fetchOperators() {
+                    this.loadingOperators = true;
+                    try {
+                        const res = await fetch('/api/operators');
+                        if (res.ok) {
+                            this.operators = await res.json();
+                        } else {
+                            this.showAlert('Erro ao buscar operadores. Verifique as credenciais do uTalk.', 'error');
+                        }
+                    } catch (err) {
+                        this.showAlert('Falha ao se comunicar com o backend Rust.', 'error');
+                    } finally {
+                        this.loadingOperators = false;
+                    }
+                },
+
+                selectAllOperators(flag) {
+                    if (flag) {
+                        this.config.rotation_operator_ids = this.operators.map(o => o.id);
+                    } else {
+                        this.config.rotation_operator_ids = [];
+                    }
+                },
+
+                openApiModal(api = null) {
+                    if (api) {
+                        this.editingApi = JSON.parse(JSON.stringify(api));
+                    } else {
+                        this.editingApi = { id: '', name: '', base_url: '', headers: [], documentation: '', enabled: true };
+                    }
+                    this.apiModalOpen = true;
+                },
+
+                saveApiModal() {
+                    if (!this.editingApi.id) {
+                        this.editingApi.id = 'api_' + Date.now();
+                    }
+                    const idx = this.config.external_apis.findIndex(a => a.id === this.editingApi.id);
+                    if (idx >= 0) {
+                        this.config.external_apis[idx] = { ...this.editingApi };
+                    } else {
+                        this.config.external_apis.push({ ...this.editingApi });
+                    }
+                    this.saveConfig();
+                    this.apiModalOpen = false;
+                },
+
+                deleteApi(id) {
+                    if (!confirm('Deseja realmente excluir esta integração?')) return;
+                    this.config.external_apis = this.config.external_apis.filter(a => a.id !== id);
+                    this.saveConfig();
+                },
+
+                async doLogout() {
+                    await fetch('/api/logout', { method: 'POST' });
+                    window.location.reload();
+                }
             };
         }
-
-        function showLoginModal() {
-            const modal = document.getElementById('loginModal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        }
-
-        function hideLoginModal() {
-            const modal = document.getElementById('loginModal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-
-        async function doLogin(event) {
-            event.preventDefault();
-            const username = document.getElementById('loginUser').value.trim();
-            const password = document.getElementById('loginPass').value.trim();
-            const errorBox = document.getElementById('loginError');
-            errorBox.classList.add('hidden');
-
-            try {
-                const res = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
-                });
-
-                const data = await res.json();
-                if (res.ok && data.success && data.token) {
-                    localStorage.setItem('session_token', data.token);
-                    hideLoginModal();
-                    await loadConfig();
-                } else {
-                    errorBox.innerText = data.message || 'Usuário ou senha inválidos';
-                    errorBox.classList.remove('hidden');
-                }
-            } catch (e) {
-                errorBox.innerText = 'Erro de conexão com o servidor';
-                errorBox.classList.remove('hidden');
-            }
-        }
-
-        async function doLogout() {
-            try {
-                await fetch('/api/logout', {
-                    method: 'POST',
-                    headers: getAuthHeaders()
-                });
-            } catch (e) {}
-            localStorage.removeItem('session_token');
-            showLoginModal();
-        }
-
-        async function loadConfig() {
-            try {
-                const res = await fetch('/api/config', {
-                    headers: getAuthHeaders()
-                });
-
-                if (res.status === 401) {
-                    showLoginModal();
-                    return;
-                }
-
-                hideLoginModal();
-                currentConfig = await res.json();
-
-                document.getElementById('botToggle').checked = currentConfig.bot_enabled;
-                updateStatusBadge(currentConfig.bot_enabled);
-
-                if (document.getElementById('adminUser')) {
-                    document.getElementById('adminUser').value = currentConfig.admin_username || 'admin';
-                }
-                if (document.getElementById('adminPass')) {
-                    document.getElementById('adminPass').value = currentConfig.admin_password || 'admin123';
-                }
-
-                if (document.getElementById('geminiModel')) {
-                    document.getElementById('geminiModel').value = currentConfig.gemini_model || 'gemini-3.1-flash-lite';
-                    const badge = document.getElementById('heroModelBadge');
-                    if (badge) badge.innerText = currentConfig.gemini_model || 'gemini-3.1-flash-lite';
-                }
-
-                document.getElementById('geminiKey').value = currentConfig.gemini_api_key || '';
-                document.getElementById('utalkToken').value = currentConfig.utalk_api_token || '';
-                document.getElementById('utalkOrgId').value = currentConfig.utalk_organization_id || '';
-                document.getElementById('systemPrompt').value = currentConfig.system_prompt || '';
-
-                renderApiList(currentConfig.external_apis || []);
-            } catch (err) {
-                showAlert('Erro ao carregar configurações do servidor', 'bg-red-500/20 text-red-400 border border-red-500/30');
-            }
-        }
-
-        function updateStatusBadge(enabled) {
-            const ind = document.getElementById('statusIndicator');
-            const txt = document.getElementById('statusText');
-            if (enabled) {
-                ind.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse';
-                txt.className = 'text-xs font-bold text-emerald-400 tracking-wide';
-                txt.innerText = 'ROBÔ ATIVO';
-            } else {
-                ind.className = 'w-2.5 h-2.5 rounded-full bg-rose-500';
-                txt.className = 'text-xs font-bold text-rose-400 tracking-wide';
-                txt.innerText = 'ROBÔ PAUSADO';
-            }
-        }
-
-        async function toggleBotStatus() {
-            const isChecked = document.getElementById('botToggle').checked;
-            currentConfig.bot_enabled = isChecked;
-            updateStatusBadge(isChecked);
-            await saveGlobalConfig();
-        }
-
-        async function saveGlobalConfig() {
-            if (document.getElementById('adminUser')) {
-                currentConfig.admin_username = document.getElementById('adminUser').value.trim() || 'admin';
-            }
-            if (document.getElementById('adminPass')) {
-                currentConfig.admin_password = document.getElementById('adminPass').value.trim() || 'admin123';
-            }
-            if (document.getElementById('geminiModel')) {
-                currentConfig.gemini_model = document.getElementById('geminiModel').value;
-                const badge = document.getElementById('heroModelBadge');
-                if (badge) badge.innerText = currentConfig.gemini_model;
-            }
-            currentConfig.gemini_api_key = document.getElementById('geminiKey').value.trim();
-            currentConfig.utalk_api_token = document.getElementById('utalkToken').value.trim();
-            currentConfig.utalk_organization_id = document.getElementById('utalkOrgId').value.trim();
-            currentConfig.system_prompt = document.getElementById('systemPrompt').value.trim();
-
-            try {
-                const res = await fetch('/api/config', {
-                    method: 'POST',
-                    headers: getAuthHeaders(),
-                    body: JSON.stringify(currentConfig)
-                });
-                if (res.ok) {
-                    showAlert('Configurações salvas com sucesso!', 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30');
-                } else if (res.status === 401) {
-                    showLoginModal();
-                } else {
-                    showAlert('Erro ao salvar no servidor.', 'bg-rose-500/20 text-rose-300 border border-rose-500/30');
-                }
-            } catch (e) {
-                showAlert('Erro de conexão ao salvar.', 'bg-rose-500/20 text-rose-300 border border-rose-500/30');
-            }
-        }
-
-        function renderApiList(apis) {
-            const container = document.getElementById('apiList');
-            if (!apis || apis.length === 0) {
-                container.innerHTML = `<div class="col-span-full p-8 text-center text-slate-500 border border-dashed border-slate-800 rounded-xl">Nenhuma API externa cadastrada. Clique em '+ Nova Integração API' para adicionar.</div>`;
-                return;
-            }
-
-            container.innerHTML = apis.map(api => `
-                <div class="glass-card p-5 rounded-xl space-y-3 relative border border-slate-800 hover:border-purple-500/40 transition-all">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <span class="text-[10px] font-mono text-purple-300 bg-purple-950/80 border border-purple-800/60 px-2 py-0.5 rounded-md font-semibold">${api.id}</span>
-                            <h3 class="font-bold text-slate-100 text-sm mt-1">${api.name}</h3>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <button onclick="editApi('${api.id}')" class="text-[11px] font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded-lg border border-slate-700 transition-colors">Editar</button>
-                            <button onclick="deleteApi('${api.id}')" class="text-[11px] font-semibold bg-rose-950/60 hover:bg-rose-900 text-rose-300 px-2.5 py-1 rounded-lg border border-rose-900/60 transition-colors">Excluir</button>
-                        </div>
-                    </div>
-
-                    <div class="text-xs font-mono text-indigo-300/90 truncate bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-850">
-                        🔗 ${api.base_url}
-                    </div>
-
-                    <div class="text-xs text-slate-300 bg-slate-950 p-3 rounded-lg font-mono whitespace-pre-wrap max-h-24 overflow-y-auto border border-slate-850">
-                        ${api.documentation}
-                    </div>
-
-                    <div class="flex flex-wrap gap-1.5 pt-1">
-                        ${(api.headers || []).map(h => `<span class="text-[10px] font-mono bg-slate-800/90 text-slate-300 border border-slate-700/80 px-2 py-0.5 rounded">${h.key}</span>`).join('')}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function openApiModal(apiData = null) {
-            document.getElementById('apiForm').reset();
-            document.getElementById('headersContainer').innerHTML = '';
-
-            if (apiData) {
-                document.getElementById('modalTitle').innerText = 'Editar Integração de API';
-                document.getElementById('apiId').value = apiData.id;
-                document.getElementById('apiName').value = apiData.name;
-                document.getElementById('apiBaseUrl').value = apiData.base_url;
-                document.getElementById('apiDoc').value = apiData.documentation;
-
-                (apiData.headers || []).forEach(h => addHeaderRow(h.key, h.value));
-            } else {
-                document.getElementById('modalTitle').innerText = 'Cadastrar Nova Integração de API';
-                document.getElementById('apiId').value = 'api_' + Date.now();
-                addHeaderRow('Authorization', 'Bearer SEU_TOKEN');
-            }
-
-            document.getElementById('apiModal').classList.remove('hidden');
-            document.getElementById('apiModal').classList.add('flex');
-        }
-
-        function closeApiModal() {
-            document.getElementById('apiModal').classList.add('hidden');
-            document.getElementById('apiModal').classList.remove('flex');
-        }
-
-        function addHeaderRow(key = '', value = '') {
-            const container = document.getElementById('headersContainer');
-            const row = document.createElement('div');
-            row.className = 'flex gap-2 items-center';
-            row.innerHTML = `
-                <input type="text" placeholder="Chave (ex: Authorization)" value="${key}" class="header-key flex-1 bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs font-mono text-slate-200">
-                <input type="text" placeholder="Valor" value="${value}" class="header-val flex-1 bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs font-mono text-slate-200">
-                <button type="button" onclick="this.parentElement.remove()" class="text-rose-400 hover:text-rose-300 text-sm px-2">✕</button>
-            `;
-            container.appendChild(row);
-        }
-
-        function editApi(id) {
-            const api = currentConfig.external_apis.find(a => a.id === id);
-            if (api) openApiModal(api);
-        }
-
-        async function deleteApi(id) {
-            if (!confirm('Deseja realmente excluir esta integração de API?')) return;
-            currentConfig.external_apis = currentConfig.external_apis.filter(a => a.id !== id);
-            await saveGlobalConfig();
-            renderApiList(currentConfig.external_apis);
-        }
-
-        async function saveApiIntegration(event) {
-            event.preventDefault();
-
-            const id = document.getElementById('apiId').value;
-            const name = document.getElementById('apiName').value.trim();
-            const base_url = document.getElementById('apiBaseUrl').value.trim();
-            const documentation = document.getElementById('apiDoc').value.trim();
-
-            const headerRows = document.querySelectorAll('#headersContainer > div');
-            const headers = [];
-            headerRows.forEach(row => {
-                const key = row.querySelector('.header-key').value.trim();
-                const value = row.querySelector('.header-val').value.trim();
-                if (key) headers.push({ key, value });
-            });
-
-            const newApi = { id, name, base_url, headers, documentation, enabled: true };
-
-            const existingIndex = currentConfig.external_apis.findIndex(a => a.id === id);
-            if (existingIndex >= 0) {
-                currentConfig.external_apis[existingIndex] = newApi;
-            } else {
-                currentConfig.external_apis.push(newApi);
-            }
-
-            await saveGlobalConfig();
-            renderApiList(currentConfig.external_apis);
-            closeApiModal();
-        }
-
-        function showAlert(msg, typeClass) {
-            const box = document.getElementById('alertBox');
-            box.className = `p-4 rounded-xl text-sm font-semibold transition-all duration-300 shadow-xl ${typeClass}`;
-            box.innerText = msg;
-            box.classList.remove('hidden');
-            setTimeout(() => box.classList.add('hidden'), 4000);
-        }
-
-        // Carrega as configurações na inicialização
-        loadConfig();
     </script>
 </body>
 </html>

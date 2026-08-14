@@ -56,9 +56,15 @@ impl Database {
                 content_rowid='id'
             );
 
-            CREATE TRIGGER IF NOT EXISTS messages_ai AFTER INSERT ON messages BEGIN
-                INSERT INTO messages_fts(rowid, chat_id, content) VALUES (new.id, new.chat_id, new.content);
-            END;
+            CREATE TABLE IF NOT EXISTS transfers (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                chat_id TEXT NOT NULL,
+                member_id TEXT NOT NULL,
+                member_name TEXT NOT NULL,
+                created_at TEXT NOT NULL
+            );
+
+            CREATE INDEX IF NOT EXISTS idx_transfers_member ON transfers(member_id);
             ",
         )
         .map_err(|e| format!("Erro ao inicializar tabelas SQLite/FTS5: {}", e))?;
@@ -266,6 +272,100 @@ impl Database {
     pub fn delete_session(&self, token: &str) {
         let conn = self.conn.lock().unwrap();
         let _ = conn.execute("DELETE FROM sessions WHERE token = ?1", params![token]);
+    }
+
+    // --- SISTEMA DE RODÍZIO & MÉTRICAS ---
+    pub fn record_transfer(&self, chat_id: &str, member_id: &str, member_name: &str) {
+        let conn = self.conn.lock().unwrap();
+        let now = Utc::now().to_rfc3339();
+        let _ = conn.execute(
+            "INSERT INTO transfers (chat_id, member_id, member_name, created_at) VALUES (?1, ?2, ?3, ?4)",
+            params![chat_id, member_id, member_name, now],
+        );
+        println!("📊 Transferência gravada: Chat {} -> {} ({})", chat_id, member_name, member_id);
+    }
+
+    pub fn get_next_rotation_operator(&self, operator_ids: &[String]) -> Option<String> {
+        if operator_ids.is_empty() {
+            return None;
+        }
+
+        let conn = self.conn.lock().unwrap();
+        
+        // Pega o índice do último atendente acionado
+        let last_idx: usize = {
+            let mut stmt = conn.prepare("SELECT value FROM settings WHERE key = 'rotation_last_index'").ok();
+            if let Some(mut stmt) = stmt {
+                if let Ok(val_str) = stmt.query_row([], |row| row.get::<_, String>(0)) {
+                    val_str.parse().unwrap_or(0)
+                } else {
+                    0
+                }
+            } else {
+                0
+            }
+        };
+
+        let next_idx = (last_idx + 1) % operator_ids.len();
+        let selected_id = operator_ids[next_idx].clone();
+
+        let _ = conn.execute(
+            "INSERT INTO settings (key, value) VALUES ('rotation_last_index', ?1)
+             ON CONFLICT(key) DO UPDATE SET value = ?1",
+            params![next_idx.to_string()],
+        );
+
+        Some(selected_id)
+    }
+
+    pub fn get_dashboard_stats(&self) -> Value {
+        let conn = self.conn.lock().unwrap();
+
+        let total_messages: i64 = conn
+            .query_row("SELECT COUNT(*) FROM messages", [], |row| row.get(0))
+            .unwrap_or(0);
+
+        let total_transfers: i64 = conn
+            .query_row("SELECT COUNT(*) FROM transfers", [], |row| row.get(0))
+            .unwrap_or(0);
+
+        let mut transfers_by_operator = Vec::new();
+        if let Ok(mut stmt) = conn.prepare("SELECT member_id, member_name, COUNT(*) as cnt FROM transfers GROUP BY member_id ORDER BY cnt DESC") {
+            if let Ok(rows) = stmt.query_map([], |row| {
+                Ok(json!({
+                    "member_id": row.get::<_, String>(0)?,
+                    "member_name": row.get::<_, String>(1)?,
+                    "count": row.get::<_, i64>(2)?
+                }))
+            }) {
+                for r in rows.flatten() {
+                    transfers_by_operator.push(r);
+                }
+            }
+        }
+
+        let mut recent_transfers = Vec::new();
+        if let Ok(mut stmt) = conn.prepare("SELECT chat_id, member_id, member_name, created_at FROM transfers ORDER BY id DESC LIMIT 10") {
+            if let Ok(rows) = stmt.query_map([], |row| {
+                Ok(json!({
+                    "chat_id": row.get::<_, String>(0)?,
+                    "member_id": row.get::<_, String>(1)?,
+                    "member_name": row.get::<_, String>(2)?,
+                    "created_at": row.get::<_, String>(3)?
+                }))
+            }) {
+                for r in rows.flatten() {
+                    recent_transfers.push(r);
+                }
+            }
+        }
+
+        json!({
+            "total_messages": total_messages,
+            "total_transfers": total_transfers,
+            "transfers_by_operator": transfers_by_operator,
+            "recent_transfers": recent_transfers
+        })
     }
 }
 

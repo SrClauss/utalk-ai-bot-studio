@@ -162,6 +162,44 @@ async fn save_config_handler(
     StatusCode::UNAUTHORIZED
 }
 
+async fn get_operators_handler(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+) -> Result<Json<Vec<utalk::UtalkOperator>>, StatusCode> {
+    if let Some(token) = extract_token(&headers) {
+        if state.db.validate_session(&token) {
+            let cfg = state.db.get_config();
+            match utalk::fetch_human_operators(
+                &cfg.utalk_api_url,
+                &cfg.utalk_api_token,
+                &cfg.utalk_organization_id,
+            )
+            .await
+            {
+                Ok(ops) => return Ok(Json(ops)),
+                Err(err) => {
+                    println!("❌ Erro ao buscar operadores no uTalk: {}", err);
+                    return Err(StatusCode::INTERNAL_SERVER_ERROR);
+                }
+            }
+        }
+    }
+    Err(StatusCode::UNAUTHORIZED)
+}
+
+async fn get_stats_handler(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+) -> Result<Json<Value>, StatusCode> {
+    if let Some(token) = extract_token(&headers) {
+        if state.db.validate_session(&token) {
+            let stats = state.db.get_dashboard_stats();
+            return Ok(Json(stats));
+        }
+    }
+    Err(StatusCode::UNAUTHORIZED)
+}
+
 async fn handle_webhook(
     State(state): State<AppState>,
     method: Method,
@@ -238,16 +276,79 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
         let cfg_snapshot = state.db.get_config();
 
         match gemini::generate_gemini_response(state.db.clone(), &cfg_snapshot, chat_id, &user_prompt).await {
-            Ok(ai_reply) => {
+            Ok(mut ai_reply) => {
                 println!("✨ Gemini gerou resposta:\n{}", ai_reply);
-                let _ = utalk::send_utalk_message(
-                    &cfg_snapshot.utalk_api_url,
-                    &cfg_snapshot.utalk_api_token,
-                    &cfg_snapshot.utalk_organization_id,
-                    chat_id,
-                    &ai_reply,
-                )
-                .await;
+
+                let should_transfer = cfg_snapshot.rotation_enabled
+                    && !cfg_snapshot.rotation_trigger_keyword.is_empty()
+                    && ai_reply.contains(&cfg_snapshot.rotation_trigger_keyword);
+
+                if should_transfer {
+                    println!("🔄 Gatilho de Rodízio detectado na resposta do Gemini!");
+                    ai_reply = ai_reply.replace(&cfg_snapshot.rotation_trigger_keyword, "").trim().to_string();
+                }
+
+                // Envia a mensagem do bot se houver texto restante
+                if !ai_reply.is_empty() {
+                    let _ = utalk::send_utalk_message(
+                        &cfg_snapshot.utalk_api_url,
+                        &cfg_snapshot.utalk_api_token,
+                        &cfg_snapshot.utalk_organization_id,
+                        chat_id,
+                        &ai_reply,
+                    )
+                    .await;
+                }
+
+                // Executa a transferência de rodízio se ativada
+                if should_transfer {
+                    let mut candidate_ids = cfg_snapshot.rotation_operator_ids.clone();
+
+                    // Se a estratégia for apenas operadores online, filtra via uTalk API
+                    if cfg_snapshot.rotation_strategy == "online_only" {
+                        if let Ok(online_ids) = utalk::fetch_online_members(
+                            &cfg_snapshot.utalk_api_url,
+                            &cfg_snapshot.utalk_api_token,
+                            &cfg_snapshot.utalk_organization_id,
+                        )
+                        .await
+                        {
+                            candidate_ids.retain(|id| online_ids.contains(id));
+                        }
+                    }
+
+                    if let Some(target_operator_id) = state.db.get_next_rotation_operator(&candidate_ids) {
+                        // Busca o nome do operador para registro de métrica
+                        let op_name = match utalk::fetch_human_operators(
+                            &cfg_snapshot.utalk_api_url,
+                            &cfg_snapshot.utalk_api_token,
+                            &cfg_snapshot.utalk_organization_id,
+                        )
+                        .await
+                        {
+                            Ok(ops) => ops
+                                .into_iter()
+                                .find(|o| o.id == target_operator_id)
+                                .map(|o| o.name)
+                                .unwrap_or_else(|| target_operator_id.clone()),
+                            Err(_) => target_operator_id.clone(),
+                        };
+
+                        if let Ok(_) = utalk::transfer_chat_to_member(
+                            &cfg_snapshot.utalk_api_url,
+                            &cfg_snapshot.utalk_api_token,
+                            &cfg_snapshot.utalk_organization_id,
+                            chat_id,
+                            &target_operator_id,
+                        )
+                        .await
+                        {
+                            state.db.record_transfer(chat_id, &target_operator_id, &op_name);
+                        }
+                    } else {
+                        println!("⚠️ Nenhum operador disponível na fila do rodízio para transferência.");
+                    }
+                }
             }
             Err(err) => {
                 println!("❌ Erro ao gerar resposta do Gemini: {}", err);
@@ -274,11 +375,13 @@ async fn main() {
         .route("/api/login", axum::routing::post(login_handler))
         .route("/api/logout", axum::routing::post(logout_handler))
         .route("/api/config", get(get_config_handler).post(save_config_handler))
+        .route("/api/operators", get(get_operators_handler))
+        .route("/api/stats", get(get_stats_handler))
         .route("/webhook", any(handle_webhook))
         .with_state(state);
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
-    println!("🚀 uTalk AI Bot Studio rodando com SQLite + FTS5 (Busca Textual & Análise de Tempo)!");
+    println!("🚀 uTalk AI Bot Studio rodando com Rodízio de Atendentes + Dashboard em Abas!");
     println!("📊 Dashboard Web de Controle: http://localhost:3000/");
     println!("📍 Endpoint do Webhook: http://localhost:3000/webhook");
 
