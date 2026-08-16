@@ -65,6 +65,46 @@
 </head>
 <body x-data="dashboardApp()" x-cloak class="min-h-screen flex flex-col antialiased selection:bg-indigo-500/30">
 
+    <!-- Modal de Login (Protege todo o conteúdo do Dashboard) -->
+    <div x-show="!loggedIn" x-transition class="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-xl flex items-center justify-center p-4">
+        <div class="glass-panel p-8 rounded-3xl w-full max-w-sm space-y-6 border border-slate-800 shadow-2xl relative overflow-hidden">
+            <!-- Efeito Glow -->
+            <div class="absolute -top-10 -right-10 w-40 h-40 bg-indigo-500/20 blur-3xl rounded-full"></div>
+            <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-purple-500/20 blur-3xl rounded-full"></div>
+            
+            <div class="relative z-10 text-center space-y-2">
+                <img src="/assets/logo.png" alt="Logo" class="w-16 h-16 rounded-2xl mx-auto border border-indigo-400/30 shadow-lg">
+                <h2 class="text-xl font-extrabold text-slate-100 glow-title mt-4">uTalk AI Bot Studio</h2>
+                <p class="text-xs text-slate-400">Acesso Restrito</p>
+            </div>
+            
+            <form @submit.prevent="doLogin()" class="relative z-10 space-y-4 pt-2">
+                <div x-show="loginError" x-transition class="bg-rose-950/50 border border-rose-900/50 text-rose-400 text-xs p-3 rounded-xl text-center font-medium" x-text="loginError"></div>
+                
+                <div class="space-y-3">
+                    <div class="relative">
+                        <i class="fa-solid fa-user absolute left-3.5 top-3 text-slate-500 text-xs"></i>
+                        <input type="text" x-model="loginUsername" placeholder="Usuário" required autocomplete="username"
+                               class="w-full bg-slate-900/50 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder:text-slate-600">
+                    </div>
+                    
+                    <div class="relative">
+                        <i class="fa-solid fa-lock absolute left-3.5 top-3 text-slate-500 text-xs"></i>
+                        <input type="password" x-model="loginPassword" placeholder="Senha" required autocomplete="current-password"
+                               class="w-full bg-slate-900/50 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder:text-slate-600">
+                    </div>
+                </div>
+                
+                <button type="submit" :disabled="loginLoading"
+                        class="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold text-sm rounded-xl transition-all shadow-lg shadow-indigo-600/25 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <span x-show="!loginLoading">Entrar no Painel</span>
+                    <i x-show="loginLoading" class="fa-solid fa-circle-notch fa-spin"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div x-show="loggedIn" class="flex flex-col min-h-screen w-full" x-transition>
     <!-- SIDEBAR RETRÁTIL DESKTOP (Com Ícones Duotone e Alinhamento Perfeito) -->
     <aside class="hidden md:flex flex-col fixed top-0 bottom-0 left-0 z-40 bg-slate-950/95 backdrop-blur-xl border-r border-slate-800/80 transition-all duration-300 select-none shadow-2xl"
            :class="sidebarCollapsed ? 'w-20' : 'w-64'">
@@ -640,6 +680,11 @@
     <script>
         function dashboardApp() {
             return {
+                loggedIn: false,
+                loginUsername: '',
+                loginPassword: '',
+                loginLoading: false,
+                loginError: '',
                 activeTab: 'metrics',
                 sidebarCollapsed: false,
                 config: {
@@ -688,9 +733,10 @@
                     try {
                         const res = await fetch('/api/config');
                         if (res.status === 401) {
-                            window.location.href = '/';
+                            this.loggedIn = false;
                             return;
                         }
+                        this.loggedIn = true;
                         const data = await res.json();
                         this.config = { ...this.config, ...data };
                         if (!this.config.rotation_operator_ids) this.config.rotation_operator_ids = [];
@@ -698,6 +744,30 @@
                         this.loadStats();
                     } catch (err) {
                         console.error('Erro ao carregar configurações:', err);
+                    }
+                },
+
+                async doLogin() {
+                    this.loginLoading = true;
+                    this.loginError = '';
+                    try {
+                        const res = await fetch('/api/login', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ username: this.loginUsername, password: this.loginPassword })
+                        });
+                        const data = await res.json();
+                        if (res.ok && data.success) {
+                            this.loggedIn = true;
+                            this.loginPassword = '';
+                            this.loadConfig();
+                        } else {
+                            this.loginError = data.message || 'Usuário ou senha incorretos.';
+                        }
+                    } catch (err) {
+                        this.loginError = 'Falha de conexão com o servidor.';
+                    } finally {
+                        this.loginLoading = false;
                     }
                 },
 
@@ -814,5 +884,6 @@
             <span>APIs</span>
         </button>
     </nav>
+    </div>
 </body>
 </html>
