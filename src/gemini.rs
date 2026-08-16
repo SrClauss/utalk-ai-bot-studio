@@ -224,18 +224,13 @@ pub async fn generate_gemini_response(
         ]
     }]);
 
-    let model_name = if config.gemini_model.trim().is_empty() {
+    let primary_model = if config.gemini_model.trim().is_empty() {
         "gemini-3.1-flash-lite"
     } else {
         config.gemini_model.trim()
     };
 
-    let gemini_url = format!(
-        "https://generativelanguage.googleapis.com/v1beta/models/{}:generateContent?key={}",
-        model_name,
-        config.gemini_api_key
-    );
-
+    let candidate_models = [primary_model, "gemini-2.5-flash", "gemini-1.5-flash"];
     let client = reqwest::Client::new();
 
     let payload = json!({
@@ -247,17 +242,35 @@ pub async fn generate_gemini_response(
     });
 
     println!("🤖 Solicitando resposta ao Gemini (Chat: {})...", chat_id);
-    let response = client
-        .post(&gemini_url)
-        .json(&payload)
-        .send()
-        .await
-        .map_err(|e| format!("Erro HTTP Gemini: {}", e))?;
+    let mut res_json: Value = json!({});
+    let mut success = false;
+    let mut used_gemini_url = String::new();
 
-    let res_json: Value = response
-        .json()
-        .await
-        .map_err(|e| format!("Erro ao ler JSON do Gemini: {}", e))?;
+    for model in candidate_models {
+        let gemini_url = format!(
+            "https://generativelanguage.googleapis.com/v1beta/models/{}:generateContent?key={}",
+            model,
+            config.gemini_api_key
+        );
+
+        if let Ok(response) = client.post(&gemini_url).json(&payload).send().await {
+            if let Ok(data) = response.json::<Value>().await {
+                if data.get("error").is_none() {
+                    res_json = data;
+                    used_gemini_url = gemini_url;
+                    success = true;
+                    break;
+                } else {
+                    println!("⚠️ Modelo '{}' instável/com sobrecarga ({:?}). Tentando modelo secundário...", model, data.get("error"));
+                    tokio::time::sleep(std::time::Duration::from_secs(1)).await;
+                }
+            }
+        }
+    }
+
+    if !success {
+        return Err("API do Gemini temporariamente indisponível devido a alta demanda do Google. Tente novamente em instientes.".to_string());
+    }
 
     if let Some(candidate) = res_json["candidates"].get(0) {
         if let Some(parts) = candidate["content"]["parts"].as_array() {
@@ -292,7 +305,7 @@ pub async fn generate_gemini_response(
                             "contents": contents
                         });
 
-                        let second_res = client.post(&gemini_url).json(&second_payload).send().await
+                        let second_res = client.post(&used_gemini_url).json(&second_payload).send().await
                             .map_err(|e| format!("Erro HTTP Gemini (2ª chamada): {}", e))?;
                         let second_json: Value = second_res.json().await
                             .map_err(|e| format!("Erro ao ler JSON final do Gemini: {}", e))?;
@@ -330,7 +343,7 @@ pub async fn generate_gemini_response(
                             "contents": contents
                         });
 
-                        let second_res = client.post(&gemini_url).json(&second_payload).send().await
+                        let second_res = client.post(&used_gemini_url).json(&second_payload).send().await
                             .map_err(|e| format!("Erro HTTP Gemini (segunda chamada FTS): {}", e))?;
                         let second_json: Value = second_res.json().await
                             .map_err(|e| format!("Erro ao ler JSON final do Gemini: {}", e))?;
