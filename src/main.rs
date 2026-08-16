@@ -4,6 +4,7 @@ mod gemini;
 mod ui;
 mod utalk;
 
+use base64::Engine;
 use axum::{
     body::Bytes,
     extract::{Query, State},
@@ -242,23 +243,34 @@ async fn handle_webhook(
 }
 
 async fn process_incoming_webhook(state: AppState, payload: Value) {
-    let last_msg = &payload["Payload"]["Content"]["LastMessage"];
-    let source = last_msg["Source"].as_str().unwrap_or_default();
-    let msg_type = last_msg["MessageType"].as_str().unwrap_or_default();
-    let content = last_msg["Content"].as_str().unwrap_or_default();
+    let content_obj = &payload["Payload"]["Content"];
+    let payload_type = payload["Payload"]["Type"].as_str().unwrap_or_default();
 
-    let chat_id = payload["Payload"]["Content"]["Id"]
-        .as_str()
-        .or_else(|| last_msg["Chat"]["Id"].as_str())
-        .unwrap_or_default();
+    let msg_obj = if payload_type == "Message" || content_obj["MessageType"].is_string() {
+        content_obj
+    } else {
+        &content_obj["LastMessage"]
+    };
 
-    let contact_name = payload["Payload"]["Content"]["Contact"]["Name"]
+    let msg_id = msg_obj["Id"].as_str().unwrap_or_default();
+    let source = msg_obj["Source"].as_str().unwrap_or_default();
+    let msg_type = msg_obj["MessageType"].as_str().unwrap_or_default();
+    let content = msg_obj["Content"].as_str().unwrap_or_default();
+
+    let chat_id = if payload_type == "Chat" {
+        content_obj["Id"].as_str().unwrap_or_default()
+    } else {
+        msg_obj["Chat"]["Id"].as_str().or_else(|| content_obj["Chat"]["Id"].as_str()).unwrap_or_default()
+    };
+
+    let contact_name = content_obj["Contact"]["Name"]
         .as_str()
+        .or_else(|| msg_obj["Chat"]["Contact"]["Name"].as_str())
         .unwrap_or("Cliente");
 
     let is_audio = msg_type == "Audio";
     if (source == "Contact" || is_audio) && !chat_id.is_empty() {
-        println!("🤖 Processando mensagem de '{}' [ChatId: {}, Type: {}]", contact_name, chat_id, msg_type);
+        println!("🤖 Processando mensagem de '{}' [ChatId: {}, Type: {}, MsgId: {}]", contact_name, chat_id, msg_type, msg_id);
 
         let cfg_snapshot = state.db.get_config();
         let mut audio_data_tuple: Option<(String, String)> = None;
@@ -266,22 +278,54 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
         let user_prompt = if msg_type == "Text" {
             content.to_string()
         } else if msg_type == "Audio" {
-            let msg_id = last_msg["Id"].as_str().unwrap_or_default();
-            match utalk::fetch_message_audio(
-                &cfg_snapshot.utalk_api_url,
-                &cfg_snapshot.utalk_api_token,
-                &cfg_snapshot.utalk_organization_id,
-                msg_id,
-            )
-            .await
-            {
-                Ok((mime, b64)) => {
-                    audio_data_tuple = Some((mime, b64));
-                    "[Áudio enviado]".to_string()
+            // Tenta obter a URL direta do payload primeiro, ou faz GET na API do uTalk
+            let direct_audio_url = msg_obj["file"]["url"]
+                .as_str()
+                .or_else(|| msg_obj["File"]["Url"].as_str())
+                .or_else(|| msg_obj["media"]["url"].as_str());
+
+            if let Some(audio_url) = direct_audio_url {
+                println!("🔊 Baixando áudio diretamente da URL do payload: {}...", audio_url);
+                match reqwest::get(audio_url).await {
+                    Ok(resp) => {
+                        let bytes = resp.bytes().await.unwrap_or_default();
+                        let b64 = base64::engine::general_purpose::STANDARD.encode(&bytes);
+                        audio_data_tuple = Some(("audio/mp3".to_string(), b64));
+                        "[Áudio enviado pelo cliente]".to_string()
+                    }
+                    Err(e) => {
+                        println!("⚠️ Falha no download direto, buscando via API uTalk: {}", e);
+                        utalk::fetch_message_audio(
+                            &cfg_snapshot.utalk_api_url,
+                            &cfg_snapshot.utalk_api_token,
+                            &cfg_snapshot.utalk_organization_id,
+                            msg_id,
+                        ).await.map(|(mime, b64)| {
+                            audio_data_tuple = Some((mime, b64));
+                            "[Áudio enviado pelo cliente]".to_string()
+                        }).unwrap_or_else(|err| {
+                            println!("⚠️ Não foi possível baixar mídia de áudio do uTalk: {}", err);
+                            format!("O cliente '{}' enviou um áudio.", contact_name)
+                        })
+                    }
                 }
-                Err(err) => {
-                    println!("⚠️ Não foi possível baixar mídia de áudio do uTalk: {}", err);
-                    format!("O cliente '{}' enviou um áudio.", contact_name)
+            } else {
+                match utalk::fetch_message_audio(
+                    &cfg_snapshot.utalk_api_url,
+                    &cfg_snapshot.utalk_api_token,
+                    &cfg_snapshot.utalk_organization_id,
+                    msg_id,
+                )
+                .await
+                {
+                    Ok((mime, b64)) => {
+                        audio_data_tuple = Some((mime, b64));
+                        "[Áudio enviado pelo cliente]".to_string()
+                    }
+                    Err(err) => {
+                        println!("⚠️ Não foi possível baixar mídia de áudio do uTalk: {}", err);
+                        format!("O cliente '{}' enviou um áudio.", contact_name)
+                    }
                 }
             }
         } else if msg_type == "Image" {
