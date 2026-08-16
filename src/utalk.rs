@@ -228,18 +228,20 @@ pub async fn fetch_message_audio(
 
     let msg_json: serde_json::Value = res.json().await.map_err(|e| format!("Erro ao ler JSON da mensagem: {}", e))?;
 
-    let media_url = msg_json["media"]["url"]
+    let media_url = msg_json["file"]["url"]
         .as_str()
+        .or_else(|| msg_json["File"]["Url"].as_str())
+        .or_else(|| msg_json["media"]["url"].as_str())
         .or_else(|| msg_json["Media"]["Url"].as_str())
         .or_else(|| msg_json["mediaUrl"].as_str())
-        .or_else(|| msg_json["MediaUrl"].as_str())
-        .or_else(|| msg_json["file"]["url"].as_str())
-        .or_else(|| msg_json["File"]["Url"].as_str());
+        .or_else(|| msg_json["MediaUrl"].as_str());
 
-    let content_type = msg_json["media"]["contentType"]
+    let content_type = msg_json["file"]["contentType"]
         .as_str()
+        .or_else(|| msg_json["File"]["ContentType"].as_str())
+        .or_else(|| msg_json["media"]["contentType"].as_str())
         .or_else(|| msg_json["Media"]["ContentType"].as_str())
-        .unwrap_or("audio/ogg")
+        .unwrap_or("audio/mp3")
         .to_string();
 
     let media_url = match media_url {

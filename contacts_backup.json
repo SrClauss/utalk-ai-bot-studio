@@ -1,0 +1,6316 @@
+[
+  {
+    "name": null,
+    "phoneNumber": "+13872861855765",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aQDABgJbHZQJ-Qyv",
+    "createdAtUTC": "2025-10-28T13:07:18.79Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+49362361135190",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aQDABug89wkuH8ZX",
+    "createdAtUTC": "2025-10-28T13:07:18.403Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+48189566672996",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aQDACQJbHZQJ-Q0l",
+    "createdAtUTC": "2025-10-28T13:07:21.529Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+123996360171590",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aQDAM-g89wkuH82I",
+    "createdAtUTC": "2025-10-28T13:08:03.607Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+179061498339397",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aQDANLQoHU6Rn9Ck",
+    "createdAtUTC": "2025-10-28T13:08:04.095Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+33724653666359",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aQDANVFIc4qIU446",
+    "createdAtUTC": "2025-10-28T13:08:05.587Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+100004152766663",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aQDAOdhUET7e4Bkv",
+    "createdAtUTC": "2025-10-28T13:08:09.322Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+181174655819947",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aQDHTeg89wkuIIi0",
+    "createdAtUTC": "2025-10-28T13:38:21.386Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+65605860352100",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aQEGW353rujGszON",
+    "createdAtUTC": "2025-10-28T18:07:23.194Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5538998694678",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aQEgloENgmyUTXqY/0-CE6_83sVd_cJLQd-ZOrklEXJ3p9eosHhOJtWG2ews",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aQEgloENgmyUTXqY",
+    "createdAtUTC": "2025-10-28T19:59:18.401Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+19734957218",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": "2025-10-29T10:54:00.638Z",
+    "channels": [],
+    "customFields": [],
+    "id": "aQHyKYENgmyUUOPm",
+    "createdAtUTC": "2025-10-29T10:53:29.35Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5584991017293",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": "2025-10-29T10:57:02.973Z",
+    "channels": [],
+    "customFields": [],
+    "id": "aQHy-bQoHU6Rq23Y",
+    "createdAtUTC": "2025-10-29T10:56:57.109Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5511984254063",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": "2025-10-29T10:57:30.769Z",
+    "channels": [],
+    "customFields": [],
+    "id": "aQHzEYENgmyUUOrl",
+    "createdAtUTC": "2025-10-29T10:57:21.681Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5511985095075",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aQHzVwJbHZQJBM21/EqSQLU2QRaB2pZglBEvKvC9Av3jc2kWPAErzKuYTMcI",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aQHzVwJbHZQJBM21",
+    "createdAtUTC": "2025-10-29T10:58:31.783Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5517997921028",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aQH1cM5F7dqzX22l",
+    "createdAtUTC": "2025-10-29T11:07:28.886Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5577991831271",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aQH1nlFIc4qIX0NX",
+    "createdAtUTC": "2025-10-29T11:08:14.773Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5538999224727",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aQH2s4ENgmyUUQ7U",
+    "createdAtUTC": "2025-10-29T11:12:51.123Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+12678194609",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aQH3UPNejrLwpEpY",
+    "createdAtUTC": "2025-10-29T11:15:28.415Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5531995450447",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aQH6JVFIc4qIX33S/U0JNyfhs95s_0s-KK79olanRSCs567or3CX09mx72dQ",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aQH6JVFIc4qIX33S",
+    "createdAtUTC": "2025-10-29T11:27:33.293Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+557816039976",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "N\u00c3O RESPONDE",
+        "id": "aQOVnY8-Y1LMUNUa"
+      }
+    ],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aQIDkLNTcUqxXK-h",
+    "createdAtUTC": "2025-10-29T12:07:44.73Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+447710173736",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aQJpnFJAqSS0vXj6/zct9xJGCv0gndommpSlAZS0eu2IvANjgdfQ69_d_Ntk",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQJW5IgCAzQmoece",
+      "ahWh7_1n1geSwJtc"
+    ],
+    "tags": [],
+    "lastActiveUTC": "2026-05-27T13:52:32Z",
+    "channels": [
+      {
+        "channelId": "aQJW5IgCAzQmoece",
+        "lastActiveUTC": "2025-10-29T19:37:59.36Z",
+        "businessUserId": null
+      },
+      {
+        "channelId": "ahWh7_1n1geSwJtc",
+        "lastActiveUTC": "2026-05-27T13:52:32Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aQJpnFJAqSS0vXj6",
+    "createdAtUTC": "2025-10-29T19:23:08.055Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+58278545490090",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aQOfJ1s99N8lTxys",
+    "createdAtUTC": "2025-10-30T17:23:51.93Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+222088564629753",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aQOkt0R4Te1lLU7N",
+    "createdAtUTC": "2025-10-30T17:47:35.415Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+189090414735448",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aQXP6thX54k-_Act",
+    "createdAtUTC": "2025-11-01T09:16:26.21Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+21827040608386",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aQihwJ0Yz51tKvKE",
+    "createdAtUTC": "2025-11-03T12:36:16.101Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+551151168335",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aQjBJHhpnwIhSmCO/7Vr9RUyM8HEiXy47ZOF6fD-UY3XCwmBrsrijnFXLN6Q",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [],
+    "lastActiveUTC": "2025-11-03T14:50:17.108Z",
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2025-11-03T14:50:17.108Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aQjBJHhpnwIhSmCO",
+    "createdAtUTC": "2025-11-03T14:50:12.217Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5562991179084",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "N\u00c3O RESPONDE",
+        "id": "aQOVnY8-Y1LMUNUa"
+      }
+    ],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aQsvTiE3UUkjii8A",
+    "createdAtUTC": "2025-11-05T11:04:46.739Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5577981272854",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aQ9KWepXUJaPqTMI/279v4oVG-Q7CJgx4gNV4t25OQ0Vk3ggR6uvzovBWo2o",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "N\u00c3O RESPONDE",
+        "id": "aQOVnY8-Y1LMUNUa"
+      }
+    ],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aQ9KWepXUJaPqTMI",
+    "createdAtUTC": "2025-11-08T13:49:13.13Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5538998504310",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "OR\u00c7AMENTO ENVIADO",
+        "id": "aQDaBBYhPaycnvbp"
+      }
+    ],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aRHn_UhSdXxbayeo",
+    "createdAtUTC": "2025-11-10T13:26:21.819Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5519789894002",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aRH6M7QghweIirrf",
+    "createdAtUTC": "2025-11-10T14:44:03.665Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5589981298519",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2025-11-11T14:07:58.412Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aRNDPrgPE_6Zh5zd",
+    "createdAtUTC": "2025-11-11T14:07:58.788Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5538998465955",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aRSSoLQghweIcO47/DKBnSVY4zClX7xdXBEXpsap5F5ptUgjVsUqW0DKpdMo",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aRSSoLQghweIcO47",
+    "createdAtUTC": "2025-11-12T13:58:56.187Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5562999473172",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "N\u00c3O RESPONDE",
+        "id": "aQOVnY8-Y1LMUNUa"
+      }
+    ],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aRXXuyUhmYerGppO",
+    "createdAtUTC": "2025-11-13T13:06:03.086Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5583993746418",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D",
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      },
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aRX0fJId9HOM43Kq",
+    "createdAtUTC": "2025-11-13T15:08:44.108Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5583981155897",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aRX7JyUhmYerknqO/KkgRVnoYHOyngENZfuTPUSoG4agacXxEHAR8BZkWtgY",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [
+      {
+        "name": "OR\u00c7AMENTO ENVIADO",
+        "id": "aQDaBBYhPaycnvbp"
+      }
+    ],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aRX7JyUhmYerknqO",
+    "createdAtUTC": "2025-11-13T15:37:11.747Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5575992049423",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aRik7pNx9iFCKasD/4QNlS-c48VeITnj-bM5eWtOmo9VYJCKaIsEP0nPaWSQ",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "FAZER OR\u00c7AMENTO",
+        "id": "aQC8MBYhPaycNeGd"
+      }
+    ],
+    "lastActiveUTC": "2025-12-05T16:18:31.394Z",
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2025-12-05T16:18:31.394Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aRik7pNx9iFCKasD",
+    "createdAtUTC": "2025-11-15T16:06:06.269Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5588999485219",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [
+      {
+        "name": "OR\u00c7AMENTO ENVIADO",
+        "id": "aQDaBBYhPaycnvbp"
+      }
+    ],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aRtIU-lTi7VLRlEh",
+    "createdAtUTC": "2025-11-17T16:07:47.998Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5538998900161",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aRxJp-lTi7VLgT8A",
+    "createdAtUTC": "2025-11-18T10:25:43.605Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5582996298197",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQKbgJwkmLpKgqo1"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQKbgJwkmLpKgqo1",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aRxcgHAZQLndFkxi",
+    "createdAtUTC": "2025-11-18T11:46:08.819Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5545999250744",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "N\u00c3O RESPONDE",
+        "id": "aQOVnY8-Y1LMUNUa"
+      }
+    ],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aRyImyUhmYerfDcR",
+    "createdAtUTC": "2025-11-18T14:54:19.626Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+447378375538",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aRzViuYKGBYZgKd_/__FvsDerq5PqSpl26GOBvPF2n3hmEbO6F2u2OwA2MB0",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2025-11-18T18:02:21.104Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aRzViuYKGBYZgKd_",
+    "createdAtUTC": "2025-11-18T20:22:34.483Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5589999761346",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "N\u00c3O RESPONDE",
+        "id": "aQOVnY8-Y1LMUNUa"
+      }
+    ],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aR3jJwEqrnVhBIVA",
+    "createdAtUTC": "2025-11-19T15:32:55.982Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5538999025073",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aR3p9AEqrnVhFZUK/vTH1SU3qqfj6tlmayRDX84G5lKe7znN3W8rOphGbpeI",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aR3p9AEqrnVhFZUK",
+    "createdAtUTC": "2025-11-19T16:01:56.793Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+241776644333642",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aR30Q4pYr8GMk_L6",
+    "createdAtUTC": "2025-11-19T16:45:55.634Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5538999143743",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aR4pk6MSbjzW9jfU/XL9rO0nkf2dzA1TktI3HiaYGLkJVX9goLj8_lVfe1Ys",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aR4pk6MSbjzW9jfU",
+    "createdAtUTC": "2025-11-19T20:33:23.926Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5588988116173",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aR4sALcwVz2qgZ_X/oCBT-n7mrde0wPlnVNnA7dAXaxEEBQVjrUhqeL0GgjA",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aR4sALcwVz2qgZ_X",
+    "createdAtUTC": "2025-11-19T20:43:44.643Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5538999576850",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aR4uKbcwVz2qhx_0/sX97XABXdZZ-Tpb--NuyBlX-_PNiKLRoZGOVIeCeNxo",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [
+      {
+        "name": "OR\u00c7AMENTO ENVIADO",
+        "id": "aQDaBBYhPaycnvbp"
+      }
+    ],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aR4uKbcwVz2qhx_0",
+    "createdAtUTC": "2025-11-19T20:52:57.771Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5511930662483",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "N\u00c3O RESPONDE",
+        "id": "aQOVnY8-Y1LMUNUa"
+      }
+    ],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aSBFZbcwVz2qm01S",
+    "createdAtUTC": "2025-11-21T10:56:37.434Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+45208943202415",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aSCB3z4zrpgHY9Of",
+    "createdAtUTC": "2025-11-21T15:14:39.037Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+154292556156974",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aSDSEj4zrpgHacs1",
+    "createdAtUTC": "2025-11-21T20:56:50.822Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5543980031498",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "CLIENTE ATENDIDO",
+        "id": "aQiUHS1b1XqCjIjd"
+      }
+    ],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aSG6mw8ELj-u6R0p",
+    "createdAtUTC": "2025-11-22T13:28:59.758Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5534613201338",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd",
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      },
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aSQ3fg8ELj-u86yD",
+    "createdAtUTC": "2025-11-24T10:46:22.294Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+227732201943257",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aSRLKd8rVQ402kYl",
+    "createdAtUTC": "2025-11-24T12:10:17.712Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+2347689216131",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aSRWYd8rVQ4023nZ",
+    "createdAtUTC": "2025-11-24T12:58:09.365Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5531998310084",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [
+      {
+        "name": "OR\u00c7AMENTO ENVIADO",
+        "id": "aQDaBBYhPaycnvbp"
+      }
+    ],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aSSLmtUMGyk_cdHg",
+    "createdAtUTC": "2025-11-24T16:45:14.488Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+224206033813589",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aSWP4FEwsx_zMcqV",
+    "createdAtUTC": "2025-11-25T11:15:44.247Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+187617408745473",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aSWSaHMtd80vLhLC",
+    "createdAtUTC": "2025-11-25T11:26:32.28Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5571981631727",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aSXD48E6BV8Hj5Gl/pKBMxOv3rH2RZzvA_z-khdPvbVL7veWAl15oEn0Ssn4",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aSXD48E6BV8Hj5Gl",
+    "createdAtUTC": "2025-11-25T14:57:39.925Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+165953342042334",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aSXFLVEwsx_zN27g",
+    "createdAtUTC": "2025-11-25T15:03:09.583Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+146720478515297",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aSYOv1Qlhnvb2hCM",
+    "createdAtUTC": "2025-11-25T20:17:03.522Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+54146719850635",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aSYf4FQlhnvb24lm",
+    "createdAtUTC": "2025-11-25T21:30:08.55Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+176471666647114",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aSbdtQBNJm4A5xhe",
+    "createdAtUTC": "2025-11-26T11:00:05.582Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+552733991800",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [
+      {
+        "name": "N\u00c3O RESPONDE",
+        "id": "aQOVnY8-Y1LMUNUa"
+      }
+    ],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aSbncNY9pURjYzaM",
+    "createdAtUTC": "2025-11-26T11:41:36.54Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+22110542016598",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aSb2DQBNJm4A6aZC",
+    "createdAtUTC": "2025-11-26T12:43:57.092Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5531996062809",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aScTg51D_YWw9jZk",
+    "createdAtUTC": "2025-11-26T14:49:39.283Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+161100029030637",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aSdU41Ewsx_zUmUf",
+    "createdAtUTC": "2025-11-26T19:28:35.707Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+132718952243205",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aSiGOFcSrwnvt5Rq",
+    "createdAtUTC": "2025-11-27T17:11:20.3Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5544997350870",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aSiNCPs6ogMzGUOy/MiCLMhJ3iSF8bfY2UeCQU0WPfUTVeUfA9Vbx4HHQPqQ",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "N\u00c3O RESPONDE",
+        "id": "aQOVnY8-Y1LMUNUa"
+      }
+    ],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aSiNCPs6ogMzGUOy",
+    "createdAtUTC": "2025-11-27T17:40:24.754Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5588992165968",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aSiNC_s6ogMzGVRI/gCUG3SzDDY_FOGMG-9aMYGIL67oKLEb6Blb1LkftqXc",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "N\u00c3O RESPONDE",
+        "id": "aQOVnY8-Y1LMUNUa"
+      }
+    ],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aSiNC_s6ogMzGVRI",
+    "createdAtUTC": "2025-11-27T17:40:27.48Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5544991352698",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aSnZNS51WJ4djEtH/dbiCGic5BiLSFHrM7TNqNmB8IDZqrFXtkFcgpNsUdf0",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aSnZNS51WJ4djEtH",
+    "createdAtUTC": "2025-11-28T17:17:41.982Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+92500895256674",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aSoSsbop9ZWguyUm",
+    "createdAtUTC": "2025-11-28T21:22:57.304Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+202078848847949",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aSrbS44rbzwiK5Me",
+    "createdAtUTC": "2025-11-29T11:38:51.02Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+185366610981013",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aSr2VR0-n07_u1HL",
+    "createdAtUTC": "2025-11-29T13:34:13.44Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5538999719145",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aSwqao4rbzwiLpN4/tR_a0qsYDViUUE8QICQEDiJS1MBFu5r6hsLC-sRSDB0",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": "2025-11-30T11:28:41.344Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aSwqao4rbzwiLpN4",
+    "createdAtUTC": "2025-11-30T11:28:42.351Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+129420283089034",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aS1n4x0-n07_v7_p",
+    "createdAtUTC": "2025-12-01T10:03:15.838Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+551231051875",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd",
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      },
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aS2dKBwLU6U7Vemd",
+    "createdAtUTC": "2025-12-01T13:50:32.62Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5524988779592",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd",
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      },
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aS2fEsNwAZQtlH_O",
+    "createdAtUTC": "2025-12-01T13:58:42.89Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5511948086618",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aS2sRMNwAZQtyi_z/q1mGh--58FlSjeXeRTSdmgjsvhogHMRjzvDI1-nWzNk",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aS2sRMNwAZQtyi_z",
+    "createdAtUTC": "2025-12-01T14:55:00.357Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5518624104804",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd",
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      },
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aS7-VrEgkUk2GRFt",
+    "createdAtUTC": "2025-12-02T14:57:26.207Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+151672575758486",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aS9HpaFoOG7h5Ee8",
+    "createdAtUTC": "2025-12-02T20:10:13.151Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5538998729097",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aTAq_mhybl3I_Q4v",
+    "createdAtUTC": "2025-12-03T12:20:14.314Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+234956236263658",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aTBxFDg-cisy2qIx",
+    "createdAtUTC": "2025-12-03T17:19:16.176Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+551935171430",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aTCAZ24Jd69_rAs3",
+    "createdAtUTC": "2025-12-03T18:24:39.637Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+51574118318252",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aTCoGjg-cisy3YaM",
+    "createdAtUTC": "2025-12-03T21:14:02.625Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+104264693198918",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aTFp96xKvpYEWOwa",
+    "createdAtUTC": "2025-12-04T11:01:11.368Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+232460960968712",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aTHYtbZTu2uODSzv",
+    "createdAtUTC": "2025-12-04T18:53:41.269Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+72628031246424",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aTHcDLMzz7lkdKU5",
+    "createdAtUTC": "2025-12-04T19:07:56.497Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+224197812985959",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aTIQiwN0xD8etaQc",
+    "createdAtUTC": "2025-12-04T22:51:55.557Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+103586189037735",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aTK2JWQRm3IQ9nFx",
+    "createdAtUTC": "2025-12-05T10:38:29.469Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+246771808763941",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aTM40GQRm3IQ_KWn",
+    "createdAtUTC": "2025-12-05T19:56:00.989Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5577999736040",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aTQMrGcK6b-zYVSz",
+    "createdAtUTC": "2025-12-06T10:59:56.963Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+184374406455418",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aTQP33B7pAOc0iXV",
+    "createdAtUTC": "2025-12-06T11:13:35.192Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+72211754922069",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aTQ-0aJfCHYh0PSW",
+    "createdAtUTC": "2025-12-06T14:33:53.915Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+1046614331565",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aTRCL4Ixgp_I9ZfV",
+    "createdAtUTC": "2025-12-06T14:48:15.879Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5517818135509",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd",
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      },
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aTarC9RnMsg-FDmP",
+    "createdAtUTC": "2025-12-08T10:40:11.587Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+130176247709805",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aTblkpIvFTh_UBir",
+    "createdAtUTC": "2025-12-08T14:49:54.567Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+122350901182670",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aTb3kEJ3HIVvHDjI",
+    "createdAtUTC": "2025-12-08T16:06:40.631Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+279246425604265",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aTcCsUJ3HIVvHL8N",
+    "createdAtUTC": "2025-12-08T16:54:09.017Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+165666065805554",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aTd6jKJfCHYh3LFs",
+    "createdAtUTC": "2025-12-09T01:25:32.48Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+100592647205094",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aTggYwkI-zNjiwZI",
+    "createdAtUTC": "2025-12-09T13:13:07.487Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5583988434946",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "OR\u00c7AMENTO ENVIADO",
+        "id": "aQDaBBYhPaycnvbp"
+      }
+    ],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aTguRTE5WBlHyoIC",
+    "createdAtUTC": "2025-12-09T14:12:21.76Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5538991326280",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aTgv-dRnMsg-_4A1",
+    "createdAtUTC": "2025-12-09T14:19:37.698Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+199067607035938",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aThYaDR5VcZAFcKZ",
+    "createdAtUTC": "2025-12-09T17:12:08.362Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5567992416443",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQKLDogCAzQmMfU7"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQKLDogCAzQmMfU7",
+        "lastActiveUTC": "2025-12-10T00:01:14.552Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aTi4SpFxtNlETVBn",
+    "createdAtUTC": "2025-12-10T00:01:14.683Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+556239230800",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aTliZmcK6b-zwOGQ",
+    "createdAtUTC": "2025-12-10T12:07:02.887Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5562939230800",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aTlilNRnMsg-7Yt9",
+    "createdAtUTC": "2025-12-10T12:07:48.497Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+47215296925773",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aTl4iTR5VcZAHAWQ",
+    "createdAtUTC": "2025-12-10T13:41:29.385Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+32367309799641",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aTmzMkJ3HIVvLyAu",
+    "createdAtUTC": "2025-12-10T17:51:46.007Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+12523915350259",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aTm_o888frUHk_6Y",
+    "createdAtUTC": "2025-12-10T18:44:51.463Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+190288928719031",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aTnhokVxyWX_RRUN",
+    "createdAtUTC": "2025-12-10T21:09:54.287Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+204200009060374",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aTq1japY3qYTH-iq",
+    "createdAtUTC": "2025-12-11T12:14:05.673Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+34673791119556",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aTsL0U01a6stoRP9",
+    "createdAtUTC": "2025-12-11T18:22:09.785Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+204638447996932",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aTschxow961h3ZwP",
+    "createdAtUTC": "2025-12-11T19:33:27.813Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+273950848364761",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aTw9Nh1LlpwQGcd0",
+    "createdAtUTC": "2025-12-12T16:05:10.324Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+62513433591813",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aTxGIBow961h40eR",
+    "createdAtUTC": "2025-12-12T16:43:12.444Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+127247113560162",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aTxgUx1LlpwQG20o",
+    "createdAtUTC": "2025-12-12T18:34:59.181Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+266872121463002",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aTyGByYtj-QKVJ8D",
+    "createdAtUTC": "2025-12-12T21:15:51.075Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+243520384307399",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aT1m1h1LlpwQHn_5",
+    "createdAtUTC": "2025-12-13T13:15:02.723Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+36241034756327",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aT17d7RU4HmDYBue",
+    "createdAtUTC": "2025-12-13T14:43:03Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+256899509424342",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aT_rmuoDsHR3mWGk",
+    "createdAtUTC": "2025-12-15T11:06:02.789Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5511988336689",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "OR\u00c7AMENTO ENVIADO",
+        "id": "aQDaBBYhPaycnvbp"
+      }
+    ],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aUBJb1RK_T9eFoxK",
+    "createdAtUTC": "2025-12-15T17:46:23.988Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+90637382754465",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aUBXN48jYzWhZpas",
+    "createdAtUTC": "2025-12-15T18:45:11.929Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+15668107821296",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aUFMoOoDsHR3ouHZ",
+    "createdAtUTC": "2025-12-16T12:12:16.575Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5547999118452",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aUFq61RK_T9enSAF/cs3_jJ2HQQgTICG1QquIRKycOAgrOf234ag1eQccFEo",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aUFq61RK_T9enSAF",
+    "createdAtUTC": "2025-12-16T14:21:31.575Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+171781612687401",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aUKVarpPpMpBleuT",
+    "createdAtUTC": "2025-12-17T11:35:06.303Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5334466842838",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aULTkQUSQN8fIHO7",
+    "createdAtUTC": "2025-12-17T16:00:17.172Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+12924093497394",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aULToRkgX8JXxuYi",
+    "createdAtUTC": "2025-12-17T16:00:33.144Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+229991237292119",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aUMThMslVlyJhijz",
+    "createdAtUTC": "2025-12-17T20:33:08.439Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+33346159661221",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aUPyMHFv71hBCyzO",
+    "createdAtUTC": "2025-12-18T12:23:12.659Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+269840011026521",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aUPzzzNLza3m7Ujo",
+    "createdAtUTC": "2025-12-18T12:30:07.191Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+157917944750173",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aUQl-I4otlMn8PuS",
+    "createdAtUTC": "2025-12-18T16:04:08.616Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+557736116536",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aUUkwPkLIBV3S6Wt",
+    "createdAtUTC": "2025-12-19T10:11:12.878Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+130919360893018",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aUUtIRkgX8JX0vIB",
+    "createdAtUTC": "2025-12-19T10:46:57.735Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+551140038068",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aUWTO8NnXHj9UrTA/l5mBtT3hVbtuiSiX6aGZnvMQl6X9MxdjB-kiHXn4Z14",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": "2025-12-19T18:27:20.916Z",
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": "2025-12-19T18:27:20.916Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aUWTO8NnXHj9UrTA",
+    "createdAtUTC": "2025-12-19T18:02:35.56Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+134127651160073",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aUaUZh0EY9KnVau_",
+    "createdAtUTC": "2025-12-20T12:19:50.623Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+207283728429283",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aUlDoNtpN9dSBfHb",
+    "createdAtUTC": "2025-12-22T13:12:00.611Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+223918270992633",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aUmI6hA0npisTfHR",
+    "createdAtUTC": "2025-12-22T18:07:38.035Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+166588997193966",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aUmTS-c9F3YwiC2I",
+    "createdAtUTC": "2025-12-22T18:51:55.901Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5538998389282",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aUmmayl46PwcMMVm",
+    "createdAtUTC": "2025-12-22T20:13:31.962Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+232602996842541",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aUrwrR0EY9KnZKdi",
+    "createdAtUTC": "2025-12-23T19:42:37.067Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+196194676519043",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aUr96x0EY9KnZQhX",
+    "createdAtUTC": "2025-12-23T20:39:07.034Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+136953907392669",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aUsfDIp-OkCc4Brv",
+    "createdAtUTC": "2025-12-23T23:00:28.997Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+105677821358312",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aUvThop-OkCc4NME",
+    "createdAtUTC": "2025-12-24T11:50:30.224Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+223557376278605",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aUvWYdNID1HSVBtW",
+    "createdAtUTC": "2025-12-24T12:02:41.298Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+12167944388642",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aUvycK8JMSZLs94f",
+    "createdAtUTC": "2025-12-24T14:02:24.684Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+183695902302326",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aUxQKttpN9dSEvKT",
+    "createdAtUTC": "2025-12-24T20:42:18.924Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+132121951744145",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aU6j5U1vwigs0mz3",
+    "createdAtUTC": "2025-12-26T15:04:05.28Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+154747755614345",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aU65qiw8b84qNQRo",
+    "createdAtUTC": "2025-12-26T16:36:58.514Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+102839099596858",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aU7rwSAphq0BenAM",
+    "createdAtUTC": "2025-12-26T20:10:41.879Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+274963957297196",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aU9iTJlC2Dv7kZaS",
+    "createdAtUTC": "2025-12-27T04:36:28.213Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5538988525846",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": "2025-12-27T14:50:06.148Z",
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": "2025-12-27T14:50:06.148Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aU_yHCw8b84qOFFq",
+    "createdAtUTC": "2025-12-27T14:50:04.163Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+8619705716867",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aVADfC1Lw0Sp5_Pj",
+    "createdAtUTC": "2025-12-27T16:04:12.587Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+62418843660531",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aVKe4phzo-mI_T7I",
+    "createdAtUTC": "2025-12-29T15:31:46.906Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5533984037774",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": "2025-12-30T12:00:54.754Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aVO--GNGGH1ykMZo",
+    "createdAtUTC": "2025-12-30T12:00:56.005Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5579998766735",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": "2025-12-30T12:31:36.765Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aVPGKplC2Dv7nMeF",
+    "createdAtUTC": "2025-12-30T12:31:38.003Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+76171731558519",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aVPJW6krgT46VTy8",
+    "createdAtUTC": "2025-12-30T12:45:15.321Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+77867773898892",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aVPVjSw8b84qQvtl",
+    "createdAtUTC": "2025-12-30T13:37:17.971Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5562981046182",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aVPoQ7MlwBu95XKj/egJp6An4Jy3qSd4M0ro58OL5of5wXk2IMPNiB2F5iRI",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "OR\u00c7AMENTO ENVIADO",
+        "id": "aQDaBBYhPaycnvbp"
+      }
+    ],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aVPoQ7MlwBu95XKj",
+    "createdAtUTC": "2025-12-30T14:57:07.472Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5533984077774",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [
+      {
+        "name": "OR\u00c7AMENTO ENVIADO",
+        "id": "aQDaBBYhPaycnvbp"
+      }
+    ],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aVP8XrMlwBu9BixV",
+    "createdAtUTC": "2025-12-30T16:22:54.617Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+146986682581055",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aVQnmBZaL7hBGDyW",
+    "createdAtUTC": "2025-12-30T19:27:20.194Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+261348810321970",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aVQ0NhNc7vwUQEyv",
+    "createdAtUTC": "2025-12-30T20:21:10.697Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+56247176933620",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aVQ1hc8IAL-9-9CT",
+    "createdAtUTC": "2025-12-30T20:26:45.934Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+131636872122441",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aVUPGLhgBXsLZOsz",
+    "createdAtUTC": "2025-12-31T11:55:04.92Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+261851405385875",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aVUgwLhgBXsLZTOJ",
+    "createdAtUTC": "2025-12-31T13:10:24.243Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+96181514420417",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aVUi8LhgBXsLZTyB",
+    "createdAtUTC": "2025-12-31T13:19:44.179Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+36262509547712",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aVU4ZHwNZvtE8GCx",
+    "createdAtUTC": "2025-12-31T14:51:16.46Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+91513002455046",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aVXme2NF9NuWYAnu",
+    "createdAtUTC": "2026-01-01T03:14:03.471Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+187771859792036",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aVenwxd3TVt1pjQ9",
+    "createdAtUTC": "2026-01-02T11:10:59.941Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5538988130886",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aVe3njkiFJDhk-vf/FCR9gT6IL9H8bmmXMdUY8ymNLIlVqhCR_I_RGogfb7Y",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aVe3njkiFJDhk-vf",
+    "createdAtUTC": "2026-01-02T12:18:38.62Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5538997459480",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aVfDpzkiFJDhpZ3Y/AfFLgyLHHnekKKYk4BbGnjaLfD4iMjMbs1mX2e6NtPE",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aVfDpzkiFJDhpZ3Y",
+    "createdAtUTC": "2026-01-02T13:09:59.624Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+44680695804078",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aVfL22QUvHHHQ59E",
+    "createdAtUTC": "2026-01-02T13:44:59.837Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+41266163241028",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aVfbZWQUvHHHRAng",
+    "createdAtUTC": "2026-01-02T14:51:17.022Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5573988457645",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aVf6cyxL7DzIjKB3/mQ3FE4pzGYZweuwlEQlIycDUq_rijiFRJdkAB2nohCw",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd",
+      "aQKbgJwkmLpKgqo1"
+    ],
+    "tags": [
+      {
+        "name": "OR\u00c7AMENTO ENVIADO",
+        "id": "aQDaBBYhPaycnvbp"
+      }
+    ],
+    "lastActiveUTC": "2026-01-02T17:04:11.889Z",
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-01-02T17:04:11.889Z",
+        "businessUserId": null
+      },
+      {
+        "channelId": "aQKbgJwkmLpKgqo1",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aVf6cyxL7DzIjKB3",
+    "createdAtUTC": "2026-01-02T17:03:47.51Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5573981834480",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [
+      {
+        "name": "OR\u00c7AMENTO ENVIADO",
+        "id": "aQDaBBYhPaycnvbp"
+      }
+    ],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aVgcdocbDwyKSa6l",
+    "createdAtUTC": "2026-01-02T19:28:54.067Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+258711817871532",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aVj8PSMJYBNnJzT-",
+    "createdAtUTC": "2026-01-03T11:23:41.218Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+157831474982919",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aVj9Bb8WlvI_28Jd",
+    "createdAtUTC": "2026-01-03T11:27:01.838Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+203710852526122",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aVkNbvF9UKdxCYii",
+    "createdAtUTC": "2026-01-03T12:37:02.48Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5538999587487",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": "2026-01-03T14:20:43.084Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aVklvCMJYBNnJ9aV",
+    "createdAtUTC": "2026-01-03T14:20:44.319Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+160984048123968",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aVrr9CMJYBNnKtpd",
+    "createdAtUTC": "2026-01-04T22:38:44.579Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+185757520134355",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aVuoyyxL7DzIk5nG",
+    "createdAtUTC": "2026-01-05T12:04:27.51Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+148223717060789",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aVu1Yzt9CSZN22j9",
+    "createdAtUTC": "2026-01-05T12:58:11.083Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+48803881193717",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aVwJpXdyubTbuaJm",
+    "createdAtUTC": "2026-01-05T18:57:41.863Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+229334459629650",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aVzuHXdyubTbvFNi",
+    "createdAtUTC": "2026-01-06T11:12:29.609Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+9483422023825",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aV0Br78WlvI_6aRH",
+    "createdAtUTC": "2026-01-06T12:35:59.936Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+16518268469396",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aV0N62NF9NuWc3Ys",
+    "createdAtUTC": "2026-01-06T13:28:11.54Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+530064204983",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aV1dx2QUvHHHWLH-",
+    "createdAtUTC": "2026-01-06T19:08:55.129Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5531956448856",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd",
+      "aQC7MhN4RVBB4K0D",
+      "aQKbgJwkmLpKgqo1"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      },
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      },
+      {
+        "channelId": "aQKbgJwkmLpKgqo1",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aV1ulTkiFJDhBtbv",
+    "createdAtUTC": "2026-01-06T20:20:37.574Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+102890370818159",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aV1zifF9UKdxHDsi",
+    "createdAtUTC": "2026-01-06T20:41:45.861Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5538999920999",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aV6U-KcwKZ5W0AGl",
+    "createdAtUTC": "2026-01-07T17:16:40.57Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5538999466623",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aV6ck5FuSJR4G7sp/LAfhicC4MYqPGN2JnPKJpmuEkOCcYALc0KSgb8bqlfM",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aV6ck5FuSJR4G7sp",
+    "createdAtUTC": "2026-01-07T17:49:07.921Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5518572378922",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aV-hcsFdmFMznNk4",
+    "createdAtUTC": "2026-01-08T12:22:10.995Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5593975102943",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "COMPROU",
+        "id": "aQDM3LNTcUqxpdWO"
+      }
+    ],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aWEFn6cwKZ5WFNVx",
+    "createdAtUTC": "2026-01-09T13:41:51.924Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5538998018560",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aWToj8FdmFMzCroJ",
+    "createdAtUTC": "2026-01-12T12:26:55.834Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5569992589777",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aWU_F3FolajKtjC6/ZKhzRg8hGEgT5XPR8wLcCTuEtzO3BEEE19iWmUyugEo",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-01-12T18:36:06.789Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aWU_F3FolajKtjC6",
+    "createdAtUTC": "2026-01-12T18:36:07.868Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+552134918527",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aW_LuudtgKCWdQ3v",
+    "createdAtUTC": "2026-01-20T18:38:50.179Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5585999737397",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [],
+    "customFields": [],
+    "id": "aW_dLudtgKCWsQYW",
+    "createdAtUTC": "2026-01-20T19:53:18.245Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5538998308210",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [],
+    "lastActiveUTC": "2026-01-22T17:04:57.983Z",
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-01-22T17:04:57.983Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXJYhC8ZWcQImS-Z",
+    "createdAtUTC": "2026-01-22T17:04:04.73Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5584999533299",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [],
+    "lastActiveUTC": "2026-01-23T16:38:43.018Z",
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-01-23T16:38:43.018Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXKqPicjFAduzB4L",
+    "createdAtUTC": "2026-01-22T22:52:46.123Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5599984255553",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [],
+    "lastActiveUTC": "2026-01-23T01:41:42.15Z",
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-01-23T01:41:42.15Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXKqvYoXYYB-lP3S",
+    "createdAtUTC": "2026-01-22T22:54:53.323Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5534998750568",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "OR\u00c7AMENTO ENVIADO",
+        "id": "aQDaBBYhPaycnvbp"
+      }
+    ],
+    "lastActiveUTC": "2026-01-22T23:04:38.913Z",
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-01-22T23:04:38.913Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXKrVEtjyai9dvUZ",
+    "createdAtUTC": "2026-01-22T22:57:24.749Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5586999463920",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aXK2Q4oXYYB-lSNZ/x94jZtyk8bm_2QLUlsWQ-yzTiaPkHbWX3NVbANzd-FA",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "N\u00c3O RESPONDE",
+        "id": "aQOVnY8-Y1LMUNUa"
+      }
+    ],
+    "lastActiveUTC": "2026-01-22T23:58:02.494Z",
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-01-22T23:58:02.494Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXK2Q4oXYYB-lSNZ",
+    "createdAtUTC": "2026-01-22T23:44:03.956Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5538991621804",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "OR\u00c7AMENTO ENVIADO",
+        "id": "aQDaBBYhPaycnvbp"
+      }
+    ],
+    "lastActiveUTC": "2026-01-23T00:44:46.019Z",
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-01-23T00:44:46.019Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXLCZOIphjLjYbM-",
+    "createdAtUTC": "2026-01-23T00:35:48.828Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5522999489597",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-01-23T01:04:50.119Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXLJN5Fx-jHy9Zks",
+    "createdAtUTC": "2026-01-23T01:04:55.126Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5538999283322",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [],
+    "lastActiveUTC": "2026-01-23T17:54:51.68Z",
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-01-23T17:54:51.68Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXLJ7BFaQq3SW6OW",
+    "createdAtUTC": "2026-01-23T01:07:56.724Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5519981630014",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-01-23T02:35:34.016Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXLee-IphjLjYeIc",
+    "createdAtUTC": "2026-01-23T02:35:39.255Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5582993795989",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aXM_i4oXYYB-lZj0/4u4LYXTJpZuJH_Uc_kayoSB6w3E1Ev63HXvNPOHjIHs",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [],
+    "lastActiveUTC": "2026-01-23T12:38:55.058Z",
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-01-23T12:38:55.058Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXM_i4oXYYB-lZj0",
+    "createdAtUTC": "2026-01-23T09:29:47.531Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5563984990997",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aXNGsEtjyai9d5tY/Plh8UAu4iUnWLBuGCFpZRKQzT9kmVFhTfKDEMHNP2Xk",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd",
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [
+      {
+        "name": "OR\u00c7AMENTO ENVIADO",
+        "id": "aQDaBBYhPaycnvbp"
+      }
+    ],
+    "lastActiveUTC": "2026-01-23T10:53:58.739Z",
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-01-23T10:53:58.739Z",
+        "businessUserId": null
+      },
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXNGsEtjyai9d5tY",
+    "createdAtUTC": "2026-01-23T10:00:16.226Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5598988860327",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aXNHtBFaQq3SW_Lt/FX83qOTiQVLobC4OUq9MqZqF_fASkmC876SRqwpfFKo",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [],
+    "lastActiveUTC": "2026-01-23T11:10:42.286Z",
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-01-23T11:10:42.286Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXNHtBFaQq3SW_Lt",
+    "createdAtUTC": "2026-01-23T10:04:36.627Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5562984020321",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aXNOR4oXYYB-la7E/Ceth8pys2N_0UBPfv_D7cz93ygSwZuB4CYmfD2OQyzU",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "AGUARDANDO INFORMA\u00c7\u00d5ES CLIENTE",
+        "id": "aQNzTDch5Iy4TuxK"
+      }
+    ],
+    "lastActiveUTC": "2026-01-23T11:21:56.705Z",
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-01-23T11:21:56.705Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXNOR4oXYYB-la7E",
+    "createdAtUTC": "2026-01-23T10:32:39.233Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5511978881291",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "N\u00c3O RESPONDE",
+        "id": "aQOVnY8-Y1LMUNUa"
+      }
+    ],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-01-23T10:55:42.059Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXNTs_RsJ2gewDpd",
+    "createdAtUTC": "2026-01-23T10:55:47.292Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5522998043101",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [],
+    "lastActiveUTC": "2026-01-23T11:14:49.829Z",
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-01-23T11:14:49.829Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXNUiBBCXvkao8un",
+    "createdAtUTC": "2026-01-23T10:59:20.531Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5588981063195",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aXNeeBFaQq3SXGBH/hDw1FMAkGJZAsmeaIiDWSRtHH0DflBcVV9LfWJFfhNc",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "OR\u00c7AMENTO ENVIADO",
+        "id": "aQDaBBYhPaycnvbp"
+      }
+    ],
+    "lastActiveUTC": "2026-01-23T20:16:59.814Z",
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-01-23T20:16:59.814Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXNeeBFaQq3SXGBH",
+    "createdAtUTC": "2026-01-23T11:41:44.025Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5584996372236",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aXNh20xl0ZrfKB92/f-2ykIG6dUA1wl0uuM3aWMehiM8LLGA9iNJOqvwwjQ4",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "N\u00c3O RESPONDE",
+        "id": "aQOVnY8-Y1LMUNUa"
+      }
+    ],
+    "lastActiveUTC": "2026-01-23T13:00:00.629Z",
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-01-23T13:00:00.629Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXNh20xl0ZrfKB92",
+    "createdAtUTC": "2026-01-23T11:56:11.271Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5586994712367",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aXNtNkxl0ZrfKK99/5DBiDr1Erf-92yQppqzafgaY5Q5hXGb4VoupBymvNZI",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "OR\u00c7AMENTO ENVIADO",
+        "id": "aQDaBBYhPaycnvbp"
+      }
+    ],
+    "lastActiveUTC": "2026-01-23T20:25:23.74Z",
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-01-23T20:25:23.74Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXNtNkxl0ZrfKK99",
+    "createdAtUTC": "2026-01-23T12:44:38.052Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5574988130741",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aXNy1k8NcWUWy9Uu/QWM96bAtPBI7-vacLGLV17GLf0Gn1jAPV4UJvjk7tho",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "AGUARDANDO INFORMA\u00c7\u00d5ES CLIENTE",
+        "id": "aQNzTDch5Iy4TuxK"
+      }
+    ],
+    "lastActiveUTC": "2026-01-23T14:17:46.217Z",
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-01-23T14:17:46.217Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXNy1k8NcWUWy9Uu",
+    "createdAtUTC": "2026-01-23T13:08:38.621Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5548999810616",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "OR\u00c7AMENTO ENVIADO",
+        "id": "aQDaBBYhPaycnvbp"
+      }
+    ],
+    "lastActiveUTC": "2026-01-23T14:40:48.184Z",
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-01-23T14:40:48.184Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXOEOuIphjLjZJw8",
+    "createdAtUTC": "2026-01-23T14:22:50.417Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5562994408364",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [],
+    "lastActiveUTC": "2026-01-23T15:13:29.689Z",
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-01-23T15:13:29.689Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXOLrp5q9-K9N0o6",
+    "createdAtUTC": "2026-01-23T14:54:38.372Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5588994775818",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aXObPRBCXvkaqBDa/fcfnvmVazU4BSE0rxhk8vCr04raUJFQZfUW3QSbIPIU",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [],
+    "lastActiveUTC": "2026-01-23T16:12:48.379Z",
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-01-23T16:12:48.379Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXObPRBCXvkaqBDa",
+    "createdAtUTC": "2026-01-23T16:01:01.934Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5562996871340",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "AGUARDANDO INFORMA\u00c7\u00d5ES CLIENTE",
+        "id": "aQNzTDch5Iy4TuxK"
+      }
+    ],
+    "lastActiveUTC": "2026-01-23T17:19:56.19Z",
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-01-23T17:19:56.19Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXOcoUtjyai9fCqs",
+    "createdAtUTC": "2026-01-23T16:06:57.855Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5549999998043",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aXOfuE8NcWUWzxfj/IjHt7tiMsIkoLmvyE4mREeB5fbyxRcIPbXMwuktRztc",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "AGUARDANDO INFORMA\u00c7\u00d5ES CLIENTE",
+        "id": "aQNzTDch5Iy4TuxK"
+      }
+    ],
+    "lastActiveUTC": "2026-01-23T18:42:37.121Z",
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-01-23T18:42:37.121Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXOfuE8NcWUWzxfj",
+    "createdAtUTC": "2026-01-23T16:20:08.953Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5574999391348",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [],
+    "lastActiveUTC": "2026-01-23T17:32:23.92Z",
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-01-23T17:32:23.92Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXOnJp5q9-K9OWRC",
+    "createdAtUTC": "2026-01-23T16:51:50.56Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5537999061690",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aXOv-xBCXvkaqcrb/6lPoPsEYxgII1w8VzEZ-CD7V0YaS2u0errSycKe8LhE",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [],
+    "lastActiveUTC": "2026-01-23T17:58:47.805Z",
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-01-23T17:58:47.805Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXOv-xBCXvkaqcrb",
+    "createdAtUTC": "2026-01-23T17:29:31.92Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5554996651772",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "AGUARDANDO INFORMA\u00c7\u00d5ES CLIENTE",
+        "id": "aQNzTDch5Iy4TuxK"
+      }
+    ],
+    "lastActiveUTC": "2026-01-23T17:43:33.66Z",
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-01-23T17:43:33.66Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXOy6Etjyai9fhHZ",
+    "createdAtUTC": "2026-01-23T17:42:00.427Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5535998531861",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aXO8rU8NcWUW0byF/22BvRiTnsZGL5qCWUv9F_v8eDo6xzAbOkQjjFzaT9w0",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "AGUARDANDO INFORMA\u00c7\u00d5ES CLIENTE",
+        "id": "aQNzTDch5Iy4TuxK"
+      }
+    ],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-01-23T18:23:36.186Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXO8rU8NcWUW0byF",
+    "createdAtUTC": "2026-01-23T18:23:41.439Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5511984318958",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [],
+    "lastActiveUTC": "2026-01-23T18:42:15.421Z",
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-01-23T18:42:15.421Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXPA-vRsJ2gex-Df",
+    "createdAtUTC": "2026-01-23T18:42:02.722Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5521966706384",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [],
+    "lastActiveUTC": "2026-01-23T19:23:09.383Z",
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-01-23T19:23:09.383Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXPDSJ5q9-K9PBJb",
+    "createdAtUTC": "2026-01-23T18:51:52.162Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5513981205251",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [],
+    "lastActiveUTC": "2026-01-23T20:32:19.6Z",
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-01-23T20:32:19.6Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXPanuIphjLjbCBY",
+    "createdAtUTC": "2026-01-23T20:31:26.387Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5538999502562",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXfUDiAs4c7wQCzT",
+    "createdAtUTC": "2026-01-26T20:52:30.202Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5516997824428",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd",
+      "aQKbgJwkmLpKgqo1"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      },
+      {
+        "channelId": "aQKbgJwkmLpKgqo1",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXiu-7ZKwMlvcIjv",
+    "createdAtUTC": "2026-01-27T12:26:35.815Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5538992696226",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "OR\u00c7AMENTO ENVIADO",
+        "id": "aQDaBBYhPaycnvbp"
+      }
+    ],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXohp50WrdlwLGWu",
+    "createdAtUTC": "2026-01-28T14:48:07.37Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+551122233500",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aXpe9zlwTz7TNuaS/RoQ_OcFK8MqQh8TgnEWnT6SLDDZ4rs0oXmek_i2kVqU",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": "2026-01-28T19:16:36.945Z",
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": "2026-01-28T19:16:36.945Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXpe9zlwTz7TNuaS",
+    "createdAtUTC": "2026-01-28T19:09:43.827Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5586981657401",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aXuUdHwIz18MXI7W/W5z-G8BErJJZwWbzPaa_iijLctt6ViEBmWF9xqzjHfY",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "OR\u00c7AMENTO ENVIADO",
+        "id": "aQDaBBYhPaycnvbp"
+      }
+    ],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXuUdHwIz18MXI7W",
+    "createdAtUTC": "2026-01-29T17:10:12.235Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+19784073262",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [
+      {
+        "name": "OR\u00c7AMENTO ENVIADO",
+        "id": "aQDaBBYhPaycnvbp"
+      }
+    ],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aXzyGMpxyggqJdaA",
+    "createdAtUTC": "2026-01-30T18:02:00.871Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5582998183344",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQKLDogCAzQmMfU7"
+    ],
+    "tags": [
+      {
+        "name": "AGUARDANDO INFORMA\u00c7\u00d5ES CLIENTE",
+        "id": "aQNzTDch5Iy4TuxK"
+      },
+      {
+        "name": "OR\u00c7AMENTO ENVIADO",
+        "id": "aQDaBBYhPaycnvbp"
+      }
+    ],
+    "lastActiveUTC": "2026-02-03T14:37:46.981Z",
+    "channels": [
+      {
+        "channelId": "aQKLDogCAzQmMfU7",
+        "lastActiveUTC": "2026-02-03T14:37:46.981Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aYDc8Btpr-0EFyck",
+    "createdAtUTC": "2026-02-02T17:20:48.045Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5534997164671",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aYHuGKJqw4O5bnbl",
+    "createdAtUTC": "2026-02-03T12:46:16.553Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5537996634410",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aYNuMHRucH72J1qm/QSAVYEKfCBHLlfyaHKcC188jCWWs0kT6e-3jFMIK1no",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "N\u00c3O RESPONDE",
+        "id": "aQOVnY8-Y1LMUNUa"
+      }
+    ],
+    "lastActiveUTC": "2026-02-04T16:05:04.112Z",
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": "2026-02-04T16:05:04.112Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aYNuMHRucH72J1qm",
+    "createdAtUTC": "2026-02-04T16:05:04.233Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5514126524512",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aZBvCx10gPHbaHFS",
+    "createdAtUTC": "2026-02-14T12:48:11.279Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5514124997302",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aZXf-3lMGWHel_bF",
+    "createdAtUTC": "2026-02-18T15:51:23.899Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5565999163460",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aZhEFgs3LDMA-NKX",
+    "createdAtUTC": "2026-02-20T11:23:02.732Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5538999606115",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/aZySwws3LDMAvWFR/LHz7B2138bTcFS6ypXuTL4pvCclfEiFNMmCPPOiu9Lo",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [
+      {
+        "name": "OR\u00c7AMENTO ENVIADO",
+        "id": "aQDaBBYhPaycnvbp"
+      }
+    ],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aZySwws3LDMAvWFR",
+    "createdAtUTC": "2026-02-23T17:47:47.968Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5519048022689",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aaWO6UE2z9nmyKim",
+    "createdAtUTC": "2026-03-02T13:21:45.677Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5579988590750",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQKbgJwkmLpKgqo1"
+    ],
+    "tags": [],
+    "lastActiveUTC": "2026-03-05T17:14:44.608Z",
+    "channels": [
+      {
+        "channelId": "aQKbgJwkmLpKgqo1",
+        "lastActiveUTC": "2026-03-05T17:14:44.608Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aam50KRlUry70iXc",
+    "createdAtUTC": "2026-03-05T17:13:52.6Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5581989198485",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [
+      {
+        "name": "OR\u00c7AMENTO ENVIADO",
+        "id": "aQDaBBYhPaycnvbp"
+      }
+    ],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "aa_seyNwTvBnua0Y",
+    "createdAtUTC": "2026-03-10T10:03:39.82Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5577999978333",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "abRj8F0cILE125tf",
+    "createdAtUTC": "2026-03-13T19:22:24.836Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+17744000963",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": "https://utalk-wamedia.s3.amazonaws.com/aORCMR51FFkJKvJe/abm4JlxTfpUVtkSx/boDruh9SBNUz_DiKuIL7I5Q5fO-q1j0HljHVdwBS89c",
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "abm4JlxTfpUVtkSx",
+    "createdAtUTC": "2026-03-17T20:23:02.549Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5577988177489",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQKLDogCAzQmMfU7"
+    ],
+    "tags": [],
+    "lastActiveUTC": "2026-03-23T12:12:19Z",
+    "channels": [
+      {
+        "channelId": "aQKLDogCAzQmMfU7",
+        "lastActiveUTC": "2026-03-23T12:12:19Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "acEt9gsz331qiNnN",
+    "createdAtUTC": "2026-03-23T12:11:34.712Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5538998717279",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "acEzomJTb4L4a-bm",
+    "createdAtUTC": "2026-03-23T12:35:46.594Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5538999378417",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "acPU1S5DsZyBEPAc",
+    "createdAtUTC": "2026-03-25T12:28:05.137Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5534998280357",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7KBN4RVBB4JZd"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7KBN4RVBB4JZd",
+        "lastActiveUTC": null,
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "acPqnRdfGLmMFFYr",
+    "createdAtUTC": "2026-03-25T14:01:01.95Z"
+  },
+  {
+    "name": null,
+    "phoneNumber": "+5538992240584",
+    "lid": null,
+    "whatsAppUsername": null,
+    "email": null,
+    "gender": null,
+    "profilePictureUrl": null,
+    "isBlocked": false,
+    "groupIdentifier": null,
+    "contactType": "DirectMessage",
+    "organizationMembers": [],
+    "channelIds": [
+      "aQC7MhN4RVBB4K0D"
+    ],
+    "tags": [],
+    "lastActiveUTC": null,
+    "channels": [
+      {
+        "channelId": "aQC7MhN4RVBB4K0D",
+        "lastActiveUTC": "2026-03-25T17:40:51.235Z",
+        "businessUserId": null
+      }
+    ],
+    "customFields": [],
+    "id": "acQeJC43PayRIVcK",
+    "createdAtUTC": "2026-03-25T17:40:52.79Z"
+  }
+]
