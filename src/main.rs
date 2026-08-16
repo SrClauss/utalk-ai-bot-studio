@@ -407,6 +407,16 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
                         .await
                         {
                             state.db.record_transfer(chat_id, &target_operator_id, &op_name);
+
+                            // Anexa a etiqueta 'FAZER ORÇAMENTO' ao chat no uTalk ao direcionar
+                            let tag_id = "aQC8MBYhPaycNeGd"; // Tag: FAZER ORÇAMENTO
+                            let tag_url = format!("{}/chats/{}/?organizationId={}", cfg_snapshot.utalk_api_url.trim_end_matches('/'), chat_id, cfg_snapshot.utalk_organization_id);
+                            let client = reqwest::Client::new();
+                            let _ = client.put(&tag_url)
+                                .header("Authorization", format!("Bearer {}", cfg_snapshot.utalk_api_token))
+                                .json(&serde_json::json!({ "tags": [{ "id": tag_id }] }))
+                                .send().await;
+                            println!("🏷️ Etiqueta 'FAZER ORÇAMENTO' anexada ao chat {} no uTalk!", chat_id);
                         }
                     } else {
                         println!("⚠️ Nenhum operador disponível na fila do rodízio para transferência.");
@@ -418,6 +428,33 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
             }
         }
     }
+}
+
+async fn get_chats_handler(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+) -> Result<Json<Value>, StatusCode> {
+    if let Some(token) = extract_token(&headers) {
+        if state.db.validate_session(&token) {
+            let chats = state.db.get_all_chats_summary();
+            return Ok(Json(serde_json::json!(chats)));
+        }
+    }
+    Err(StatusCode::UNAUTHORIZED)
+}
+
+async fn delete_chat_handler(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+    axum::extract::Path(chat_id): axum::extract::Path<String>,
+) -> Result<StatusCode, StatusCode> {
+    if let Some(token) = extract_token(&headers) {
+        if state.db.validate_session(&token) {
+            state.db.delete_chat_messages(&chat_id);
+            return Ok(StatusCode::OK);
+        }
+    }
+    Err(StatusCode::UNAUTHORIZED)
 }
 
 #[tokio::main]
@@ -440,6 +477,8 @@ async fn main() {
         .route("/api/config", get(get_config_handler).post(save_config_handler))
         .route("/api/operators", get(get_operators_handler))
         .route("/api/stats", get(get_stats_handler))
+        .route("/api/chats", get(get_chats_handler))
+        .route("/api/chats/:chat_id", axum::routing::delete(delete_chat_handler))
         .route("/webhook", any(handle_webhook))
         .with_state(state);
 
