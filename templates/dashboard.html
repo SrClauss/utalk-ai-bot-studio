@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-BR" class="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>uTalk AI Bot Studio & Rodízio de Atendimento</title>
     <link rel="icon" href="/assets/logo.png" type="image/png">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <!-- Font Awesome 6.5.1 CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <!-- Alpine.js CDN para Reatividade Elegante -->
@@ -16,7 +18,7 @@
             font-family: 'Inter', sans-serif;
             background-color: #030712;
             color: #f3f4f6;
-            background-image: 
+            background-image:
                 radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
                 radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.12) 0px, transparent 50%),
                 radial-gradient(at 50% 100%, rgba(14, 165, 233, 0.08) 0px, transparent 50%);
@@ -60,46 +62,53 @@
             color: #ffffff;
         }
 
-        [x-cloak] { display: none !important; }
+        [x-cloak] {
+            display: none !important;
+        }
     </style>
 </head>
+
 <body x-data="dashboardApp()" x-cloak class="min-h-screen flex flex-col antialiased selection:bg-indigo-500/30">
 
     <!-- Modal de Login (Protege todo o conteúdo do Dashboard) -->
-    <div x-show="!loggedIn" x-transition class="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-xl flex items-center justify-center p-4">
-        <div class="glass-panel p-8 rounded-3xl w-full max-w-sm space-y-6 border border-slate-800 shadow-2xl relative overflow-hidden">
+    <div x-show="!loggedIn" x-transition
+        class="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-xl flex items-center justify-center p-4">
+        <div
+            class="glass-panel p-8 rounded-3xl w-full max-w-sm space-y-6 border border-slate-800 shadow-2xl relative overflow-hidden">
             <!-- Efeito Glow -->
             <div class="absolute -top-10 -right-10 w-40 h-40 bg-indigo-500/20 blur-3xl rounded-full"></div>
             <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-purple-500/20 blur-3xl rounded-full"></div>
-            
+
             <div class="relative z-10 text-center space-y-2">
-                <img src="/assets/logo.png" alt="Logo" class="w-16 h-16 rounded-2xl mx-auto border border-indigo-400/30 shadow-lg">
+                <img src="/assets/logo.png" alt="Logo"
+                    class="w-16 h-16 rounded-2xl mx-auto border border-indigo-400/30 shadow-lg">
                 <h2 class="text-xl font-extrabold text-slate-100 glow-title mt-4">uTalk AI Bot Studio</h2>
                 <p class="text-xs text-slate-400">Acesso Restrito</p>
             </div>
-            
+
             <form @submit.prevent="doLogin()" class="relative z-10 space-y-4 pt-2">
-                <div x-show="loginError" x-transition class="bg-rose-950/50 border border-rose-900/50 text-rose-400 text-xs p-3 rounded-xl text-center font-medium" x-text="loginError"></div>
-                
+                <div x-show="loginError" x-transition
+                    class="bg-rose-950/50 border border-rose-900/50 text-rose-400 text-xs p-3 rounded-xl text-center font-medium"
+                    x-text="loginError"></div>
+
                 <div class="space-y-3">
                     <div class="relative">
                         <i class="fa-solid fa-user absolute left-3.5 top-3 text-slate-500 text-xs"></i>
-                        <input type="text" x-model="loginUsername" placeholder="Usuário" required autocomplete="username"
-                               class="w-full bg-slate-900/50 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder:text-slate-600">
+                        <input type="text" x-model="loginUsername" placeholder="Usuário" required
+                            autocomplete="username"
+                            class="w-full bg-slate-900/50 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder:text-slate-600">
                     </div>
-                    
-                    <div class="relative" x-data="{ showPass: false }">
+
+                    <div class="relative">
                         <i class="fa-solid fa-lock absolute left-3.5 top-3 text-slate-500 text-xs"></i>
-                        <input :type="showPass ? 'text' : 'password'" x-model="loginPassword" placeholder="Senha" required autocomplete="current-password"
-                               class="w-full bg-slate-900/50 border border-slate-800 rounded-xl pl-10 pr-10 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder:text-slate-600">
-                        <button type="button" @click="showPass = !showPass" class="absolute right-3.5 top-3 text-slate-500 hover:text-slate-300">
-                            <i class="fa-solid text-xs" :class="showPass ? 'fa-eye-slash' : 'fa-eye'"></i>
-                        </button>
+                        <input type="password" x-model="loginPassword" placeholder="Senha" required
+                            autocomplete="current-password"
+                            class="w-full bg-slate-900/50 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder:text-slate-600">
                     </div>
                 </div>
-                
+
                 <button type="submit" :disabled="loginLoading"
-                        class="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold text-sm rounded-xl transition-all shadow-lg shadow-indigo-600/25 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                    class="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold text-sm rounded-xl transition-all shadow-lg shadow-indigo-600/25 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
                     <span x-show="!loginLoading">Entrar no Painel</span>
                     <i x-show="loginLoading" class="fa-solid fa-circle-notch fa-spin"></i>
                 </button>
@@ -108,887 +117,904 @@
     </div>
 
     <div x-show="loggedIn" class="flex flex-col min-h-screen w-full" x-transition>
-    <!-- SIDEBAR RETRÁTIL DESKTOP (Com Ícones Duotone e Alinhamento Perfeito) -->
-    <aside class="hidden md:flex flex-col fixed top-0 bottom-0 left-0 z-40 bg-slate-950/95 backdrop-blur-xl border-r border-slate-800/80 transition-all duration-300 select-none shadow-2xl"
-           :class="sidebarCollapsed ? 'w-20' : 'w-64'">
-        
-        <!-- Topo da Sidebar: Logo + Botão Retrair/Expandir (Com Alinhamento Sem Sobreposição) -->
-        <div class="p-3.5 flex items-center border-b border-slate-800/80 h-16"
-             :class="sidebarCollapsed ? 'justify-center' : 'justify-between'">
-            
-            <!-- Logo + Título (Escondido quando recolhido) -->
-            <div x-show="!sidebarCollapsed" x-transition class="flex items-center gap-3 overflow-hidden">
-                <div class="relative group cursor-pointer shrink-0">
-                    <div class="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-300"></div>
-                    <img src="/assets/logo.png" alt="Logo" class="relative w-9 h-9 rounded-lg object-cover border border-indigo-400/30">
-                </div>
-                <div class="whitespace-nowrap">
-                    <h1 class="text-sm font-extrabold glow-title leading-tight">uTalk AI Studio</h1>
-                    <span class="text-[9px] font-mono text-indigo-400 font-bold">v2.5 Sidebar</span>
-                </div>
-            </div>
+        <!-- SIDEBAR RETRÁTIL DESKTOP (Com Ícones Duotone e Alinhamento Perfeito) -->
+        <aside
+            class="hidden md:flex flex-col fixed top-0 bottom-0 left-0 z-40 bg-slate-950/95 backdrop-blur-xl border-r border-slate-800/80 transition-all duration-300 select-none shadow-2xl"
+            :class="sidebarCollapsed ? 'w-20' : 'w-64'">
 
-            <!-- Botão Retrair / Expandir Sidebar (Centralizado quando recolhido) -->
-            <button @click="sidebarCollapsed = !sidebarCollapsed"
+            <!-- Topo da Sidebar: Logo + Botão Retrair/Expandir (Com Alinhamento Sem Sobreposição) -->
+            <div class="p-3.5 flex items-center border-b border-slate-800/80 h-16"
+                :class="sidebarCollapsed ? 'justify-center' : 'justify-between'">
+
+                <!-- Logo + Título (Escondido quando recolhido) -->
+                <div x-show="!sidebarCollapsed" x-transition class="flex items-center gap-3 overflow-hidden">
+                    <div class="relative group cursor-pointer shrink-0">
+                        <div
+                            class="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-300">
+                        </div>
+                        <img src="/assets/logo.png" alt="Logo"
+                            class="relative w-9 h-9 rounded-lg object-cover border border-indigo-400/30">
+                    </div>
+                    <div class="whitespace-nowrap">
+                        <h1 class="text-sm font-extrabold glow-title leading-tight">uTalk AI Studio</h1>
+                        <span class="text-[9px] font-mono text-indigo-400 font-bold">v2.5 Sidebar</span>
+                    </div>
+                </div>
+
+                <!-- Botão Retrair / Expandir Sidebar (Centralizado quando recolhido) -->
+                <button @click="sidebarCollapsed = !sidebarCollapsed"
                     class="w-9 h-9 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-indigo-500/50 text-slate-400 hover:text-white flex items-center justify-center transition-all shrink-0 shadow-sm"
                     :title="sidebarCollapsed ? 'Expandir Menu' : 'Recolher Menu'">
-                <i class="fa-solid" :class="sidebarCollapsed ? 'fa-angles-right text-indigo-400' : 'fa-angles-left'"></i>
-            </button>
-        </div>
+                    <i class="fa-solid"
+                        :class="sidebarCollapsed ? 'fa-angles-right text-indigo-400' : 'fa-angles-left'"></i>
+                </button>
+            </div>
 
-        <!-- Menu de Navegação da Sidebar (Ícones Duotone Centralizados no Modo Recolhido) -->
-        <nav class="flex-1 px-2.5 py-4 space-y-2 overflow-y-auto">
-            
-            <button @click="switchTab('metrics')" 
+            <!-- Menu de Navegação da Sidebar (Ícones Duotone Centralizados no Modo Recolhido) -->
+            <nav class="flex-1 px-2.5 py-4 space-y-2 overflow-y-auto">
+
+                <button @click="switchTab('metrics')"
                     :class="{ 'active': activeTab === 'metrics', 'justify-center px-0': sidebarCollapsed, 'justify-start px-2': !sidebarCollapsed }"
                     class="sidebar-item w-full flex items-center gap-3 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-900/60 group"
                     :title="sidebarCollapsed ? 'Métricas & Dashboard' : ''">
-                <div class="w-9 h-9 rounded-xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-sm">
-                    <i class="fa-solid fa-chart-pie text-indigo-400 text-sm"></i>
-                </div>
-                <span x-show="!sidebarCollapsed" x-transition class="truncate">Métricas & Dashboard</span>
-            </button>
+                    <div
+                        class="w-9 h-9 rounded-xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-sm">
+                        <i class="fa-solid fa-chart-pie text-indigo-400 text-sm"></i>
+                    </div>
+                    <span x-show="!sidebarCollapsed" x-transition class="truncate">Métricas & Dashboard</span>
+                </button>
 
-            <button @click="switchTab('rotation')" 
+                <button @click="switchTab('rotation')"
                     :class="{ 'active': activeTab === 'rotation', 'justify-center px-0': sidebarCollapsed, 'justify-start px-2': !sidebarCollapsed }"
                     class="sidebar-item w-full flex items-center gap-3 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-900/60 group"
                     :title="sidebarCollapsed ? 'Rodízio de Atendentes' : ''">
-                <div class="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-sm">
-                    <i class="fa-solid fa-users-gear text-emerald-400 text-sm"></i>
-                </div>
-                <span x-show="!sidebarCollapsed" x-transition class="truncate">Rodízio de Atendentes</span>
-            </button>
+                    <div
+                        class="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-sm">
+                        <i class="fa-solid fa-users-gear text-emerald-400 text-sm"></i>
+                    </div>
+                    <span x-show="!sidebarCollapsed" x-transition class="truncate">Rodízio de Atendentes</span>
+                </button>
 
-            <button @click="switchTab('prompt')" 
+                <button @click="switchTab('prompt')"
                     :class="{ 'active': activeTab === 'prompt', 'justify-center px-0': sidebarCollapsed, 'justify-start px-2': !sidebarCollapsed }"
                     class="sidebar-item w-full flex items-center gap-3 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-900/60 group"
                     :title="sidebarCollapsed ? 'Prompt & Funil IA' : ''">
-                <div class="w-9 h-9 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-sm">
-                    <i class="fa-solid fa-brain text-purple-400 text-sm"></i>
-                </div>
-                <span x-show="!sidebarCollapsed" x-transition class="truncate">Prompt & Funil IA</span>
-            </button>
+                    <div
+                        class="w-9 h-9 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-sm">
+                        <i class="fa-solid fa-brain text-purple-400 text-sm"></i>
+                    </div>
+                    <span x-show="!sidebarCollapsed" x-transition class="truncate">Prompt & Funil IA</span>
+                </button>
 
-            <button @click="switchTab('credentials')" 
+                <button @click="switchTab('credentials')"
                     :class="{ 'active': activeTab === 'credentials', 'justify-center px-0': sidebarCollapsed, 'justify-start px-2': !sidebarCollapsed }"
                     class="sidebar-item w-full flex items-center gap-3 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-900/60 group"
                     :title="sidebarCollapsed ? 'Credenciais & Acessos' : ''">
-                <div class="w-9 h-9 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-sm">
-                    <i class="fa-solid fa-key text-amber-400 text-sm"></i>
-                </div>
-                <span x-show="!sidebarCollapsed" x-transition class="truncate">Credenciais & Acessos</span>
-            </button>
+                    <div
+                        class="w-9 h-9 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-sm">
+                        <i class="fa-solid fa-key text-amber-400 text-sm"></i>
+                    </div>
+                    <span x-show="!sidebarCollapsed" x-transition class="truncate">Credenciais & Acessos</span>
+                </button>
 
-            <button @click="switchTab('apis')" 
+                <button @click="switchTab('apis')"
                     :class="{ 'active': activeTab === 'apis', 'justify-center px-0': sidebarCollapsed, 'justify-start px-2': !sidebarCollapsed }"
                     class="sidebar-item w-full flex items-center gap-3 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-900/60 group"
                     :title="sidebarCollapsed ? 'APIs Externas & Tools' : ''">
-                <div class="w-9 h-9 rounded-xl bg-pink-500/15 border border-pink-500/30 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-sm">
-                    <i class="fa-solid fa-plug text-pink-400 text-sm"></i>
-                </div>
-                <span x-show="!sidebarCollapsed" x-transition class="truncate">APIs Externas & Tools</span>
-            </button>
+                    <div
+                        class="w-9 h-9 rounded-xl bg-pink-500/15 border border-pink-500/30 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-sm">
+                        <i class="fa-solid fa-plug text-pink-400 text-sm"></i>
+                    </div>
+                    <span x-show="!sidebarCollapsed" x-transition class="truncate">APIs Externas & Tools</span>
+                </button>
+            </nav>
 
-            <button @click="switchTab('chats')" 
-                    :class="{ 'active': activeTab === 'chats', 'justify-center px-0': sidebarCollapsed, 'justify-start px-2': !sidebarCollapsed }"
-                    class="sidebar-item w-full flex items-center gap-3 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-900/60 group"
-                    :title="sidebarCollapsed ? 'Chats & Testes' : ''">
-                <div class="w-9 h-9 rounded-xl bg-teal-500/15 border border-teal-500/30 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-sm">
-                    <i class="fa-solid fa-comments text-teal-400 text-sm"></i>
+            <!-- Rodapé da Sidebar: Status do Robô & Logout (Ajustado no Modo Recolhido) -->
+            <div class="p-2.5 border-t border-slate-800/80 space-y-2">
+                <!-- Toggle Robô -->
+                <div class="glass-card p-2 rounded-xl border border-slate-800 flex items-center"
+                    :class="sidebarCollapsed ? 'justify-center' : 'justify-between'">
+                    <div x-show="!sidebarCollapsed" x-transition class="flex items-center gap-2 overflow-hidden">
+                        <span class="w-2.5 h-2.5 rounded-full shrink-0"
+                            :class="config.bot_enabled ? 'bg-emerald-500 animate-pulse' : 'bg-slate-500'"></span>
+                        <span class="text-[10px] font-bold tracking-wide truncate"
+                            :class="config.bot_enabled ? 'text-emerald-400' : 'text-slate-400'"
+                            x-text="config.bot_enabled ? 'ROBÔ ATIVO' : 'PAUSADO'"></span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer shrink-0"
+                        :title="sidebarCollapsed ? (config.bot_enabled ? 'Robô Ativo' : 'Robô Pausado') : ''">
+                        <input type="checkbox" x-model="config.bot_enabled" @change="saveConfig(false)"
+                            class="sr-only peer">
+                        <div
+                            class="w-8 h-4 bg-slate-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-indigo-600">
+                        </div>
+                    </label>
                 </div>
-                <span x-show="!sidebarCollapsed" x-transition class="truncate">Chats & Testes</span>
-            </button>
-        </nav>
 
-        <!-- Rodapé da Sidebar: Status do Robô & Logout (Ajustado no Modo Recolhido) -->
-        <div class="p-2.5 border-t border-slate-800/80 space-y-2">
-            <!-- Toggle Robô -->
-            <div class="glass-card p-2 rounded-xl border border-slate-800 flex items-center"
-                 :class="sidebarCollapsed ? 'justify-center' : 'justify-between'">
-                <div x-show="!sidebarCollapsed" x-transition class="flex items-center gap-2 overflow-hidden">
-                    <span class="w-2.5 h-2.5 rounded-full shrink-0" :class="config.bot_enabled ? 'bg-emerald-500 animate-pulse' : 'bg-slate-500'"></span>
-                    <span class="text-[10px] font-bold tracking-wide truncate"
-                          :class="config.bot_enabled ? 'text-emerald-400' : 'text-slate-400'"
-                          x-text="config.bot_enabled ? 'ROBÔ ATIVO' : 'PAUSADO'"></span>
-                </div>
-                <label class="relative inline-flex items-center cursor-pointer shrink-0"
-                       :title="sidebarCollapsed ? (config.bot_enabled ? 'Robô Ativo' : 'Robô Pausado') : ''">
-                    <input type="checkbox" x-model="config.bot_enabled" @change="saveConfig(false)" class="sr-only peer">
-                    <div class="w-8 h-4 bg-slate-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-indigo-600"></div>
-                </label>
-            </div>
-
-            <!-- Botão Sair -->
-            <button @click="doLogout()" 
+                <!-- Botão Sair -->
+                <button @click="doLogout()"
                     class="w-full py-2.5 bg-slate-900/90 hover:bg-rose-950/40 hover:text-rose-400 text-slate-300 text-xs font-semibold rounded-xl border border-slate-800 hover:border-rose-500/40 transition-all flex items-center justify-center gap-2"
-                    :class="sidebarCollapsed ? 'px-0' : 'px-3'"
-                    :title="sidebarCollapsed ? 'Sair do Painel' : ''">
-                <i class="fa-solid fa-right-from-bracket text-rose-400"></i>
-                <span x-show="!sidebarCollapsed" x-transition>Sair do Painel</span>
-            </button>
-        </div>
-    </aside>
-
-    <!-- Main Container (Ajusta margem esquerda conforme expansão/recolhimento da Sidebar no Desktop) -->
-    <main class="transition-all duration-300 flex-1 px-4 sm:px-6 pt-6 pb-24 md:pb-12 space-y-6"
-          :class="sidebarCollapsed ? 'md:ml-20' : 'md:ml-64'">
-
-        <!-- Banner Hero Integrado com Imagem Neuronal (/assets/banner.jpg) -->
-        <div class="relative overflow-hidden rounded-2xl border border-indigo-500/30 bg-slate-900/90 shadow-2xl">
-            <!-- Imagem Neuronal de Fundo -->
-            <div class="absolute inset-0 z-0 opacity-40 mix-blend-luminosity">
-                <img src="/assets/banner.jpg" alt="AI Neural Banner" class="w-full h-full object-cover">
+                    :class="sidebarCollapsed ? 'px-0' : 'px-3'" :title="sidebarCollapsed ? 'Sair do Painel' : ''">
+                    <i class="fa-solid fa-right-from-bracket text-rose-400"></i>
+                    <span x-show="!sidebarCollapsed" x-transition>Sair do Painel</span>
+                </button>
             </div>
-            
-            <div class="relative z-10 p-5 md:p-8 space-y-6 bg-gradient-to-r from-slate-950/95 via-slate-950/85 to-slate-950/40">
-                <!-- Linha Superior: Logo + Título + Status Robô + Botão Sair (Visível no Mobile) -->
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800/80 pb-5">
-                    <div class="flex items-center gap-3.5">
-                        <div class="relative group cursor-pointer shrink-0">
-                            <div class="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-300"></div>
-                            <img src="/assets/logo.png" alt="uTalk Bot Logo" class="relative w-12 h-12 rounded-xl object-cover border border-indigo-400/30">
-                        </div>
-                        <div>
-                            <div class="flex items-center gap-2 flex-wrap">
-                                <h1 class="text-xl md:text-2xl font-extrabold tracking-tight glow-title">uTalk AI Bot Studio</h1>
-                                <span class="text-[10px] font-mono font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-full uppercase tracking-wider">v2.5 Sidebar FA</span>
-                            </div>
-                            <p class="text-xs text-slate-400 font-medium">Motor Multimodal Gemini & Rodízio Inteligente uTalk API</p>
-                        </div>
-                    </div>
+        </aside>
 
-                    <!-- Status do Robô & Controles de Acesso (Visível no Mobile) -->
-                    <div class="md:hidden flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
-                        <div class="glass-panel px-3.5 py-1.5 rounded-xl border border-slate-800 flex items-center gap-3">
-                            <div class="flex items-center gap-2">
-                                <span class="w-2.5 h-2.5 rounded-full" :class="config.bot_enabled ? 'bg-emerald-500 animate-pulse' : 'bg-slate-500'"></span>
-                                <span class="text-xs font-bold tracking-wide" :class="config.bot_enabled ? 'text-emerald-400' : 'text-slate-400'" x-text="config.bot_enabled ? 'ROBÔ ATIVO' : 'ROBÔ PAUSADO'"></span>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" x-model="config.bot_enabled" @change="saveConfig(false)" class="sr-only peer">
-                                <div class="w-9 h-5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
-                            </label>
-                        </div>
+        <!-- Main Container (Ajusta margem esquerda conforme expansão/recolhimento da Sidebar no Desktop) -->
+        <main class="transition-all duration-300 flex-1 w-full px-4 sm:px-6 pt-6 pb-24 md:pb-12 space-y-6"
+            :class="sidebarCollapsed ? 'md:ml-20' : 'md:ml-64'">
 
-                        <button @click="doLogout()" class="px-3.5 py-1.5 bg-slate-900/90 hover:bg-rose-950/40 hover:text-rose-400 text-slate-300 text-xs font-semibold rounded-xl border border-slate-800 hover:border-rose-500/40 transition-all flex items-center gap-1.5">
-                            <i class="fa-solid fa-right-from-bracket text-rose-400"></i>
-                            <span>Sair</span>
-                        </button>
-                    </div>
+            <!-- Banner Hero Integrado com Imagem Neuronal (/assets/banner.jpg) -->
+            <div class="relative overflow-hidden rounded-2xl border border-indigo-500/30 bg-slate-900/90 shadow-2xl">
+                <!-- Imagem Neuronal de Fundo -->
+                <div class="absolute inset-0 z-0 opacity-40 mix-blend-luminosity">
+                    <img src="/assets/banner.jpg" alt="AI Neural Banner" class="w-full h-full object-cover">
                 </div>
 
-                <!-- Linha Inferior: Descrição & Badges Rápidos -->
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                    <div class="space-y-1 max-w-2xl">
-                        <p class="text-xs md:text-sm text-slate-300 leading-relaxed">
-                            Qualifique leads com inteligência artificial no WhatsApp e atribua conversas automaticamente para os atendentes humanos online no uTalk.
-                        </p>
-                    </div>
-
-                    <div class="grid grid-cols-3 gap-2.5 w-full md:w-auto">
-                        <div class="glass-card p-2.5 rounded-xl border border-slate-800/80 text-center">
-                            <span class="block text-[9px] text-slate-400 font-mono uppercase">Motor IA</span>
-                            <span class="text-xs font-bold text-indigo-400" x-text="config.gemini_model || 'Gemini 3.1'">Gemini 3.1</span>
-                        </div>
-                        <div class="glass-card p-2.5 rounded-xl border border-slate-800/80 text-center">
-                            <span class="block text-[9px] text-slate-400 font-mono uppercase">Estratégia</span>
-                            <span class="text-xs font-bold text-emerald-400">Operadores Online</span>
-                        </div>
-                        <div class="glass-card p-2.5 rounded-xl border border-slate-800/80 text-center">
-                            <span class="block text-[9px] text-slate-400 font-mono uppercase">uTalk API</span>
-                            <span class="text-xs font-bold text-purple-400">v1 Conectado</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Banner de Alertas (Alpine.js Reativo) -->
-        <div x-show="alert.show" x-transition 
-             :class="alert.type === 'success' ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-800' : 'bg-rose-950/80 text-rose-300 border border-rose-800'"
-             class="p-4 rounded-xl text-sm font-medium shadow-lg" x-text="alert.msg"></div>
-
-        <!-- TAB 1: MÉTRICAS & DASHBOARD -->
-        <div x-show="activeTab === 'metrics'" class="space-y-6">
-            <!-- Cards Estatísticos -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="glass-card p-5 rounded-2xl space-y-2 border border-slate-800">
-                    <span class="text-xs font-semibold text-slate-400 flex items-center justify-between">
-                        Total de Mensagens IA
-                        <i class="fa-solid fa-comments text-indigo-400"></i>
-                    </span>
-                    <div class="flex items-baseline justify-between">
-                        <span class="text-2xl font-extrabold text-indigo-400" x-text="stats.total_messages || 0">0</span>
-                        <span class="text-xs text-slate-500 font-mono">SQLite FTS5</span>
-                    </div>
-                </div>
-                <div class="glass-card p-5 rounded-2xl space-y-2 border border-slate-800">
-                    <span class="text-xs font-semibold text-slate-400 flex items-center justify-between">
-                        Leads Transferidos
-                        <i class="fa-solid fa-headset text-purple-400"></i>
-                    </span>
-                    <div class="flex items-baseline justify-between">
-                        <span class="text-2xl font-extrabold text-purple-400" x-text="stats.total_transfers || 0">0</span>
-                        <span class="text-xs text-purple-400/80 font-mono">Rodízio Ativo</span>
-                    </div>
-                </div>
-                <div class="glass-card p-5 rounded-2xl space-y-2 border border-slate-800">
-                    <span class="text-xs font-semibold text-slate-400 flex items-center justify-between">
-                        Operadores no Rodízio
-                        <i class="fa-solid fa-user-check text-emerald-400"></i>
-                    </span>
-                    <div class="flex items-baseline justify-between">
-                        <span class="text-2xl font-extrabold text-emerald-400" x-text="config.rotation_operator_ids ? config.rotation_operator_ids.length : 0">0</span>
-                        <span class="text-xs text-emerald-400/80 font-mono">uTalk API</span>
-                    </div>
-                </div>
-                <div class="glass-card p-5 rounded-2xl space-y-2 border border-slate-800">
-                    <span class="text-xs font-semibold text-slate-400 flex items-center justify-between">
-                        Modelo em Uso
-                        <i class="fa-solid fa-microchip text-amber-400"></i>
-                    </span>
-                    <div class="flex items-baseline justify-between">
-                        <span class="text-sm font-bold text-slate-200 truncate" x-text="config.gemini_model || 'Gemini 3.1'">Gemini 3.1</span>
-                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded font-mono">Google</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tabela de Distribuição por Operador e Feed Recente -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <!-- Tabela por Operador -->
-                <div class="lg:col-span-6 glass-panel p-6 rounded-2xl space-y-4">
-                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                        <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
-                            <i class="fa-solid fa-chart-column text-indigo-400"></i>
-                            <span>Atribuições por Atendente</span>
-                        </h3>
-                        <button @click="loadStats()" class="text-xs text-indigo-400 hover:underline flex items-center gap-1">
-                            <i class="fa-solid fa-rotate-right"></i>
-                            <span>Atualizar</span>
-                        </button>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs text-slate-300">
-                            <thead class="bg-slate-900/80 text-slate-400 font-mono uppercase text-[10px]">
-                                <tr>
-                                    <th class="p-3">Atendente</th>
-                                    <th class="p-3 text-right">Encaminhados</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-800/60">
-                                <template x-for="op in stats.transfers_by_operator" :key="op.member_id">
-                                    <tr class="hover:bg-slate-900/50">
-                                        <td class="p-3 font-medium text-slate-200" x-text="op.member_name"></td>
-                                        <td class="p-3 text-right font-mono font-bold text-purple-400" x-text="op.count"></td>
-                                    </tr>
-                                </template>
-                                <tr x-show="!stats.transfers_by_operator || stats.transfers_by_operator.length === 0">
-                                    <td colspan="2" class="p-4 text-center text-slate-500">Nenhuma transferência gravada ainda.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Feed de Transferências Recentes -->
-                <div class="lg:col-span-6 glass-panel p-6 rounded-2xl space-y-4">
-                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                        <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
-                            <i class="fa-solid fa-clock-rotate-left text-purple-400"></i>
-                            <span>Últimos Transbordos de Atendimento</span>
-                        </h3>
-                    </div>
-                    <div class="space-y-2.5 max-h-[320px] overflow-y-auto pr-1">
-                        <template x-for="item in stats.recent_transfers" :key="item.created_at + item.chat_id">
-                            <div class="glass-card p-3 rounded-xl flex items-center justify-between text-xs">
-                                <div>
-                                    <span class="font-bold text-slate-200" x-text="item.member_name"></span>
-                                    <span class="block text-[10px] text-slate-500 font-mono" x-text="'Chat ID: ' + item.chat_id"></span>
+                <div
+                    class="relative z-10 p-5 md:p-8 space-y-6 bg-gradient-to-r from-slate-950/95 via-slate-950/85 to-slate-950/40">
+                    <!-- Linha Superior: Logo + Título + Status Robô + Botão Sair (Visível no Mobile) -->
+                    <div
+                        class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800/80 pb-5">
+                        <div class="flex items-center gap-3.5">
+                            <div class="relative group cursor-pointer shrink-0">
+                                <div
+                                    class="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-300">
                                 </div>
-                                <span class="text-[10px] font-mono text-purple-400" x-text="new Date(item.created_at).toLocaleTimeString()"></span>
+                                <img src="/assets/logo.png" alt="uTalk Bot Logo"
+                                    class="relative w-12 h-12 rounded-xl object-cover border border-indigo-400/30">
                             </div>
-                        </template>
-                        <div x-show="!stats.recent_transfers || stats.recent_transfers.length === 0" class="p-4 text-center text-xs text-slate-500">
-                            Nenhum transbordo gravado ainda.
+                            <div>
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <h1 class="text-xl md:text-2xl font-extrabold tracking-tight glow-title">uTalk AI
+                                        Bot Studio</h1>
+                                    <span
+                                        class="text-[10px] font-mono font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-full uppercase tracking-wider">v2.5
+                                        Sidebar FA</span>
+                                </div>
+                                <p class="text-xs text-slate-400 font-medium">Motor Multimodal Gemini & Rodízio
+                                    Inteligente uTalk API</p>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- TAB 2: RODÍZIO DE ATENDENTES -->
-        <div x-show="activeTab === 'rotation'" class="space-y-6">
-            <div class="glass-panel p-6 rounded-2xl space-y-6">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-4">
-                    <div>
-                        <h2 class="text-lg font-extrabold text-slate-100 flex items-center gap-2">
-                            <i class="fa-solid fa-arrows-spin text-emerald-400"></i>
-                            <span>Rodízio Configurável de Atendentes Humanos</span>
-                        </h2>
-                        <p class="text-xs text-slate-400">Selecione os operadores ativos no uTalk que participarão da distribuição automática de chats.</p>
-                    </div>
-
-                    <button @click="fetchOperators()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl transition-all shadow-md shadow-indigo-600/25 flex items-center gap-2">
-                        <i class="fa-solid fa-rotate-right"></i>
-                        <span>Sincronizar Operadores do uTalk</span>
-                    </button>
-                </div>
-
-                <!-- Painel de Regras de Distribuição -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="glass-card p-4 rounded-xl space-y-2">
-                        <label class="block text-xs font-semibold text-slate-300">Status do Rodízio</label>
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold" :class="config.rotation_enabled ? 'text-emerald-400' : 'text-slate-400'" x-text="config.rotation_enabled ? 'ATIVO' : 'DESATIVADO'"></span>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" x-model="config.rotation_enabled" class="sr-only peer">
-                                <div class="w-9 h-5 bg-slate-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="glass-card p-4 rounded-xl space-y-2">
-                        <label class="block text-xs font-semibold text-slate-300">Estratégia de Distribuição</label>
-                        <div class="w-full bg-slate-950/80 border border-slate-800 rounded-lg px-3 py-1.5 text-xs font-semibold text-emerald-400 flex items-center justify-between">
-                            <span>Apenas Operadores ONLINE no uTalk</span>
-                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        </div>
-                    </div>
-
-                    <div class="glass-card p-4 rounded-xl space-y-2">
-                        <label class="block text-xs font-semibold text-slate-300">Comando de Transferência</label>
-                        <input type="text" x-model="config.rotation_trigger_keyword" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs font-mono text-indigo-300 focus:outline-none focus:border-indigo-500">
-                    </div>
-                </div>
-
-                <!-- Lista de Operadores -->
-                <div class="space-y-3">
-                    <div class="flex justify-between items-center">
-                        <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Operadores Humanos Disponíveis na Organização</h3>
-                        <div class="flex items-center gap-2">
-                            <button @click="selectAllOperators(true)" class="text-xs text-indigo-400 hover:underline">Selecionar Todos</button>
-                            <span class="text-slate-600">|</span>
-                            <button @click="selectAllOperators(false)" class="text-xs text-slate-400 hover:underline">Desmarcar Todos</button>
-                        </div>
-                    </div>
-
-                    <div x-show="loadingOperators" class="p-6 text-center text-xs text-slate-400 animate-pulse">Carregando operadores ativos do uTalk...</div>
-
-                    <div x-show="!loadingOperators && operators.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                        <template x-for="op in operators" :key="op.id">
-                            <label class="glass-card p-4 rounded-xl flex items-start justify-between cursor-pointer border transition-all"
-                                   :class="config.rotation_operator_ids.includes(op.id) ? 'border-indigo-500/50 bg-indigo-950/20' : 'border-slate-800'">
-                                <div class="space-y-1">
-                                    <div class="flex items-center gap-2">
-                                        <span class="font-bold text-xs text-slate-100" x-text="op.name"></span>
-                                        <span x-show="op.is_online" class="text-[9px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.2 rounded font-bold">ONLINE</span>
-                                        <span x-show="!op.is_online" class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.2 rounded">OFFLINE</span>
+                        <!-- Status do Robô & Controles de Acesso (Visível no Mobile) -->
+                        <div class="md:hidden flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                            <div
+                                class="glass-panel px-3.5 py-1.5 rounded-xl border border-slate-800 flex items-center gap-3">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2.5 h-2.5 rounded-full"
+                                        :class="config.bot_enabled ? 'bg-emerald-500 animate-pulse' : 'bg-slate-500'"></span>
+                                    <span class="text-xs font-bold tracking-wide"
+                                        :class="config.bot_enabled ? 'text-emerald-400' : 'text-slate-400'"
+                                        x-text="config.bot_enabled ? 'ROBÔ ATIVO' : 'ROBÔ PAUSADO'"></span>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" x-model="config.bot_enabled" @change="saveConfig(false)"
+                                        class="sr-only peer">
+                                    <div
+                                        class="w-9 h-5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600">
                                     </div>
-                                    <span class="block text-[11px] text-slate-400" x-text="op.email || 'Sem e-mail'"></span>
-                                    <span class="block text-[9px] font-mono text-slate-600" x-text="'ID: ' + op.id"></span>
-                                </div>
-                                <input type="checkbox" :value="op.id" x-model="config.rotation_operator_ids" class="accent-indigo-600 w-4 h-4 rounded mt-1">
-                            </label>
-                        </template>
-                    </div>
+                                </label>
+                            </div>
 
-                    <div x-show="!loadingOperators && operators.length === 0" class="p-6 text-center text-xs text-slate-500">
-                        Clique em "Sincronizar Operadores do uTalk" para carregar a lista.
-                    </div>
-                </div>
-
-                <div class="flex justify-end pt-4 border-t border-slate-800">
-                    <button @click="saveConfig()" class="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 text-white font-semibold text-xs rounded-xl transition-all shadow-lg shadow-emerald-600/25 flex items-center gap-2">
-                        <i class="fa-solid fa-floppy-disk"></i>
-                        <span>Salvar Configurações do Rodízio</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 3: PROMPT & FUNIL IA -->
-        <div x-show="activeTab === 'prompt'" class="space-y-6">
-            <div class="glass-panel p-6 rounded-2xl space-y-6">
-                <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
-                    <div class="w-9 h-9 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold text-base">
-                        <i class="fa-solid fa-brain"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-lg font-extrabold text-slate-100">Prompt do Sistema & Funil de Qualificação</h2>
-                        <p class="text-xs text-slate-400">Instruções principais do Gemini. Inclua a palavra-chave <code class="text-purple-300 font-mono" x-text="config.rotation_trigger_keyword || '[TRANSFERIR]'"></code> quando o lead for qualificado.</p>
-                    </div>
-                </div>
-
-                <textarea x-model="config.system_prompt" rows="12" class="w-full bg-slate-950/90 border border-slate-800 rounded-xl p-4 text-xs focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors font-mono leading-relaxed text-slate-200"></textarea>
-
-                <div class="flex justify-end">
-                    <button @click="saveConfig()" class="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold text-xs rounded-xl transition-all shadow-lg shadow-purple-600/25 flex items-center gap-2">
-                        <i class="fa-solid fa-floppy-disk"></i>
-                        <span>Salvar Prompt de Sistema</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 4: CREDENCIAIS & ACESSOS -->
-        <div x-show="activeTab === 'credentials'" class="space-y-6">
-            <div class="glass-panel p-6 rounded-2xl space-y-6 max-w-3xl mx-auto">
-                <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
-                    <div class="w-9 h-9 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold text-base">
-                        <i class="fa-solid fa-key"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-lg font-extrabold text-slate-100">Credenciais & Acessos da Aplicação</h2>
-                        <p class="text-xs text-slate-400">Gerencie as chaves de conexão com uTalk, Gemini e senha de acesso.</p>
-                    </div>
-                </div>
-
-                <form @submit.prevent="saveConfig()" class="space-y-4">
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Usuário Admin</label>
-                            <input type="text" x-model="config.admin_username" autocomplete="username" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                            <button @click="doLogout()"
+                                class="px-3.5 py-1.5 bg-slate-900/90 hover:bg-rose-950/40 hover:text-rose-400 text-slate-300 text-xs font-semibold rounded-xl border border-slate-800 hover:border-rose-500/40 transition-all flex items-center gap-1.5">
+                                <i class="fa-solid fa-right-from-bracket text-rose-400"></i>
+                                <span>Sair</span>
+                            </button>
                         </div>
-                        <div x-data="{ showPass: false }">
-                            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Senha Admin</label>
-                            <div class="relative">
-                                <input :type="showPass ? 'text' : 'password'" x-model="config.admin_password" autocomplete="current-password" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 pr-10 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
-                                <button type="button" @click="showPass = !showPass" class="absolute right-3 top-2.5 text-slate-500 hover:text-slate-300">
-                                    <i class="fa-solid text-xs" :class="showPass ? 'fa-eye-slash' : 'fa-eye'"></i>
-                                </button>
+                    </div>
+
+                    <!-- Linha Inferior: Descrição & Badges Rápidos -->
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div class="space-y-1 max-w-2xl">
+                            <p class="text-xs md:text-sm text-slate-300 leading-relaxed">
+                                Qualifique leads com inteligência artificial no WhatsApp e atribua conversas
+                                automaticamente para os atendentes humanos online no uTalk.
+                            </p>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-2.5 w-full md:w-auto">
+                            <div class="glass-card p-2.5 rounded-xl border border-slate-800/80 text-center">
+                                <span class="block text-[9px] text-slate-400 font-mono uppercase">Motor IA</span>
+                                <span class="text-xs font-bold text-indigo-400"
+                                    x-text="config.gemini_model || 'Gemini 3.1'">Gemini 3.1</span>
+                            </div>
+                            <div class="glass-card p-2.5 rounded-xl border border-slate-800/80 text-center">
+                                <span class="block text-[9px] text-slate-400 font-mono uppercase">Estratégia</span>
+                                <span class="text-xs font-bold text-emerald-400">Operadores Online</span>
+                            </div>
+                            <div class="glass-card p-2.5 rounded-xl border border-slate-800/80 text-center">
+                                <span class="block text-[9px] text-slate-400 font-mono uppercase">uTalk API</span>
+                                <span class="text-xs font-bold text-purple-400">v1 Conectado</span>
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
 
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-400 mb-1.5">Modelo Google Gemini</label>
-                        <select x-model="config.gemini_model" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500">
-                            <option value="gemini-3.1-flash-lite">gemini-3.1-flash-lite (Recomendado)</option>
-                            <option value="gemini-3.6-flash">gemini-3.6-flash</option>
-                            <option value="gemini-2.5-flash">gemini-2.5-flash</option>
-                            <option value="gemini-1.5-flash">gemini-1.5-flash</option>
-                            <option value="gemini-1.5-pro">gemini-1.5-pro</option>
-                        </select>
+            <!-- Banner de Alertas (Alpine.js Reativo) -->
+            <div x-show="alert.show" x-transition
+                :class="alert.type === 'success' ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-800' : 'bg-rose-950/80 text-rose-300 border border-rose-800'"
+                class="p-4 rounded-xl text-sm font-medium shadow-lg" x-text="alert.msg"></div>
+
+            <!-- TAB 1: MÉTRICAS & DASHBOARD -->
+            <div x-show="activeTab === 'metrics'" class="space-y-6">
+                <!-- Cards Estatísticos -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="glass-card p-5 rounded-2xl space-y-2 border border-slate-800">
+                        <span class="text-xs font-semibold text-slate-400 flex items-center justify-between">
+                            Total de Mensagens IA
+                            <i class="fa-solid fa-comments text-indigo-400"></i>
+                        </span>
+                        <div class="flex items-baseline justify-between">
+                            <span class="text-2xl font-extrabold text-indigo-400"
+                                x-text="stats.total_messages || 0">0</span>
+                            <span class="text-xs text-slate-500 font-mono">SQLite FTS5</span>
+                        </div>
                     </div>
+                    <div class="glass-card p-5 rounded-2xl space-y-2 border border-slate-800">
+                        <span class="text-xs font-semibold text-slate-400 flex items-center justify-between">
+                            Leads Transferidos
+                            <i class="fa-solid fa-headset text-purple-400"></i>
+                        </span>
+                        <div class="flex items-baseline justify-between">
+                            <span class="text-2xl font-extrabold text-purple-400"
+                                x-text="stats.total_transfers || 0">0</span>
+                            <span class="text-xs text-purple-400/80 font-mono">Rodízio Ativo</span>
+                        </div>
+                    </div>
+                    <div class="glass-card p-5 rounded-2xl space-y-2 border border-slate-800">
+                        <span class="text-xs font-semibold text-slate-400 flex items-center justify-between">
+                            Operadores no Rodízio
+                            <i class="fa-solid fa-user-check text-emerald-400"></i>
+                        </span>
+                        <div class="flex items-baseline justify-between">
+                            <span class="text-2xl font-extrabold text-emerald-400"
+                                x-text="config.rotation_operator_ids ? config.rotation_operator_ids.length : 0">0</span>
+                            <span class="text-xs text-emerald-400/80 font-mono">uTalk API</span>
+                        </div>
+                    </div>
+                    <div class="glass-card p-5 rounded-2xl space-y-2 border border-slate-800">
+                        <span class="text-xs font-semibold text-slate-400 flex items-center justify-between">
+                            Modelo em Uso
+                            <i class="fa-solid fa-microchip text-amber-400"></i>
+                        </span>
+                        <div class="flex items-baseline justify-between">
+                            <span class="text-sm font-bold text-slate-200 truncate"
+                                x-text="config.gemini_model || 'Gemini 3.1'">Gemini 3.1</span>
+                            <span
+                                class="text-[10px] bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded font-mono">Google</span>
+                        </div>
+                    </div>
+                </div>
 
-                    <div x-data="{ showPass: false }">
-                        <label class="block text-xs font-semibold text-slate-400 mb-1.5">Gemini API Key</label>
-                        <div class="relative">
-                            <input :type="showPass ? 'text' : 'password'" x-model="config.gemini_api_key" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 pr-10 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500">
-                            <button type="button" @click="showPass = !showPass" class="absolute right-3 top-2.5 text-slate-500 hover:text-slate-300">
-                                <i class="fa-solid text-xs" :class="showPass ? 'fa-eye-slash' : 'fa-eye'"></i>
+                <!-- Tabela de Distribuição por Operador e Feed Recente -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Tabela por Operador -->
+                    <div class="lg:col-span-6 glass-panel p-6 rounded-2xl space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                            <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+                                <i class="fa-solid fa-chart-column text-indigo-400"></i>
+                                <span>Atribuições por Atendente</span>
+                            </h3>
+                            <button @click="loadStats()"
+                                class="text-xs text-indigo-400 hover:underline flex items-center gap-1">
+                                <i class="fa-solid fa-rotate-right"></i>
+                                <span>Atualizar</span>
                             </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs text-slate-300">
+                                <thead class="bg-slate-900/80 text-slate-400 font-mono uppercase text-[10px]">
+                                    <tr>
+                                        <th class="p-3">Atendente</th>
+                                        <th class="p-3 text-right">Encaminhados</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-800/60">
+                                    <template x-for="op in stats.transfers_by_operator" :key="op.member_id">
+                                        <tr class="hover:bg-slate-900/50">
+                                            <td class="p-3 font-medium text-slate-200" x-text="op.member_name"></td>
+                                            <td class="p-3 text-right font-mono font-bold text-purple-400"
+                                                x-text="op.count"></td>
+                                        </tr>
+                                    </template>
+                                    <tr
+                                        x-show="!stats.transfers_by_operator || stats.transfers_by_operator.length === 0">
+                                        <td colspan="2" class="p-4 text-center text-slate-500">Nenhuma transferência
+                                            gravada ainda.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
 
-                    <div x-data="{ showPass: false }">
-                        <label class="block text-xs font-semibold text-slate-400 mb-1.5">uTalk API Token</label>
-                        <div class="relative">
-                            <input :type="showPass ? 'text' : 'password'" x-model="config.utalk_api_token" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 pr-10 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500">
-                            <button type="button" @click="showPass = !showPass" class="absolute right-3 top-2.5 text-slate-500 hover:text-slate-300">
-                                <i class="fa-solid text-xs" :class="showPass ? 'fa-eye-slash' : 'fa-eye'"></i>
-                            </button>
+                    <!-- Feed de Transferências Recentes -->
+                    <div class="lg:col-span-6 glass-panel p-6 rounded-2xl space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                            <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+                                <i class="fa-solid fa-clock-rotate-left text-purple-400"></i>
+                                <span>Últimos Transbordos de Atendimento</span>
+                            </h3>
+                        </div>
+                        <div class="space-y-2.5 max-h-[320px] overflow-y-auto pr-1">
+                            <template x-for="item in stats.recent_transfers" :key="item.created_at + item.chat_id">
+                                <div class="glass-card p-3 rounded-xl flex items-center justify-between text-xs">
+                                    <div>
+                                        <span class="font-bold text-slate-200" x-text="item.member_name"></span>
+                                        <span class="block text-[10px] text-slate-500 font-mono"
+                                            x-text="'Chat ID: ' + item.chat_id"></span>
+                                    </div>
+                                    <span class="text-[10px] font-mono text-purple-400"
+                                        x-text="new Date(item.created_at).toLocaleTimeString()"></span>
+                                </div>
+                            </template>
+                            <div x-show="!stats.recent_transfers || stats.recent_transfers.length === 0"
+                                class="p-4 text-center text-xs text-slate-500">
+                                Nenhum transbordo gravado ainda.
+                            </div>
                         </div>
                     </div>
+                </div>
+            </div>
 
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-400 mb-1.5">uTalk Organization ID</label>
-                        <input type="text" x-model="config.utalk_organization_id" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500">
-                    </div>
+            <!-- TAB 2: RODÍZIO DE ATENDENTES -->
+            <div x-show="activeTab === 'rotation'" class="space-y-6">
+                <div class="glass-panel p-6 rounded-2xl space-y-6">
+                    <div
+                        class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-4">
+                        <div>
+                            <h2 class="text-lg font-extrabold text-slate-100 flex items-center gap-2">
+                                <i class="fa-solid fa-arrows-spin text-emerald-400"></i>
+                                <span>Rodízio Configurável de Atendentes Humanos</span>
+                            </h2>
+                            <p class="text-xs text-slate-400">Selecione os operadores ativos no uTalk que participarão
+                                da distribuição automática de chats.</p>
+                        </div>
 
-                    <div class="pt-2">
-                        <button type="submit" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-semibold text-xs rounded-xl transition-all shadow-lg shadow-indigo-600/25 flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-floppy-disk"></i>
-                            <span>Salvar Credenciais</span>
+                        <button @click="fetchOperators()"
+                            class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl transition-all shadow-md shadow-indigo-600/25 flex items-center gap-2">
+                            <i class="fa-solid fa-rotate-right"></i>
+                            <span>Sincronizar Operadores do uTalk</span>
                         </button>
+                    </div>
+
+                    <!-- Painel de Regras de Distribuição -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="glass-card p-4 rounded-xl space-y-2">
+                            <label class="block text-xs font-semibold text-slate-300">Status do Rodízio</label>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold"
+                                    :class="config.rotation_enabled ? 'text-emerald-400' : 'text-slate-400'"
+                                    x-text="config.rotation_enabled ? 'ATIVO' : 'DESATIVADO'"></span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" x-model="config.rotation_enabled" class="sr-only peer">
+                                    <div
+                                        class="w-9 h-5 bg-slate-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600">
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="glass-card p-4 rounded-xl space-y-2">
+                            <label class="block text-xs font-semibold text-slate-300">Estratégia de Distribuição</label>
+                            <div
+                                class="w-full bg-slate-950/80 border border-slate-800 rounded-lg px-3 py-1.5 text-xs font-semibold text-emerald-400 flex items-center justify-between">
+                                <span>Apenas Operadores ONLINE no uTalk</span>
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            </div>
+                        </div>
+
+                        <div class="glass-card p-4 rounded-xl space-y-2">
+                            <label class="block text-xs font-semibold text-slate-300">Comando de Transferência</label>
+                            <input type="text" x-model="config.rotation_trigger_keyword"
+                                class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs font-mono text-indigo-300 focus:outline-none focus:border-indigo-500">
+                        </div>
+                    </div>
+
+                    <!-- Lista de Operadores -->
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Operadores Humanos
+                                Disponíveis na Organização</h3>
+                            <div class="flex items-center gap-2">
+                                <button @click="selectAllOperators(true)"
+                                    class="text-xs text-indigo-400 hover:underline">Selecionar Todos</button>
+                                <span class="text-slate-600">|</span>
+                                <button @click="selectAllOperators(false)"
+                                    class="text-xs text-slate-400 hover:underline">Desmarcar Todos</button>
+                            </div>
+                        </div>
+
+                        <div x-show="loadingOperators" class="p-6 text-center text-xs text-slate-400 animate-pulse">
+                            Carregando operadores ativos do uTalk...</div>
+
+                        <div x-show="!loadingOperators && operators.length > 0"
+                            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                            <template x-for="op in operators" :key="op.id">
+                                <label
+                                    class="glass-card p-4 rounded-xl flex items-start justify-between cursor-pointer border transition-all"
+                                    :class="config.rotation_operator_ids.includes(op.id) ? 'border-indigo-500/50 bg-indigo-950/20' : 'border-slate-800'">
+                                    <div class="space-y-1">
+                                        <div class="flex items-center gap-2">
+                                            <span class="font-bold text-xs text-slate-100" x-text="op.name"></span>
+                                            <span x-show="op.is_online"
+                                                class="text-[9px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.2 rounded font-bold">ONLINE</span>
+                                            <span x-show="!op.is_online"
+                                                class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.2 rounded">OFFLINE</span>
+                                        </div>
+                                        <span class="block text-[11px] text-slate-400"
+                                            x-text="op.email || 'Sem e-mail'"></span>
+                                        <span class="block text-[9px] font-mono text-slate-600"
+                                            x-text="'ID: ' + op.id"></span>
+                                    </div>
+                                    <input type="checkbox" :value="op.id" x-model="config.rotation_operator_ids"
+                                        class="accent-indigo-600 w-4 h-4 rounded mt-1">
+                                </label>
+                            </template>
+                        </div>
+
+                        <div x-show="!loadingOperators && operators.length === 0"
+                            class="p-6 text-center text-xs text-slate-500">
+                            Clique em "Sincronizar Operadores do uTalk" para carregar a lista.
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end pt-4 border-t border-slate-800">
+                        <button @click="saveConfig()"
+                            class="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 text-white font-semibold text-xs rounded-xl transition-all shadow-lg shadow-emerald-600/25 flex items-center gap-2">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            <span>Salvar Configurações do Rodízio</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: PROMPT & FUNIL IA -->
+            <div x-show="activeTab === 'prompt'" class="space-y-6">
+                <div class="glass-panel p-6 rounded-2xl space-y-6">
+                    <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
+                        <div
+                            class="w-9 h-9 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold text-base">
+                            <i class="fa-solid fa-brain"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-extrabold text-slate-100">Prompt do Sistema & Funil de Qualificação
+                            </h2>
+                            <p class="text-xs text-slate-400">Instruções principais do Gemini. Inclua a palavra-chave
+                                <code class="text-purple-300 font-mono"
+                                    x-text="config.rotation_trigger_keyword || '[TRANSFERIR]'"></code> quando o lead for
+                                qualificado.</p>
+                        </div>
+                    </div>
+
+                    <textarea x-model="config.system_prompt" rows="12"
+                        class="w-full bg-slate-950/90 border border-slate-800 rounded-xl p-4 text-xs focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors font-mono leading-relaxed text-slate-200"></textarea>
+
+                    <div class="flex justify-end">
+                        <button @click="saveConfig()"
+                            class="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold text-xs rounded-xl transition-all shadow-lg shadow-purple-600/25 flex items-center gap-2">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            <span>Salvar Prompt de Sistema</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: CREDENCIAIS & ACESSOS -->
+            <div x-show="activeTab === 'credentials'" class="space-y-6">
+                <div class="glass-panel p-6 rounded-2xl space-y-6 max-w-3xl mx-auto">
+                    <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
+                        <div
+                            class="w-9 h-9 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold text-base">
+                            <i class="fa-solid fa-key"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-extrabold text-slate-100">Credenciais & Acessos da Aplicação</h2>
+                            <p class="text-xs text-slate-400">Gerencie as chaves de conexão com uTalk, Gemini e senha de
+                                acesso.</p>
+                        </div>
+                    </div>
+
+                    <form @submit.prevent="saveConfig()" class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 mb-1.5">Usuário Admin</label>
+                                <input type="text" x-model="config.admin_username" autocomplete="username"
+                                    class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 mb-1.5">Senha Admin</label>
+                                <input type="password" x-model="config.admin_password" autocomplete="current-password"
+                                    class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Modelo Google
+                                Gemini</label>
+                            <select x-model="config.gemini_model"
+                                class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500">
+                                <option value="gemini-3.1-flash-lite">gemini-3.1-flash-lite (Recomendado)</option>
+                                <option value="gemini-3.6-flash">gemini-3.6-flash</option>
+                                <option value="gemini-2.5-flash">gemini-2.5-flash</option>
+                                <option value="gemini-1.5-flash">gemini-1.5-flash</option>
+                                <option value="gemini-1.5-pro">gemini-1.5-pro</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Gemini API Key</label>
+                            <input type="password" x-model="config.gemini_api_key"
+                                class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1.5">uTalk API Token</label>
+                            <input type="password" x-model="config.utalk_api_token"
+                                class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1.5">uTalk Organization
+                                ID</label>
+                            <input type="text" x-model="config.utalk_organization_id"
+                                class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500">
+                        </div>
+
+                        <div class="pt-2">
+                            <button type="submit"
+                                class="w-full py-3 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-semibold text-xs rounded-xl transition-all shadow-lg shadow-indigo-600/25 flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-floppy-disk"></i>
+                                <span>Salvar Credenciais</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- TAB 5: APIS EXTERNAS & TOOLS -->
+            <div x-show="activeTab === 'apis'" class="space-y-6">
+                <div class="glass-panel p-6 rounded-2xl space-y-6">
+                    <div
+                        class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-4">
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-600 to-pink-500 flex items-center justify-center font-bold text-base text-white shadow-md">
+                                <i class="fa-solid fa-plug"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-lg font-extrabold text-slate-100">
+                                    APIs Externas Conectadas (`request_external_api`)
+                                </h2>
+                                <p class="text-xs text-slate-400">Cadastre integrações dinâmicas para a IA consultar
+                                    estoques, fretes e ERPs em tempo real.</p>
+                            </div>
+                        </div>
+
+                        <button @click="openApiModal()"
+                            class="px-4 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold text-xs rounded-xl transition-all flex items-center gap-2 shadow-lg shadow-purple-600/25">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Nova Integração API</span>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <template x-for="api in config.external_apis" :key="api.id">
+                            <div class="glass-card p-4 rounded-xl space-y-3 border border-slate-800">
+                                <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs font-bold text-slate-100" x-text="api.name"></span>
+                                        <span class="text-[9px] font-mono px-2 py-0.5 rounded"
+                                            :class="api.enabled ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-800 text-slate-500'"
+                                            x-text="api.enabled ? 'ATIVA' : 'PAUSADA'"></span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <button @click="editApi(api)"
+                                            class="text-xs text-indigo-400 hover:underline">Editar</button>
+                                        <button @click="deleteApi(api.id)"
+                                            class="text-xs text-rose-400 hover:underline">Excluir</button>
+                                    </div>
+                                </div>
+                                <div class="text-[11px] font-mono text-purple-300 truncate" x-text="api.base_url"></div>
+                                <div class="text-xs text-slate-400 bg-slate-950 p-2.5 rounded-lg border border-slate-900 font-mono text-[10px] leading-relaxed max-h-20 overflow-y-auto"
+                                    x-text="api.documentation"></div>
+                            </div>
+                        </template>
+                        <div x-show="!config.external_apis || config.external_apis.length === 0"
+                            class="p-6 text-center text-xs text-slate-500 col-span-full">
+                            Nenhuma API cadastrada.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Modal de API Externa (Alpine.js Modal) -->
+        <div x-show="apiModalOpen"
+            class="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
+            <div class="glass-panel p-6 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto space-y-5 border border-slate-800 shadow-2xl"
+                @click.away="apiModalOpen = false">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                    <h3 class="text-base font-bold text-purple-400"
+                        x-text="editingApi.id ? 'Editar Integração de API' : 'Cadastrar Nova Integração de API'"></h3>
+                    <button @click="apiModalOpen = false" class="text-slate-400 hover:text-white text-lg">✕</button>
+                </div>
+
+                <form @submit.prevent="saveApiModal()" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Nome da API / Serviço</label>
+                            <input type="text" x-model="editingApi.name" required
+                                class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-purple-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Base URL</label>
+                            <input type="text" x-model="editingApi.base_url" required
+                                class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-purple-500 font-mono">
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="block text-xs font-semibold text-slate-400">Cabeçalhos HTTP (Headers)</label>
+                            <button type="button" @click="editingApi.headers.push({ key: '', value: '' })"
+                                class="text-xs text-purple-400 hover:underline">+ Adicionar Header</button>
+                        </div>
+                        <div class="space-y-2">
+                            <template x-for="(hdr, idx) in editingApi.headers" :key="idx">
+                                <div class="flex items-center gap-2">
+                                    <input type="text" placeholder="Key (ex: Authorization)" x-model="hdr.key"
+                                        class="w-1/2 bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 font-mono">
+                                    <input type="text" placeholder="Value (ex: Bearer token)" x-model="hdr.value"
+                                        class="w-1/2 bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 font-mono">
+                                    <button type="button" @click="editingApi.headers.splice(idx, 1)"
+                                        class="text-rose-400 hover:text-rose-300 text-xs px-1">✕</button>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">Documentação para a IA</label>
+                        <textarea x-model="editingApi.documentation" rows="4" required
+                            class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-slate-200 focus:outline-none focus:border-purple-500"></textarea>
+                    </div>
+
+                    <div class="flex justify-end gap-3 pt-4 border-t border-slate-800">
+                        <button type="button" @click="apiModalOpen = false"
+                            class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs font-semibold rounded-xl border border-slate-800">Cancelar</button>
+                        <button type="submit"
+                            class="px-5 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-semibold rounded-xl">Salvar
+                            Integração</button>
                     </div>
                 </form>
             </div>
         </div>
 
-        <!-- TAB 5: APIS EXTERNAS & TOOLS -->
-        <div x-show="activeTab === 'apis'" class="space-y-6">
-            <div class="glass-panel p-6 rounded-2xl space-y-6">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-600 to-pink-500 flex items-center justify-center font-bold text-base text-white shadow-md">
-                            <i class="fa-solid fa-plug"></i>
-                        </div>
-                        <div>
-                            <h2 class="text-lg font-extrabold text-slate-100">
-                                APIs Externas Conectadas (`request_external_api`)
-                            </h2>
-                            <p class="text-xs text-slate-400">Cadastre integrações dinâmicas para a IA consultar estoques, fretes e ERPs em tempo real.</p>
-                        </div>
-                    </div>
+        <!-- Script Alpine.js Reativo com Estado da Sidebar Retrátil -->
+        <script>
+            function dashboardApp() {
+                return {
+                    loggedIn: false,
+                    loginUsername: '',
+                    loginPassword: '',
+                    loginLoading: false,
+                    loginError: '',
+                    activeTab: 'metrics',
+                    sidebarCollapsed: false,
+                    config: {
+                        bot_enabled: true,
+                        admin_username: '',
+                        admin_password: '',
+                        gemini_model: 'gemini-3.1-flash-lite',
+                        gemini_api_key: '',
+                        utalk_api_token: '',
+                        utalk_organization_id: '',
+                        system_prompt: '',
+                        external_apis: [],
+                        rotation_enabled: true,
+                        rotation_operator_ids: [],
+                        rotation_strategy: 'online_only',
+                        rotation_trigger_keyword: '[TRANSFERIR]'
+                    },
+                    stats: {
+                        total_messages: 0,
+                        total_transfers: 0,
+                        transfers_by_operator: [],
+                        recent_transfers: []
+                    },
+                    operators: [],
+                    loadingOperators: false,
+                    alert: { show: false, msg: '', type: 'success' },
+                    apiModalOpen: false,
+                    editingApi: { id: '', name: '', base_url: '', headers: [], documentation: '', enabled: true },
 
-                    <button @click="openApiModal()" class="px-4 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold text-xs rounded-xl transition-all flex items-center gap-2 shadow-lg shadow-purple-600/25">
-                        <i class="fa-solid fa-plus"></i>
-                        <span>Nova Integração API</span>
-                    </button>
-                </div>
+                    init() {
+                        this.loadConfig();
+                    },
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <template x-for="api in config.external_apis" :key="api.id">
-                        <div class="glass-card p-4 rounded-xl space-y-3 border border-slate-800">
-                            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-                                <div class="flex items-center gap-2">
-                                    <span class="text-xs font-bold text-slate-100" x-text="api.name"></span>
-                                    <span class="text-[9px] font-mono px-2 py-0.5 rounded" :class="api.enabled ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-800 text-slate-500'" x-text="api.enabled ? 'ATIVA' : 'PAUSADA'"></span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <button @click="editApi(api)" class="text-xs text-indigo-400 hover:underline">Editar</button>
-                                    <button @click="deleteApi(api.id)" class="text-xs text-rose-400 hover:underline">Excluir</button>
-                                </div>
-                            </div>
-                            <div class="text-[11px] font-mono text-purple-300 truncate" x-text="api.base_url"></div>
-                            <div class="text-xs text-slate-400 bg-slate-950 p-2.5 rounded-lg border border-slate-900 font-mono text-[10px] leading-relaxed max-h-20 overflow-y-auto" x-text="api.documentation"></div>
-                        </div>
-                    </template>
-                    <div x-show="!config.external_apis || config.external_apis.length === 0" class="p-6 text-center text-xs text-slate-500 col-span-full">
-                        Nenhuma API cadastrada.
-                    </div>
-                </div>
-            </div>
-        </div>
+                    switchTab(tabId) {
+                        this.activeTab = tabId;
+                        if (tabId === 'metrics') this.loadStats();
+                        if (tabId === 'rotation' && this.operators.length === 0) this.fetchOperators();
+                    },
 
-        <div x-show="activeTab === 'chats'" class="space-y-6">
-            <div class="glass-panel p-6 rounded-2xl space-y-6">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-teal-500 to-emerald-400 flex items-center justify-center font-bold text-base text-white shadow-md">
-                            <i class="fa-solid fa-comments"></i>
-                        </div>
-                        <div>
-                            <h2 class="text-lg font-extrabold text-slate-100">
-                                Histórico de Chats & Testes
-                            </h2>
-                            <p class="text-xs text-slate-400">Visualize todas as conversas gravadas. Apague o histórico para limpar o contexto da IA nos testes.</p>
-                        </div>
-                    </div>
-                    <button @click="fetchChats()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs font-semibold rounded-xl border border-slate-800 flex items-center gap-2">
-                        <i class="fa-solid fa-rotate-right"></i>
-                        <span>Atualizar</span>
-                    </button>
-                </div>
+                    showAlert(msg, type = 'success') {
+                        this.alert = { show: true, msg, type };
+                        setTimeout(() => this.alert.show = false, 4000);
+                    },
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <template x-for="chat in chatsList" :key="chat.chat_id">
-                        <div class="glass-card p-4 rounded-xl space-y-3 border border-slate-800 flex flex-col justify-between">
-                            <div>
-                                <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-2">
-                                    <span class="text-xs font-mono font-bold text-slate-200 truncate" x-text="chat.chat_id" :title="chat.chat_id"></span>
-                                    <span class="text-[10px] bg-slate-900 px-2 py-0.5 rounded text-slate-400" x-text="chat.msg_count + ' msgs'"></span>
-                                </div>
-                                <div class="text-[10px] text-slate-500">Última inter.: <span x-text="new Date(chat.last_msg).toLocaleString()"></span></div>
-                            </div>
-                            <button @click="deleteChat(chat.chat_id)" class="mt-2 w-full px-3 py-1.5 bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 hover:text-rose-300 text-[11px] font-semibold rounded-lg border border-rose-900/30 transition-colors flex justify-center items-center gap-1.5">
-                                <i class="fa-solid fa-trash-can"></i>
-                                <span>Apagar Histórico</span>
-                            </button>
-                        </div>
-                    </template>
-                    <div x-show="chatsList.length === 0" class="col-span-full p-6 text-center text-xs text-slate-500">
-                        Nenhum chat registrado.
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- Modal de API Externa (Alpine.js Modal) -->
-    <div x-show="apiModalOpen" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
-        <div class="glass-panel p-6 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto space-y-5 border border-slate-800 shadow-2xl" @click.away="apiModalOpen = false">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 class="text-base font-bold text-purple-400" x-text="editingApi.id ? 'Editar Integração de API' : 'Cadastrar Nova Integração de API'"></h3>
-                <button @click="apiModalOpen = false" class="text-slate-400 hover:text-white text-lg">✕</button>
-            </div>
-
-            <form @submit.prevent="saveApiModal()" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-400 mb-1">Nome da API / Serviço</label>
-                        <input type="text" x-model="editingApi.name" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-purple-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-400 mb-1">Base URL</label>
-                        <input type="text" x-model="editingApi.base_url" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-purple-500 font-mono">
-                    </div>
-                </div>
-
-                <div>
-                    <div class="flex justify-between items-center mb-2">
-                        <label class="block text-xs font-semibold text-slate-400">Cabeçalhos HTTP (Headers)</label>
-                        <button type="button" @click="editingApi.headers.push({ key: '', value: '' })" class="text-xs text-purple-400 hover:underline">+ Adicionar Header</button>
-                    </div>
-                    <div class="space-y-2">
-                        <template x-for="(hdr, idx) in editingApi.headers" :key="idx">
-                            <div class="flex items-center gap-2">
-                                <input type="text" placeholder="Key (ex: Authorization)" x-model="hdr.key" class="w-1/2 bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 font-mono">
-                                <input type="text" placeholder="Value (ex: Bearer token)" x-model="hdr.value" class="w-1/2 bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 font-mono">
-                                <button type="button" @click="editingApi.headers.splice(idx, 1)" class="text-rose-400 hover:text-rose-300 text-xs px-1">✕</button>
-                            </div>
-                        </template>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 mb-1">Documentação para a IA</label>
-                    <textarea x-model="editingApi.documentation" rows="4" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-slate-200 focus:outline-none focus:border-purple-500"></textarea>
-                </div>
-
-                <div class="flex justify-end gap-3 pt-4 border-t border-slate-800">
-                    <button type="button" @click="apiModalOpen = false" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs font-semibold rounded-xl border border-slate-800">Cancelar</button>
-                    <button type="submit" class="px-5 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-semibold rounded-xl">Salvar Integração</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Script Alpine.js Reativo com Estado da Sidebar Retrátil -->
-    <script>
-        function dashboardApp() {
-            return {
-                loggedIn: false,
-                loginUsername: '',
-                loginPassword: '',
-                loginLoading: false,
-                loginError: '',
-                activeTab: 'metrics',
-                sidebarCollapsed: false,
-                config: {
-                    bot_enabled: true,
-                    admin_username: '',
-                    admin_password: '',
-                    gemini_model: 'gemini-3.1-flash-lite',
-                    gemini_api_key: '',
-                    utalk_api_token: '',
-                    utalk_organization_id: '',
-                    system_prompt: '',
-                    external_apis: [],
-                    rotation_enabled: true,
-                    rotation_operator_ids: [],
-                    rotation_strategy: 'online_only',
-                    rotation_trigger_keyword: '[TRANSFERIR]'
-                },
-                stats: {
-                    total_messages: 0,
-                    total_transfers: 0,
-                    transfers_by_operator: [],
-                    recent_transfers: []
-                },
-                operators: [],
-                loadingOperators: false,
-                alert: { show: false, msg: '', type: 'success' },
-                apiModalOpen: false,
-                editingApi: { id: '', name: '', base_url: '', headers: [], documentation: '', enabled: true },
-                chatsList: [],
-
-                init() {
-                    this.loadConfig();
-                },
-
-                switchTab(tabId) {
-                    this.activeTab = tabId;
-                    if (tabId === 'metrics') this.loadStats();
-                    if (tabId === 'rotation' && this.operators.length === 0) this.fetchOperators();
-                    if (tabId === 'chats') this.fetchChats();
-                },
-
-                async fetchChats() {
-                    try {
-                        const res = await fetch('/api/chats');
-                        if (res.ok) {
-                            this.chatsList = await res.json();
-                        } else {
-                            this.showAlert('Erro ao buscar lista de chats.', 'error');
-                        }
-                    } catch (err) {
-                        this.showAlert('Falha ao comunicar com o servidor.', 'error');
-                    }
-                },
-
-                async deleteChat(chatId) {
-                    if (!confirm(`Tem certeza que deseja apagar o histórico do chat ${chatId}? Isso não pode ser desfeito.`)) return;
-                    try {
-                        const res = await fetch(`/api/chats/${chatId}`, { method: 'DELETE' });
-                        if (res.ok) {
-                            this.showAlert('Histórico apagado com sucesso!');
-                            this.fetchChats();
-                        } else {
-                            this.showAlert('Erro ao apagar chat.', 'error');
-                        }
-                    } catch (err) {
-                        this.showAlert('Falha ao comunicar com o servidor.', 'error');
-                    }
-                },
-
-                showAlert(msg, type = 'success') {
-                    this.alert = { show: true, msg, type };
-                    setTimeout(() => this.alert.show = false, 4000);
-                },
-
-                async loadConfig() {
-                    try {
-                        const res = await fetch('/api/config');
-                        if (res.status === 401) {
-                            this.loggedIn = false;
-                            return;
-                        }
-                        this.loggedIn = true;
-                        const data = await res.json();
-                        this.config = { ...this.config, ...data };
-                        if (!this.config.rotation_operator_ids) this.config.rotation_operator_ids = [];
-                        if (!this.config.external_apis) this.config.external_apis = [];
-                        this.loadStats();
-                    } catch (err) {
-                        console.error('Erro ao carregar configurações:', err);
-                    }
-                },
-
-                async doLogin() {
-                    this.loginLoading = true;
-                    this.loginError = '';
-                    try {
-                        const res = await fetch('/api/login', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ username: this.loginUsername, password: this.loginPassword })
-                        });
-                        const data = await res.json();
-                        if (res.ok && data.success) {
+                    async loadConfig() {
+                        try {
+                            const res = await fetch('/api/config');
+                            if (res.status === 401) {
+                                this.loggedIn = false;
+                                return;
+                            }
                             this.loggedIn = true;
-                            this.loginPassword = '';
-                            this.loadConfig();
-                        } else {
-                            this.loginError = data.message || 'Usuário ou senha incorretos.';
-                        }
-                    } catch (err) {
-                        this.loginError = 'Falha de conexão com o servidor.';
-                    } finally {
-                        this.loginLoading = false;
-                    }
-                },
-
-                async saveConfig(showMsg = true) {
-                    try {
-                        const res = await fetch('/api/config', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(this.config)
-                        });
-                        if (res.ok) {
-                            if (showMsg) this.showAlert('Configurações salvas com sucesso!');
+                            const data = await res.json();
+                            this.config = { ...this.config, ...data };
+                            if (!this.config.rotation_operator_ids) this.config.rotation_operator_ids = [];
+                            if (!this.config.external_apis) this.config.external_apis = [];
                             this.loadStats();
+                        } catch (err) {
+                            console.error('Erro ao carregar configurações:', err);
+                        }
+                    },
+
+                    async doLogin() {
+                        this.loginLoading = true;
+                        this.loginError = '';
+                        try {
+                            const res = await fetch('/api/login', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ username: this.loginUsername, password: this.loginPassword })
+                            });
+                            const data = await res.json();
+                            if (res.ok && data.success) {
+                                this.loggedIn = true;
+                                this.loginPassword = '';
+                                this.loadConfig();
+                            } else {
+                                this.loginError = data.message || 'Usuário ou senha incorretos.';
+                            }
+                        } catch (err) {
+                            this.loginError = 'Falha de conexão com o servidor.';
+                        } finally {
+                            this.loginLoading = false;
+                        }
+                    },
+
+                    async saveConfig(showMsg = true) {
+                        try {
+                            const res = await fetch('/api/config', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(this.config)
+                            });
+                            if (res.ok) {
+                                if (showMsg) this.showAlert('Configurações salvas com sucesso!');
+                                this.loadStats();
+                            } else {
+                                this.showAlert('Erro ao salvar configurações.', 'error');
+                            }
+                        } catch (err) {
+                            this.showAlert('Falha de conexão.', 'error');
+                        }
+                    },
+
+                    async loadStats() {
+                        try {
+                            const res = await fetch('/api/stats');
+                            if (res.ok) {
+                                this.stats = await res.json();
+                            }
+                        } catch (err) {
+                            console.error('Erro ao carregar estatísticas:', err);
+                        }
+                    },
+
+                    async fetchOperators() {
+                        this.loadingOperators = true;
+                        try {
+                            const res = await fetch('/api/operators');
+                            if (res.ok) {
+                                this.operators = await res.json();
+                            } else {
+                                this.showAlert('Erro ao buscar operadores. Verifique as credenciais do uTalk.', 'error');
+                            }
+                        } catch (err) {
+                            this.showAlert('Falha ao se comunicar com o backend Rust.', 'error');
+                        } finally {
+                            this.loadingOperators = false;
+                        }
+                    },
+
+                    selectAllOperators(flag) {
+                        if (flag) {
+                            this.config.rotation_operator_ids = this.operators.map(o => o.id);
                         } else {
-                            this.showAlert('Erro ao salvar configurações.', 'error');
+                            this.config.rotation_operator_ids = [];
                         }
-                    } catch (err) {
-                        this.showAlert('Falha de conexão.', 'error');
-                    }
-                },
+                    },
 
-                async loadStats() {
-                    try {
-                        const res = await fetch('/api/stats');
-                        if (res.ok) {
-                            this.stats = await res.json();
-                        }
-                    } catch (err) {
-                        console.error('Erro ao carregar estatísticas:', err);
-                    }
-                },
-
-                async fetchOperators() {
-                    this.loadingOperators = true;
-                    try {
-                        const res = await fetch('/api/operators');
-                        if (res.ok) {
-                            this.operators = await res.json();
+                    openApiModal(api = null) {
+                        if (api) {
+                            this.editingApi = JSON.parse(JSON.stringify(api));
                         } else {
-                            this.showAlert('Erro ao buscar operadores. Verifique as credenciais do uTalk.', 'error');
+                            this.editingApi = { id: '', name: '', base_url: '', headers: [], documentation: '', enabled: true };
                         }
-                    } catch (err) {
-                        this.showAlert('Falha ao se comunicar com o backend Rust.', 'error');
-                    } finally {
-                        this.loadingOperators = false;
+                        this.apiModalOpen = true;
+                    },
+
+                    saveApiModal() {
+                        if (!this.editingApi.id) {
+                            this.editingApi.id = 'api_' + Date.now();
+                        }
+                        const idx = this.config.external_apis.findIndex(a => a.id === this.editingApi.id);
+                        if (idx >= 0) {
+                            this.config.external_apis[idx] = { ...this.editingApi };
+                        } else {
+                            this.config.external_apis.push({ ...this.editingApi });
+                        }
+                        this.saveConfig();
+                        this.apiModalOpen = false;
+                    },
+
+                    deleteApi(id) {
+                        if (!confirm('Deseja realmente excluir esta integração?')) return;
+                        this.config.external_apis = this.config.external_apis.filter(a => a.id !== id);
+                        this.saveConfig();
+                    },
+
+                    async doLogout() {
+                        await fetch('/api/logout', { method: 'POST' });
+                        window.location.reload();
                     }
-                },
+                };
+            }
+        </script>
 
-                selectAllOperators(flag) {
-                    if (flag) {
-                        this.config.rotation_operator_ids = this.operators.map(o => o.id);
-                    } else {
-                        this.config.rotation_operator_ids = [];
-                    }
-                },
-
-                openApiModal(api = null) {
-                    if (api) {
-                        this.editingApi = JSON.parse(JSON.stringify(api));
-                    } else {
-                        this.editingApi = { id: '', name: '', base_url: '', headers: [], documentation: '', enabled: true };
-                    }
-                    this.apiModalOpen = true;
-                },
-
-                saveApiModal() {
-                    if (!this.editingApi.id) {
-                        this.editingApi.id = 'api_' + Date.now();
-                    }
-                    const idx = this.config.external_apis.findIndex(a => a.id === this.editingApi.id);
-                    if (idx >= 0) {
-                        this.config.external_apis[idx] = { ...this.editingApi };
-                    } else {
-                        this.config.external_apis.push({ ...this.editingApi });
-                    }
-                    this.saveConfig();
-                    this.apiModalOpen = false;
-                },
-
-                deleteApi(id) {
-                    if (!confirm('Deseja realmente excluir esta integração?')) return;
-                    this.config.external_apis = this.config.external_apis.filter(a => a.id !== id);
-                    this.saveConfig();
-                },
-
-                async doLogout() {
-                    await fetch('/api/logout', { method: 'POST' });
-                    window.location.reload();
-                }
-            };
-        }
-    </script>
-
-    <!-- Mobile Bottom Navigation Bar (Barra de Navegação Inferior para Dispositivos Móveis com Font Awesome) -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-slate-950/95 backdrop-blur-md border-t border-slate-800/80 px-2 py-2 flex justify-around items-center text-[10px] shadow-2xl">
-        <button @click="switchTab('metrics')" :class="{ 'text-indigo-400 font-bold': activeTab === 'metrics', 'text-slate-400': activeTab !== 'metrics' }" class="flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition-all">
-            <i class="fa-solid fa-chart-pie text-base"></i>
-            <span>Métricas</span>
-        </button>
-        <button @click="switchTab('rotation')" :class="{ 'text-indigo-400 font-bold': activeTab === 'rotation', 'text-slate-400': activeTab !== 'rotation' }" class="flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition-all">
-            <i class="fa-solid fa-users-gear text-base"></i>
-            <span>Rodízio</span>
-        </button>
-        <button @click="switchTab('prompt')" :class="{ 'text-indigo-400 font-bold': activeTab === 'prompt', 'text-slate-400': activeTab !== 'prompt' }" class="flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition-all">
-            <i class="fa-solid fa-brain text-base"></i>
-            <span>Prompt</span>
-        </button>
-        <button @click="switchTab('credentials')" :class="{ 'text-indigo-400 font-bold': activeTab === 'credentials', 'text-slate-400': activeTab !== 'credentials' }" class="flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition-all">
-            <i class="fa-solid fa-key text-base"></i>
-            <span>Acessos</span>
-        </button>
-        <button @click="switchTab('apis')" :class="{ 'text-indigo-400 font-bold': activeTab === 'apis', 'text-slate-400': activeTab !== 'apis' }" class="flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition-all">
-            <i class="fa-solid fa-plug text-base"></i>
-            <span>APIs</span>
-        </button>
-        <button @click="switchTab('chats')" :class="{ 'text-teal-400 font-bold': activeTab === 'chats', 'text-slate-400': activeTab !== 'chats' }" class="flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition-all">
-            <i class="fa-solid fa-comments text-base"></i>
-            <span>Testes</span>
-        </button>
-    </nav>
+        <!-- Mobile Bottom Navigation Bar (Barra de Navegação Inferior para Dispositivos Móveis com Font Awesome) -->
+        <nav
+            class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-slate-950/95 backdrop-blur-md border-t border-slate-800/80 px-2 py-2 flex justify-around items-center text-[10px] shadow-2xl">
+            <button @click="switchTab('metrics')"
+                :class="{ 'text-indigo-400 font-bold': activeTab === 'metrics', 'text-slate-400': activeTab !== 'metrics' }"
+                class="flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition-all">
+                <i class="fa-solid fa-chart-pie text-base"></i>
+                <span>Métricas</span>
+            </button>
+            <button @click="switchTab('rotation')"
+                :class="{ 'text-indigo-400 font-bold': activeTab === 'rotation', 'text-slate-400': activeTab !== 'rotation' }"
+                class="flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition-all">
+                <i class="fa-solid fa-users-gear text-base"></i>
+                <span>Rodízio</span>
+            </button>
+            <button @click="switchTab('prompt')"
+                :class="{ 'text-indigo-400 font-bold': activeTab === 'prompt', 'text-slate-400': activeTab !== 'prompt' }"
+                class="flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition-all">
+                <i class="fa-solid fa-brain text-base"></i>
+                <span>Prompt</span>
+            </button>
+            <button @click="switchTab('credentials')"
+                :class="{ 'text-indigo-400 font-bold': activeTab === 'credentials', 'text-slate-400': activeTab !== 'credentials' }"
+                class="flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition-all">
+                <i class="fa-solid fa-key text-base"></i>
+                <span>Acessos</span>
+            </button>
+            <button @click="switchTab('apis')"
+                :class="{ 'text-indigo-400 font-bold': activeTab === 'apis', 'text-slate-400': activeTab !== 'apis' }"
+                class="flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition-all">
+                <i class="fa-solid fa-plug text-base"></i>
+                <span>APIs</span>
+            </button>
+        </nav>
     </div>
 </body>
+
 </html>

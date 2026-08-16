@@ -116,6 +116,7 @@ pub async fn generate_gemini_response(
     config: &AppConfig,
     chat_id: &str,
     user_message: &str,
+    audio_data: Option<(&str, &str)>,
 ) -> Result<String, String> {
     if config.gemini_api_key.is_empty() {
         return Err("GEMINI_API_KEY não foi configurada.".to_string());
@@ -124,12 +125,30 @@ pub async fn generate_gemini_response(
     // Carrega o histórico persistido do chat analisando se houve pausa longa (> 24h)
     let (mut contents, hours_elapsed) = db.get_chat_context_for_ai(chat_id, 24);
 
-    // Salva a nova mensagem do usuário no banco SQLite com timestamp
-    db.save_message(chat_id, "user", user_message);
-    contents.push(json!({
-        "role": "user",
-        "parts": [{ "text": user_message }]
-    }));
+    if let Some((mime_type, base64_data)) = audio_data {
+        println!("🎧 Enviando arquivo de áudio bruto diretamente ao Gemini multimodal [mime: {}]...", mime_type);
+        db.save_message(chat_id, "user", "[Áudio do cliente]");
+        contents.push(json!({
+            "role": "user",
+            "parts": [
+                {
+                    "inline_data": {
+                        "mime_type": mime_type,
+                        "data": base64_data
+                    }
+                },
+                {
+                    "text": "Ouça o áudio acima enviado pelo cliente e atenda à solicitação dele de forma amigável, clara e precisa."
+                }
+            ]
+        }));
+    } else {
+        db.save_message(chat_id, "user", user_message);
+        contents.push(json!({
+            "role": "user",
+            "parts": [{ "text": user_message }]
+        }));
+    }
 
     if let Some(hours) = hours_elapsed {
         println!("⏱️ Tempo decorrido desde última mensagem de [{}]: {} horas", chat_id, hours);

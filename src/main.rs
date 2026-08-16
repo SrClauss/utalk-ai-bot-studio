@@ -200,34 +200,6 @@ async fn get_stats_handler(
     Err(StatusCode::UNAUTHORIZED)
 }
 
-async fn get_chats_handler(
-    State(state): State<AppState>,
-    headers: HeaderMap,
-) -> Result<Json<Vec<Value>>, StatusCode> {
-    if let Some(token) = extract_token(&headers) {
-        if state.db.validate_session(&token) {
-            let chats = state.db.get_all_chats_summary();
-            return Ok(Json(chats));
-        }
-    }
-    Err(StatusCode::UNAUTHORIZED)
-}
-
-async fn delete_chat_handler(
-    State(state): State<AppState>,
-    axum::extract::Path(chat_id): axum::extract::Path<String>,
-    headers: HeaderMap,
-) -> Result<StatusCode, StatusCode> {
-    if let Some(token) = extract_token(&headers) {
-        if state.db.validate_session(&token) {
-            state.db.delete_chat_messages(&chat_id);
-            return Ok(StatusCode::OK);
-        }
-    }
-    Err(StatusCode::UNAUTHORIZED)
-}
-
-
 async fn handle_webhook(
     State(state): State<AppState>,
     method: Method,
@@ -287,23 +259,43 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
     if source == "Contact" && !chat_id.is_empty() {
         println!("🤖 Processando mensagem de '{}' [ChatId: {}]", contact_name, chat_id);
 
+        let cfg_snapshot = state.db.get_config();
+        let mut audio_data_tuple: Option<(String, String)> = None;
+
         let user_prompt = if msg_type == "Text" {
             content.to_string()
         } else if msg_type == "Audio" {
-            format!("O cliente '{}' enviou um áudio. Atenda-o cordialmente.", contact_name)
+            let msg_id = last_msg["Id"].as_str().unwrap_or_default();
+            match utalk::fetch_message_audio(
+                &cfg_snapshot.utalk_api_url,
+                &cfg_snapshot.utalk_api_token,
+                &cfg_snapshot.utalk_organization_id,
+                msg_id,
+            )
+            .await
+            {
+                Ok((mime, b64)) => {
+                    audio_data_tuple = Some((mime, b64));
+                    "[Áudio enviado]".to_string()
+                }
+                Err(err) => {
+                    println!("⚠️ Não foi possível baixar mídia de áudio do uTalk: {}", err);
+                    format!("O cliente '{}' enviou um áudio.", contact_name)
+                }
+            }
         } else if msg_type == "Image" {
             format!("O cliente '{}' enviou uma imagem. Atenda-o cordialmente.", contact_name)
         } else {
             content.to_string()
         };
 
-        if user_prompt.trim().is_empty() {
+        if user_prompt.trim().is_empty() && audio_data_tuple.is_none() {
             return;
         }
 
-        let cfg_snapshot = state.db.get_config();
+        let audio_ref = audio_data_tuple.as_ref().map(|(m, b)| (m.as_str(), b.as_str()));
 
-        match gemini::generate_gemini_response(state.db.clone(), &cfg_snapshot, chat_id, &user_prompt).await {
+        match gemini::generate_gemini_response(state.db.clone(), &cfg_snapshot, chat_id, &user_prompt, audio_ref).await {
             Ok(mut ai_reply) => {
                 println!("✨ Gemini gerou resposta:\n{}", ai_reply);
 
@@ -403,8 +395,6 @@ async fn main() {
         .route("/api/config", get(get_config_handler).post(save_config_handler))
         .route("/api/operators", get(get_operators_handler))
         .route("/api/stats", get(get_stats_handler))
-        .route("/api/chats", get(get_chats_handler))
-        .route("/api/chats/:chat_id", axum::routing::delete(delete_chat_handler))
         .route("/webhook", any(handle_webhook))
         .with_state(state);
 
