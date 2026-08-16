@@ -183,6 +183,34 @@ impl Database {
         (contents, hours_since_last)
     }
 
+    pub fn get_all_chats_summary(&self) -> Vec<Value> {
+        let conn = self.conn.lock().unwrap();
+        let mut results = vec![];
+
+        let sql = "SELECT chat_id, COUNT(*) as msg_count, MAX(created_at) as last_msg FROM messages GROUP BY chat_id ORDER BY last_msg DESC";
+        if let Ok(mut stmt) = conn.prepare(sql) {
+            if let Ok(rows) = stmt.query_map([], |row| {
+                Ok(json!({
+                    "chat_id": row.get::<_, String>(0)?,
+                    "msg_count": row.get::<_, i64>(1)?,
+                    "last_msg": row.get::<_, String>(2)?
+                }))
+            }) {
+                for r in rows.flatten() {
+                    results.push(r);
+                }
+            }
+        }
+        results
+    }
+
+    pub fn delete_chat_messages(&self, chat_id: &str) {
+        let conn = self.conn.lock().unwrap();
+        let _ = conn.execute("DELETE FROM messages WHERE chat_id = ?1", params![chat_id]);
+        let _ = conn.execute("DELETE FROM messages_fts WHERE chat_id = ?1", params![chat_id]);
+        println!("🗑️ Histórico de chat deletado do BD local: {}", chat_id);
+    }
+
     // --- BUSCA TEXTUAL COMPLETA (FULL-TEXT SEARCH FTS5) ---
     pub fn search_full_text(&self, query_text: &str, target_chat_id: Option<&str>) -> Vec<Value> {
         let conn = self.conn.lock().unwrap();

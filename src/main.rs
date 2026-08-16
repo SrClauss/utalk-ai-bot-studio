@@ -200,6 +200,34 @@ async fn get_stats_handler(
     Err(StatusCode::UNAUTHORIZED)
 }
 
+async fn get_chats_handler(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+) -> Result<Json<Vec<Value>>, StatusCode> {
+    if let Some(token) = extract_token(&headers) {
+        if state.db.validate_session(&token) {
+            let chats = state.db.get_all_chats_summary();
+            return Ok(Json(chats));
+        }
+    }
+    Err(StatusCode::UNAUTHORIZED)
+}
+
+async fn delete_chat_handler(
+    State(state): State<AppState>,
+    axum::extract::Path(chat_id): axum::extract::Path<String>,
+    headers: HeaderMap,
+) -> Result<StatusCode, StatusCode> {
+    if let Some(token) = extract_token(&headers) {
+        if state.db.validate_session(&token) {
+            state.db.delete_chat_messages(&chat_id);
+            return Ok(StatusCode::OK);
+        }
+    }
+    Err(StatusCode::UNAUTHORIZED)
+}
+
+
 async fn handle_webhook(
     State(state): State<AppState>,
     method: Method,
@@ -375,6 +403,8 @@ async fn main() {
         .route("/api/config", get(get_config_handler).post(save_config_handler))
         .route("/api/operators", get(get_operators_handler))
         .route("/api/stats", get(get_stats_handler))
+        .route("/api/chats", get(get_chats_handler))
+        .route("/api/chats/:chat_id", axum::routing::delete(delete_chat_handler))
         .route("/webhook", any(handle_webhook))
         .with_state(state);
 
