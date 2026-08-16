@@ -88,10 +88,13 @@
                                class="w-full bg-slate-900/50 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder:text-slate-600">
                     </div>
                     
-                    <div class="relative">
+                    <div class="relative" x-data="{ showPass: false }">
                         <i class="fa-solid fa-lock absolute left-3.5 top-3 text-slate-500 text-xs"></i>
-                        <input type="password" x-model="loginPassword" placeholder="Senha" required autocomplete="current-password"
-                               class="w-full bg-slate-900/50 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder:text-slate-600">
+                        <input :type="showPass ? 'text' : 'password'" x-model="loginPassword" placeholder="Senha" required autocomplete="current-password"
+                               class="w-full bg-slate-900/50 border border-slate-800 rounded-xl pl-10 pr-10 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder:text-slate-600">
+                        <button type="button" @click="showPass = !showPass" class="absolute right-3.5 top-3 text-slate-500 hover:text-slate-300">
+                            <i class="fa-solid text-xs" :class="showPass ? 'fa-eye-slash' : 'fa-eye'"></i>
+                        </button>
                     </div>
                 </div>
                 
@@ -217,7 +220,7 @@
     </aside>
 
     <!-- Main Container (Ajusta margem esquerda conforme expansão/recolhimento da Sidebar no Desktop) -->
-    <main class="transition-all duration-300 flex-1 w-full px-4 sm:px-6 pt-6 pb-24 md:pb-12 space-y-6"
+    <main class="transition-all duration-300 flex-1 px-4 sm:px-6 pt-6 pb-24 md:pb-12 space-y-6"
           :class="sidebarCollapsed ? 'md:ml-20' : 'md:ml-64'">
 
         <!-- Banner Hero Integrado com Imagem Neuronal (/assets/banner.jpg) -->
@@ -537,9 +540,14 @@
                             <label class="block text-xs font-semibold text-slate-400 mb-1.5">Usuário Admin</label>
                             <input type="text" x-model="config.admin_username" autocomplete="username" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
                         </div>
-                        <div>
+                        <div x-data="{ showPass: false }">
                             <label class="block text-xs font-semibold text-slate-400 mb-1.5">Senha Admin</label>
-                            <input type="password" x-model="config.admin_password" autocomplete="current-password" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                            <div class="relative">
+                                <input :type="showPass ? 'text' : 'password'" x-model="config.admin_password" autocomplete="current-password" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 pr-10 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                                <button type="button" @click="showPass = !showPass" class="absolute right-3 top-2.5 text-slate-500 hover:text-slate-300">
+                                    <i class="fa-solid text-xs" :class="showPass ? 'fa-eye-slash' : 'fa-eye'"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -554,14 +562,24 @@
                         </select>
                     </div>
 
-                    <div>
+                    <div x-data="{ showPass: false }">
                         <label class="block text-xs font-semibold text-slate-400 mb-1.5">Gemini API Key</label>
-                        <input type="password" x-model="config.gemini_api_key" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500">
+                        <div class="relative">
+                            <input :type="showPass ? 'text' : 'password'" x-model="config.gemini_api_key" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 pr-10 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500">
+                            <button type="button" @click="showPass = !showPass" class="absolute right-3 top-2.5 text-slate-500 hover:text-slate-300">
+                                <i class="fa-solid text-xs" :class="showPass ? 'fa-eye-slash' : 'fa-eye'"></i>
+                            </button>
+                        </div>
                     </div>
 
-                    <div>
+                    <div x-data="{ showPass: false }">
                         <label class="block text-xs font-semibold text-slate-400 mb-1.5">uTalk API Token</label>
-                        <input type="password" x-model="config.utalk_api_token" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500">
+                        <div class="relative">
+                            <input :type="showPass ? 'text' : 'password'" x-model="config.utalk_api_token" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 pr-10 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500">
+                            <button type="button" @click="showPass = !showPass" class="absolute right-3 top-2.5 text-slate-500 hover:text-slate-300">
+                                <i class="fa-solid text-xs" :class="showPass ? 'fa-eye-slash' : 'fa-eye'"></i>
+                            </button>
+                        </div>
                     </div>
 
                     <div>
