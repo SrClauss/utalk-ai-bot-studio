@@ -25,9 +25,9 @@ pub async fn send_utalk_message(
     let url = format!("{}/messages?organizationId={}", api_url.trim_end_matches('/'), org_id);
 
     let body = json!({
-        "chatId": chat_id,
-        "content": content,
-        "messageType": "Text"
+        "ChatId": chat_id,
+        "OrganizationId": org_id,
+        "Message": content
     });
 
     println!("📤 Enviando mensagem ao cliente via uTalk API [ChatId: {}]...", chat_id);
