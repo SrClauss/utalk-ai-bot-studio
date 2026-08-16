@@ -215,58 +215,51 @@ pub async fn fetch_message_audio(
 
     println!("📥 Buscando metadados do áudio no uTalk [MsgId: {}]...", msg_id);
 
-    let res = client
-        .get(&url)
-        .header("Authorization", format!("Bearer {}", token))
-        .send()
-        .await
-        .map_err(|e| format!("Erro HTTP uTalk GET message: {}", e))?;
+    for attempt in 1..=4 {
+        let res = client
+            .get(&url)
+            .header("Authorization", format!("Bearer {}", token))
+            .send()
+            .await
+            .map_err(|e| format!("Erro HTTP uTalk GET message: {}", e))?;
 
-    if !res.status().is_success() {
-        return Err(format!("Erro uTalk GET message HTTP {}", res.status()));
+        if res.status().is_success() {
+            let msg_json: serde_json::Value = res.json().await.map_err(|e| format!("Erro ao ler JSON da mensagem: {}", e))?;
+
+            let media_url = msg_json["file"]["url"]
+                .as_str()
+                .or_else(|| msg_json["File"]["Url"].as_str())
+                .or_else(|| msg_json["media"]["url"].as_str())
+                .or_else(|| msg_json["Media"]["Url"].as_str())
+                .or_else(|| msg_json["mediaUrl"].as_str())
+                .or_else(|| msg_json["MediaUrl"].as_str());
+
+            let content_type = msg_json["file"]["contentType"]
+                .as_str()
+                .or_else(|| msg_json["File"]["ContentType"].as_str())
+                .or_else(|| msg_json["media"]["contentType"].as_str())
+                .or_else(|| msg_json["Media"]["ContentType"].as_str())
+                .unwrap_or("audio/mp3")
+                .to_string();
+
+            if let Some(u) = media_url {
+                if !u.is_empty() {
+                    println!("🔊 Baixando arquivo de áudio de {} (Tentativa {})...", u, attempt);
+                    let audio_res = client.get(u).send().await.map_err(|e| format!("Erro ao baixar áudio: {}", e))?;
+                    let bytes = audio_res.bytes().await.map_err(|e| format!("Erro nos bytes do áudio: {}", e))?;
+                    use base64::Engine;
+                    let b64 = base64::engine::general_purpose::STANDARD.encode(&bytes);
+                    println!("✅ Áudio baixado ({:.1} KB) e codificado em Base64 para envio direto ao Gemini!", bytes.len() as f64 / 1024.0);
+                    return Ok((content_type, b64));
+                }
+            }
+        }
+
+        if attempt < 4 {
+            println!("⏳ Áudio em processamento no uTalk (Tentativa {}/4). Aguardando 1.5s...", attempt);
+            tokio::time::sleep(std::time::Duration::from_millis(1500)).await;
+        }
     }
 
-    let msg_json: serde_json::Value = res.json().await.map_err(|e| format!("Erro ao ler JSON da mensagem: {}", e))?;
-
-    let media_url = msg_json["file"]["url"]
-        .as_str()
-        .or_else(|| msg_json["File"]["Url"].as_str())
-        .or_else(|| msg_json["media"]["url"].as_str())
-        .or_else(|| msg_json["Media"]["Url"].as_str())
-        .or_else(|| msg_json["mediaUrl"].as_str())
-        .or_else(|| msg_json["MediaUrl"].as_str());
-
-    let content_type = msg_json["file"]["contentType"]
-        .as_str()
-        .or_else(|| msg_json["File"]["ContentType"].as_str())
-        .or_else(|| msg_json["media"]["contentType"].as_str())
-        .or_else(|| msg_json["Media"]["ContentType"].as_str())
-        .unwrap_or("audio/mp3")
-        .to_string();
-
-    let media_url = match media_url {
-        Some(u) => u.to_string(),
-        None => return Err("URL da mídia de áudio não encontrada na mensagem do uTalk".to_string()),
-    };
-
-    println!("🔊 Baixando arquivo de áudio de {}...", media_url);
-
-    let audio_res = client
-        .get(&media_url)
-        .header("Authorization", format!("Bearer {}", token))
-        .send()
-        .await
-        .map_err(|e| format!("Erro ao baixar arquivo de áudio: {}", e))?;
-
-    if !audio_res.status().is_success() {
-        return Err(format!("Erro HTTP ao baixar áudio: {}", audio_res.status()));
-    }
-
-    let audio_bytes = audio_res.bytes().await.map_err(|e| format!("Erro ao ler bytes do áudio: {}", e))?;
-    use base64::Engine;
-    let base64_audio = base64::engine::general_purpose::STANDARD.encode(&audio_bytes);
-
-    println!("✅ Áudio baixado ({:.1} KB) e codificado em Base64 para envio direto ao Gemini!", audio_bytes.len() as f64 / 1024.0);
-
-    Ok((content_type, base64_audio))
+    Err("URL da mídia de áudio não encontrada na mensagem do uTalk após 4 tentativas".to_string())
 }
