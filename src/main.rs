@@ -270,6 +270,11 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
 
     let is_audio = msg_type == "Audio";
     if (source == "Contact" || is_audio) && !chat_id.is_empty() {
+        if state.db.is_chat_transferred(chat_id) {
+            println!("⏸️ Chat {} já foi transferido para o atendimento humano. IA pausada para este contato.", chat_id);
+            return;
+        }
+
         println!("🤖 Processando mensagem de '{}' [ChatId: {}, Type: {}, MsgId: {}]", contact_name, chat_id, msg_type, msg_id);
 
         let cfg_snapshot = state.db.get_config();

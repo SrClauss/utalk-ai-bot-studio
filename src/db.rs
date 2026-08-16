@@ -208,7 +208,18 @@ impl Database {
         let conn = self.conn.lock().unwrap();
         let _ = conn.execute("DELETE FROM messages WHERE chat_id = ?1", params![chat_id]);
         let _ = conn.execute("DELETE FROM messages_fts WHERE chat_id = ?1", params![chat_id]);
-        println!("🗑️ Histórico de chat deletado do BD local: {}", chat_id);
+        let _ = conn.execute("DELETE FROM transfers WHERE chat_id = ?1", params![chat_id]);
+        println!("🗑️ Histórico de chat e status de transferência deletados do BD local: {}", chat_id);
+    }
+
+    pub fn is_chat_transferred(&self, chat_id: &str) -> bool {
+        let conn = self.conn.lock().unwrap();
+        let mut stmt = match conn.prepare("SELECT COUNT(*) FROM transfers WHERE chat_id = ?1") {
+            Ok(s) => s,
+            Err(_) => return false,
+        };
+        let count: i64 = stmt.query_row(params![chat_id], |row| row.get(0)).unwrap_or(0);
+        count > 0
     }
 
     // --- BUSCA TEXTUAL COMPLETA (FULL-TEXT SEARCH FTS5) ---
