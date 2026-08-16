@@ -138,7 +138,7 @@ pub async fn generate_gemini_response(
                     }
                 },
                 {
-                    "text": "Ouça o áudio acima enviado pelo cliente e atenda à solicitação dele de forma amigável, clara e precisa."
+                    "text": "Ouça o áudio acima enviado pelo cliente e atenda à solicitação dele de forma amigável, clara e precisa. IMPORTANTE: Na sua resposta, confirme explicitamente o que você ouviu e compreendeu do áudio do cliente (ex: 'Ouvi seu áudio! Entendi que...')."
                 }
             ]
         }));
@@ -166,7 +166,7 @@ pub async fn generate_gemini_response(
     }
 
     let full_system_prompt = format!(
-        "{}\n\n### ANÁLISE DE TEMPO & EVITANDO DUPLICAÇÃO:\n- Sempre analise as mensagens anteriores. Se o cliente respondeu rapidamente (poucas horas), continue a conversa atual.\n- Se houver nota de intervalo longo (dias), considere o contexto anterior mas reinicie o atendimento de forma cordial.\n- Utilize `search_past_conversations` se precisar pesquisar assuntos/orçamentos antigos discutidos no passado.\n\n### APIS EXTERNAS DISPONÍVEIS VIA `request_external_api`:\n{}",
+        "{}\n\n### REGRA MANDATÓRIA DE ÁUDIO E REGISTRO DE DADOS COLETADOS:\n1. Quando o cliente enviar um áudio, CONFIRME EXPLICITAMENTE na sua resposta a informação exata que você entendeu do áudio (exemplo: \"Ouvi seu áudio! Entendi que você mencionou um poço artesiano de 60 metros...\").\n2. Sempre que você coletar informações técnicas (seja por texto ou por áudio) e for realizar a transferência para o técnico com a tag `[TRANSFERIR]`, você DEVE OBRIGATORIAMENTE incluir no chat o seguinte bloco de resumo formatado:\n\n📋 RESUMO TÉCNICO DOS DADOS COLETADOS:\n• Fonte de Água: [ex: Poço artesiano]\n• Profundidade / Nível: [ex: 60 metros]\n• Distância / Elevação: [ex: 150m com subida leve]\n• Volume / Vazão Diária: [ex: 5.000 litros/dia]\n• CEP / Cidade: [ex: 39400-000]\n\nDessa forma, as informações coletadas do áudio ficam gravadas no chat do uTalk para a equipe humana!\n\n### ANÁLISE DE TEMPO & EVITANDO DUPLICAÇÃO:\n- Sempre analise as mensagens anteriores. Se o cliente respondeu rapidamente (poucas horas), continue a conversa atual.\n- Se houver nota de intervalo longo (dias), considere o contexto anterior mas reinicie o atendimento de forma cordial.\n- Utilize `search_past_conversations` se precisar pesquisar assuntos/orçamentos antigos discutidos no passado.\n\n### APIS EXTERNAS DISPONÍVEIS VIA `request_external_api`:\n{}",
         config.system_prompt,
         if apis_doc.is_empty() { "Nenhuma API externa cadastrada." } else { &apis_doc }
     );
