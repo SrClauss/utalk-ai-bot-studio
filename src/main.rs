@@ -385,8 +385,8 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
                         candidate_ids.retain(|id| online_ids.contains(id));
                     }
 
-                    if let Some(target_operator_id) = state.db.get_next_rotation_operator(&candidate_ids) {
-                        // Busca o nome do operador para registro de métrica
+                    // DEVE OBRIGATORIAMENTE registrar a transferência para PAUSAR a IA no chat local
+                    let target_op_name = if let Some(target_operator_id) = state.db.get_next_rotation_operator(&candidate_ids) {
                         let op_name = match utalk::fetch_human_operators(
                             &cfg_snapshot.utalk_api_url,
                             &cfg_snapshot.utalk_api_token,
@@ -402,48 +402,49 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
                             Err(_) => target_operator_id.clone(),
                         };
 
-                        if let Ok(_) = utalk::transfer_chat_to_member(
+                        let _ = utalk::transfer_chat_to_member(
                             &cfg_snapshot.utalk_api_url,
                             &cfg_snapshot.utalk_api_token,
                             &cfg_snapshot.utalk_organization_id,
                             chat_id,
                             &target_operator_id,
-                        )
-                        .await
-                        {
-                            state.db.record_transfer(chat_id, &target_operator_id, &op_name);
+                        ).await;
 
-                            // Anexa as etiquetas no uTalk (procura por tag com o nome do atendente e/ou 'FAZER ORÇAMENTO')
-                            let client = reqwest::Client::new();
-                            let tags_url = format!("{}/tags/?organizationId={}", cfg_snapshot.utalk_api_url.trim_end_matches('/'), cfg_snapshot.utalk_organization_id);
-                            let mut selected_tag_ids = vec!["aQC8MBYhPaycNeGd".to_string()]; // Tag padrão: FAZER ORÇAMENTO
+                        op_name
+                    } else {
+                        "Equipe de Vendas".to_string()
+                    };
 
-                            if let Ok(res) = client.get(&tags_url).header("Authorization", format!("Bearer {}", cfg_snapshot.utalk_api_token)).send().await {
-                                if let Ok(data) = res.json::<serde_json::Value>().await {
-                                    let items_empty = vec![];
-                                    let tags_arr = data.get("items").and_then(|v| v.as_array()).unwrap_or(&items_empty);
-                                    for t in tags_arr {
-                                        if let (Some(tid), Some(tname)) = (t.get("id").and_then(|v| v.as_str()), t.get("name").and_then(|v| v.as_str())) {
-                                            if tname.to_lowercase().contains(&op_name.to_lowercase()) {
-                                                selected_tag_ids.push(tid.to_string());
-                                                println!("🏷️ Encontrada etiqueta para o atendente '{}': '{}' (ID: {})", op_name, tname, tid);
-                                            }
-                                        }
+                    // Grava obrigatoriamente a transferencia para pausar a IA localmente
+                    state.db.record_transfer(chat_id, "transferred", &target_op_name);
+
+                    // Anexa as etiquetas no uTalk (procura por tag com o nome do atendente e/ou 'FAZER ORÇAMENTO')
+                    let client = reqwest::Client::new();
+                    let tags_url = format!("{}/tags/?organizationId={}", cfg_snapshot.utalk_api_url.trim_end_matches('/'), cfg_snapshot.utalk_organization_id);
+                    let mut selected_tag_ids = vec!["aQC8MBYhPaycNeGd".to_string()]; // Tag padrão: FAZER ORÇAMENTO
+
+                    if let Ok(res) = client.get(&tags_url).header("Authorization", format!("Bearer {}", cfg_snapshot.utalk_api_token)).send().await {
+                        if let Ok(data) = res.json::<serde_json::Value>().await {
+                            let items_empty = vec![];
+                            let tags_arr = data.get("items").and_then(|v| v.as_array()).unwrap_or(&items_empty);
+                            for t in tags_arr {
+                                if let (Some(tid), Some(tname)) = (t.get("id").and_then(|v| v.as_str()), t.get("name").and_then(|v| v.as_str())) {
+                                    if tname.to_lowercase().contains(&target_op_name.to_lowercase()) {
+                                        selected_tag_ids.push(tid.to_string());
+                                        println!("🏷️ Encontrada etiqueta para o atendente '{}': '{}' (ID: {})", target_op_name, tname, tid);
                                     }
                                 }
                             }
-
-                            let chat_tag_url = format!("{}/chats/{}/?organizationId={}", cfg_snapshot.utalk_api_url.trim_end_matches('/'), chat_id, cfg_snapshot.utalk_organization_id);
-                            let tags_payload: Vec<serde_json::Value> = selected_tag_ids.iter().map(|id| serde_json::json!({ "id": id })).collect();
-                            let _ = client.put(&chat_tag_url)
-                                .header("Authorization", format!("Bearer {}", cfg_snapshot.utalk_api_token))
-                                .json(&serde_json::json!({ "tags": tags_payload }))
-                                .send().await;
-                            println!("🏷️ Etiquetas anexadas ao chat {} no uTalk para o atendente '{}'!", chat_id, op_name);
                         }
-                    } else {
-                        println!("⚠️ Nenhum operador disponível na fila do rodízio para transferência.");
                     }
+
+                    let chat_tag_url = format!("{}/chats/{}/?organizationId={}", cfg_snapshot.utalk_api_url.trim_end_matches('/'), chat_id, cfg_snapshot.utalk_organization_id);
+                    let tags_payload: Vec<serde_json::Value> = selected_tag_ids.iter().map(|id| serde_json::json!({ "id": id })).collect();
+                    let _ = client.put(&chat_tag_url)
+                        .header("Authorization", format!("Bearer {}", cfg_snapshot.utalk_api_token))
+                        .json(&serde_json::json!({ "tags": tags_payload }))
+                        .send().await;
+                    println!("🏷️ Chat {} pausado para a IA e etiquetado no uTalk para '{}'!", chat_id, target_op_name);
                 }
             }
             Err(err) => {
