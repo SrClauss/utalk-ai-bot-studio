@@ -1,5 +1,6 @@
 mod config;
 mod db;
+mod deepseek;
 mod gemini;
 mod ui;
 mod utalk;
@@ -960,46 +961,55 @@ async fn simulate_chat_handler(
                 }
             }
 
-            // Intervenção da IA Gemini / DeepSeek em exceções
+            // Intervenção da IA DeepSeek em dúvidas e exceções
             let prompt_with_stage_ctx = format!(
                 "{}\n[INSTRUÇÃO DE ETAPA: O cliente está na etapa '{}'. Responda à dúvida dele de forma objetiva, cortês e formal (tom consultivo, sem entonação de locutor/político) e conclua a resposta fazendo a pergunta pendente da etapa '{}']",
                 user_prompt, current_stage, current_stage
             );
 
-            match gemini::generate_gemini_response(state.db.clone(), &cfg_snapshot, chat_id, &prompt_with_stage_ctx, None).await {
+            match deepseek::generate_deepseek_response(state.db.clone(), &cfg_snapshot, chat_id, &prompt_with_stage_ctx).await {
                 Ok(ai_reply) => {
-                    let mut final_audio_url = String::new();
-                    let reply_type = if is_client_audio {
-                        use std::hash::{Hash, Hasher};
-                        let mut hasher = std::collections::hash_map::DefaultHasher::new();
-                        ai_reply.hash(&mut hasher);
-                        let hash_val = hasher.finish();
-                        let hash_hex = format!("{:x}", hash_val);
-
-                        let out_mp3_rel = format!("/assets/audio_cache/{}.mp3", hash_hex);
-                        let out_mp3_full = format!("assets/audio_cache/{}.mp3", hash_hex);
-
-                        if !std::path::Path::new(&out_mp3_full).exists() {
-                            let _ = gemini::generate_gemini_tts_audio(&cfg_snapshot.gemini_api_key, &ai_reply, "Puck", &out_mp3_full).await;
-                        }
-                        final_audio_url = out_mp3_rel;
-                        "Audio"
-                    } else {
-                        "Text"
+                    let audio_url_for_stage = match current_stage.as_str() {
+                        "STAGE_1" => "/assets/stage_1_puck.mp3",
+                        "STAGE_2" => "/assets/stage_2_puck.mp3",
+                        "STAGE_3" => "/assets/stage_3_puck.mp3",
+                        _ => "/assets/stage_transfer_puck.mp3",
                     };
 
+                    let reply_type = if is_client_audio { "Audio" } else { "Text" };
                     state.db.save_message(chat_id, "assistant", &ai_reply);
+
                     return (StatusCode::OK, Json(serde_json::json!({
                         "success": true,
                         "chat_id": chat_id,
                         "current_stage": current_stage,
                         "reply_type": reply_type,
                         "reply_text": ai_reply,
-                        "reply_audio_url": final_audio_url,
+                        "reply_audio_url": audio_url_for_stage,
                         "was_ai_intervention": true
                     })));
                 }
                 Err(err) => {
+                    println!("⚠️ Falha no DeepSeek, usando resposta de contingência: {}", err);
+                    let audio_url_for_stage = match current_stage.as_str() {
+                        "STAGE_1" => "/assets/stage_1_puck.mp3",
+                        "STAGE_2" => "/assets/stage_2_puck.mp3",
+                        "STAGE_3" => "/assets/stage_3_puck.mp3",
+                        _ => "/assets/stage_transfer_puck.mp3",
+                    };
+                    if let Some(stage_cfg) = state.db.get_stage_config(&current_stage) {
+                        let txt_msg = stage_cfg["text_message"].as_str().unwrap_or_default();
+                        state.db.save_message(chat_id, "assistant", txt_msg);
+                        return (StatusCode::OK, Json(serde_json::json!({
+                            "success": true,
+                            "chat_id": chat_id,
+                            "current_stage": current_stage,
+                            "reply_type": if is_client_audio { "Audio" } else { "Text" },
+                            "reply_text": txt_msg,
+                            "reply_audio_url": audio_url_for_stage,
+                            "was_ai_intervention": false
+                        })));
+                    }
                     return (StatusCode::BAD_REQUEST, Json(serde_json::json!({ "error": err })));
                 }
             }
