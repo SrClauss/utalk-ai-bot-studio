@@ -893,17 +893,14 @@ async fn simulate_chat_handler(
             let user_prompt = req.content.clone();
             let cfg_snapshot = state.db.get_config();
 
+            // Salva a mensagem do usuario no historico
+            state.db.save_message(chat_id, "user", &user_prompt);
+
             let current_stage = state.db.get_chat_stage(chat_id);
             let text_low = user_prompt.to_lowercase();
 
-            let is_expected_stage_answer = match current_stage.as_str() {
-                "STAGE_1" => text_low.contains("poço") || text_low.contains("poco") || text_low.contains("rio") || text_low.contains("represa") || text_low.contains("cacimba") || text_low.contains("artesiano") || text_low.contains("cisterna"),
-                "STAGE_2" => text_low.contains("metro") || text_low.contains("m") || text_low.contains("profund") || text_low.contains("distancia") || text_low.contains("caixa"),
-                _ => false,
-            };
-
             let (history_vec, _) = state.db.get_chat_context_for_ai(chat_id, 24);
-            let is_first_contact = history_vec.is_empty();
+            let is_first_contact = history_vec.len() <= 1; // Apenas a mensagem atual que acabamos de salvar
 
             if is_first_contact {
                 state.db.set_chat_stage(chat_id, "STAGE_1");
@@ -911,6 +908,7 @@ async fn simulate_chat_handler(
                     let txt_msg = stage_cfg["text_message"].as_str().unwrap_or_default();
                     let audio_url = stage_cfg["audio_url"].as_str().unwrap_or_default();
 
+                    state.db.save_message(chat_id, "assistant", txt_msg);
                     let reply_type = if is_client_audio && !audio_url.is_empty() { "Audio" } else { "Text" };
                     return (StatusCode::OK, Json(serde_json::json!({
                         "success": true,
@@ -922,18 +920,33 @@ async fn simulate_chat_handler(
                         "was_ai_intervention": false
                     })));
                 }
-            } else if is_expected_stage_answer {
-                let next_stage = match current_stage.as_str() {
-                    "STAGE_1" => "STAGE_2",
-                    "STAGE_2" => "STAGE_3",
-                    _ => "STAGE_3",
-                };
+            }
+
+            // Verifica se a resposta corresponde ao esperado para cada etapa
+            let (is_expected_stage_answer, next_stage) = match current_stage.as_str() {
+                "STAGE_1" => {
+                    let is_match = text_low.contains("poço") || text_low.contains("poco") || text_low.contains("rio") || text_low.contains("represa") || text_low.contains("cacimba") || text_low.contains("artesiano") || text_low.contains("cisterna") || text_low.contains("nascente") || text_low.contains("lago");
+                    (is_match, "STAGE_2")
+                },
+                "STAGE_2" => {
+                    let is_match = text_low.contains("metro") || text_low.contains("m") || text_low.contains("profund") || text_low.contains("distancia") || text_low.contains("caixa") || text_low.contains("0") || text_low.contains("1") || text_low.contains("2") || text_low.contains("3") || text_low.contains("4") || text_low.contains("5") || text_low.contains("6") || text_low.contains("7") || text_low.contains("8") || text_low.contains("9");
+                    (is_match, "STAGE_3")
+                },
+                "STAGE_3" => {
+                    let is_match = text_low.contains("litro") || text_low.contains("l") || text_low.contains("placa") || text_low.contains("solar") || text_low.contains("eletric") || text_low.contains("rede") || text_low.contains("0") || text_low.contains("1") || text_low.contains("2") || text_low.contains("3") || text_low.contains("4") || text_low.contains("5") || text_low.contains("6") || text_low.contains("7") || text_low.contains("8") || text_low.contains("9");
+                    (is_match, "STAGE_TRANSFER")
+                },
+                _ => (false, "STAGE_TRANSFER"),
+            };
+
+            if is_expected_stage_answer {
                 state.db.set_chat_stage(chat_id, next_stage);
 
                 if let Some(stage_cfg) = state.db.get_stage_config(next_stage) {
                     let txt_msg = stage_cfg["text_message"].as_str().unwrap_or_default();
                     let audio_url = stage_cfg["audio_url"].as_str().unwrap_or_default();
 
+                    state.db.save_message(chat_id, "assistant", txt_msg);
                     let reply_type = if is_client_audio && !audio_url.is_empty() { "Audio" } else { "Text" };
                     return (StatusCode::OK, Json(serde_json::json!({
                         "success": true,
@@ -947,7 +960,7 @@ async fn simulate_chat_handler(
                 }
             }
 
-            // Intervenção da IA Gemini
+            // Intervenção da IA Gemini / DeepSeek em exceções
             let prompt_with_stage_ctx = format!(
                 "{}\n[INSTRUÇÃO DE ETAPA: O cliente está na etapa '{}'. Responda à dúvida dele de forma objetiva, cortês e formal (tom consultivo, sem entonação de locutor/político) e conclua a resposta fazendo a pergunta pendente da etapa '{}']",
                 user_prompt, current_stage, current_stage
@@ -975,6 +988,7 @@ async fn simulate_chat_handler(
                         "Text"
                     };
 
+                    state.db.save_message(chat_id, "assistant", &ai_reply);
                     return (StatusCode::OK, Json(serde_json::json!({
                         "success": true,
                         "chat_id": chat_id,

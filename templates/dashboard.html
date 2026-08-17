@@ -1495,6 +1495,7 @@
                     simMediaType: 'Text',
                     simInputText: '',
                     simSending: false,
+                    simChatId: 'simulacao_' + Math.floor(Math.random() * 100000),
 
                     init() {
                         this.loadConfig();
@@ -1506,6 +1507,8 @@
                         this.simMessages = [];
                         this.simStage = 'STAGE_1';
                         this.simInputText = '';
+                        this.simChatId = 'simulacao_' + Math.floor(Math.random() * 100000);
+                        this.showAlert('Simulação reiniciada!');
                     },
 
                     async sendSimulationMessage() {
@@ -1529,7 +1532,7 @@
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({
-                                    chat_id: 'simulacao_demo',
+                                    chat_id: this.simChatId,
                                     msg_type: mediaType,
                                     content: textToSend
                                 })

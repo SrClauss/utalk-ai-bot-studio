@@ -623,40 +623,60 @@ impl Database {
             }
         }
 
-        if list.is_empty() {
-            // Inicializar estagios padrao
-            let defaults = vec![
-                (
-                    "STAGE_1",
-                    "Apresentação e Fonte de Água",
-                    "Olá! Bom dia! Sou o Leandro da equipe da Tubarão Bombas. É um prazer falar com você.\n\nEstou aqui para ajudar a encontrar a bomba solar ideal para o seu projeto. Para começarmos, você poderia me dizer qual é a fonte de água que você vai utilizar? (Por exemplo: poço artesiano, rio, represa ou cacimba?)",
-                    "/assets/stage_1_puck.mp3",
-                ),
-                (
-                    "STAGE_2",
-                    "Profundidade do Poço e Distância",
-                    "Excelente! E qual é a profundidade aproximada do poço (ou nível da água) e a distância até o reservatório ou caixa d'água?",
-                    "/assets/stage_2_puck.mp3",
-                ),
-                (
-                    "STAGE_3",
-                    "Vazão Desejada e Tipo de Energia",
-                    "Perfeito! Quantos litros de água por dia (ou por hora) você precisa abastecer? E pretende utilizar energia por placas solares ou rede elétrica?",
-                    "/assets/stage_3_puck.mp3",
-                ),
-            ];
+        let defaults = vec![
+            (
+                "STAGE_1",
+                "Apresentação e Fonte de Água",
+                "Olá! Bom dia! Sou o Leandro da equipe da Tubarão Bombas. É um prazer falar com você.\n\nEstou aqui para ajudar a encontrar a bomba solar ideal para o seu projeto. Para começarmos, você poderia me dizer qual é a fonte de água que você vai utilizar? (Por exemplo: poço artesiano, rio, represa ou cacimba?)",
+                "/assets/stage_1_puck.mp3",
+            ),
+            (
+                "STAGE_2",
+                "Profundidade do Poço e Distância",
+                "Excelente! E qual é a profundidade aproximada do poço (ou nível da água) e a distância até o reservatório ou caixa d'água?",
+                "/assets/stage_2_puck.mp3",
+            ),
+            (
+                "STAGE_3",
+                "Vazão Desejada e Tipo de Energia",
+                "Perfeito! Quantos litros de água por dia (ou por hora) você precisa abastecer? E pretende utilizar energia por placas solares ou rede elétrica?",
+                "/assets/stage_3_puck.mp3",
+            ),
+            (
+                "STAGE_TRANSFER",
+                "Transferência e Encaminhamento ao Especialista",
+                "Perfeito! Coletei todas as informações do seu projeto com sucesso. Já estou encaminhando os seus dados para a nossa equipe de especialistas para calcular o orçamento ideal para você. Um momento que um atendente continuará o seu atendimento!",
+                "/assets/stage_transfer_puck.mp3",
+            ),
+        ];
 
-            for (key, title, txt, audio) in defaults {
-                let _ = conn.execute(
-                    "INSERT INTO stage_config (stage_key, title, text_message, audio_url) VALUES (?1, ?2, ?3, ?4)",
-                    params![key, title, txt, audio],
-                );
-                list.push(json!({
-                    "stage_key": key,
-                    "title": title,
-                    "text_message": txt,
-                    "audio_url": audio
-                }));
+        for (key, title, txt, audio) in defaults {
+            let _ = conn.execute(
+                "INSERT INTO stage_config (stage_key, title, text_message, audio_url) VALUES (?1, ?2, ?3, ?4)
+                 ON CONFLICT(stage_key) DO UPDATE SET 
+                 audio_url = CASE WHEN stage_config.audio_url IS NULL OR stage_config.audio_url = '' THEN excluded.audio_url ELSE stage_config.audio_url END",
+                params![key, title, txt, audio],
+            );
+        }
+
+        let mut stmt = match conn.prepare("SELECT stage_key, title, text_message, audio_url FROM stage_config ORDER BY stage_key") {
+            Ok(s) => s,
+            Err(_) => return json!([]),
+        };
+
+        let rows = stmt.query_map([], |row| {
+            Ok(json!({
+                "stage_key": row.get::<_, String>(0)?,
+                "title": row.get::<_, String>(1)?,
+                "text_message": row.get::<_, String>(2)?,
+                "audio_url": row.get::<_, String>(3)?,
+            }))
+        });
+
+        let mut list = Vec::new();
+        if let Ok(iter) = rows {
+            for item in iter.flatten() {
+                list.push(item);
             }
         }
 
