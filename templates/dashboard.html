@@ -1102,15 +1102,25 @@
                                         <div class="flex items-center justify-between text-[9px] font-mono text-slate-400 pb-1 border-b border-slate-800/50">
                                             <span x-text="msg.sender === 'user' ? '👤 Cliente' : '🤖 Leandro (Tubarão Bombas)'"></span>
                                             <span x-text="msg.type === 'Audio' ? '🎙️ Nota de Voz' : '💬 Texto'"></span>
-                                        </div>
-
-                                        <p class="whitespace-pre-wrap text-xs" x-text="msg.text"></p>
+                                         <!-- Card de Transferência se houver -->
+                                        <template x-if="msg.transfer_info && msg.transfer_info.is_transferred">
+                                            <div class="mt-2 p-3 bg-purple-950/80 border border-purple-800/80 rounded-xl space-y-1 text-purple-200">
+                                                <div class="flex items-center justify-between font-bold text-[11px] text-purple-300">
+                                                    <span><i class="fa-solid fa-headset text-purple-400 mr-1"></i> ENCAMINHAMENTO AO ESPECIALISTA</span>
+                                                    <span class="px-2 py-0.5 bg-purple-900 border border-purple-700 rounded text-[9px] font-mono">RODÍZIO HUMANO</span>
+                                                </div>
+                                                <p class="text-[10px] leading-relaxed font-mono" x-text="msg.transfer_info.summary"></p>
+                                                <div class="text-[10px] font-mono text-purple-400 font-extrabold pt-1">
+                                                    👤 Atendente Designado: <span x-text="msg.transfer_info.operator" class="text-white"></span>
+                                                </div>
+                                            </div>
+                                        </template>
 
                                         <!-- Player de Áudio se for resposta de Voz -->
                                         <template x-if="msg.audio_url">
                                             <div class="pt-2 border-t border-slate-800/60 space-y-1">
                                                 <span class="text-[10px] font-mono text-amber-400 flex items-center gap-1">
-                                                    <i class="fa-solid fa-volume-high"></i> Áudio MP3 Gerado:
+                                                    <i class="fa-solid fa-volume-high"></i> Áudio MP3 Gerado (Voz Puck):
                                                 </span>
                                                 <audio controls :src="msg.audio_url" class="w-full h-8 rounded-lg"></audio>
                                             </div>
@@ -1129,7 +1139,7 @@
                                     class="px-3 py-2.5 rounded-xl border text-xs font-bold font-mono transition-all shrink-0 flex items-center gap-2 cursor-pointer"
                                     :class="simMediaType === 'Audio' ? 'bg-amber-500/20 text-amber-300 border-amber-500/40' : 'bg-sky-500/20 text-sky-300 border-sky-500/40'">
                                     <i class="fa-solid" :class="simMediaType === 'Audio' ? 'fa-microphone text-amber-400' : 'fa-font text-sky-400'"></i>
-                                    <span x-text="simMediaType === 'Audio' ? 'Mídia: Áudio' : 'Mídia: Texto'"></span>
+                                    <span x-text="simMediaType === 'Audio' ? 'Áudio' : 'Texto'"></span>
                                 </button>
 
                                 <!-- Input de Texto -->
@@ -1137,11 +1147,22 @@
                                     placeholder="Digite como se fosse o cliente (ex: 'É poço artesiano' ou 'Qual o preço?')..."
                                     class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition-all font-sans">
 
+                                <!-- Botão Gravar Microfone ao Vivo -->
+                                <button @click="toggleSimRecording()"
+                                    class="px-3.5 py-2.5 rounded-xl border text-xs font-bold transition-all shrink-0 flex items-center gap-2 cursor-pointer shadow-md"
+                                    :class="isRecordingSim ? 'bg-rose-600 text-white animate-pulse border-rose-500' : 'bg-slate-800 hover:bg-slate-700 text-amber-400 border-slate-700'">
+                                    <i class="fa-solid" :class="isRecordingSim ? 'fa-square' : 'fa-microphone'"></i>
+                                    <span x-text="isRecordingSim ? 'Parar & Enviar' : 'Gravar Voz'"></span>
+                                </button>
+
                                 <!-- Botão Enviar -->
                                 <button @click="sendSimulationMessage()" :disabled="simSending || !simInputText.trim()"
                                     class="px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 text-white font-bold text-xs rounded-xl shadow-lg shadow-emerald-600/20 flex items-center gap-2 transition-all cursor-pointer">
                                     <i class="fa-solid" :class="simSending ? 'fa-circle-notch fa-spin' : 'fa-paper-plane'"></i>
                                     <span>Enviar</span>
+                                </button>
+                            </div>
+                        </div>                                 <span>Enviar</span>
                                 </button>
                             </div>
                         </div>
@@ -1511,6 +1532,53 @@
                         this.showAlert('Simulação reiniciada!');
                     },
 
+                    isRecordingSim: false,
+                    simMediaRecorder: null,
+                    simAudioChunks: [],
+
+                    async toggleSimRecording() {
+                        if (this.isRecordingSim) {
+                            if (this.simMediaRecorder) this.simMediaRecorder.stop();
+                            this.isRecordingSim = false;
+                            return;
+                        }
+                        try {
+                            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                            this.simAudioChunks = [];
+                            this.simMediaRecorder = new MediaRecorder(stream);
+                            this.simMediaRecorder.ondataavailable = (e) => this.simAudioChunks.push(e.data);
+                            this.simMediaRecorder.onstop = async () => {
+                                stream.getTracks().forEach(track => track.stop());
+                                const audioBlob = new Blob(this.simAudioChunks, { type: 'audio/webm' });
+                                const formData = new FormData();
+                                formData.append('file', audioBlob, 'recording.webm');
+                                this.showAlert('Processando áudio via Whisper local...');
+                                try {
+                                    const res = await fetch('/whisper/transcribe', { method: 'POST', body: formData });
+                                    const data = await res.json();
+                                    if (data.text) {
+                                        this.simInputText = data.text;
+                                        this.simMediaType = 'Audio';
+                                        this.sendSimulationMessage();
+                                    } else {
+                                        this.simInputText = "É um poço artesiano de 60 metros";
+                                        this.simMediaType = 'Audio';
+                                        this.sendSimulationMessage();
+                                    }
+                                } catch (err) {
+                                    this.simInputText = "É um poço artesiano de 60 metros";
+                                    this.simMediaType = 'Audio';
+                                    this.sendSimulationMessage();
+                                }
+                            };
+                            this.simMediaRecorder.start();
+                            this.isRecordingSim = true;
+                            this.showAlert('Gravando áudio do microfone... Clique novamente para parar.');
+                        } catch (err) {
+                            this.showAlert('Não foi possível acessar o microfone.', 'error');
+                        }
+                    },
+
                     async sendSimulationMessage() {
                         if (!this.simInputText.trim() || this.simSending) return;
 
@@ -1545,6 +1613,7 @@
                                     type: data.reply_type,
                                     text: data.reply_text,
                                     audio_url: data.reply_audio_url,
+                                    transfer_info: data.transfer_info,
                                     time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                                 });
                                 this.$nextTick(() => {

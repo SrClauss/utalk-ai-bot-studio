@@ -947,6 +947,18 @@ async fn simulate_chat_handler(
 
                     state.db.save_message(chat_id, "assistant", txt_msg);
                     let reply_type = if is_client_audio && !audio_url.is_empty() { "Audio" } else { "Text" };
+
+                    let is_transfer = next_stage == "STAGE_TRANSFER";
+                    let transfer_info = if is_transfer {
+                        serde_json::json!({
+                            "is_transferred": true,
+                            "operator": "Leandro Humberto (Rodízio de Atendentes)",
+                            "summary": "Coleta de dados da bomba solar finalizada com sucesso. Atendimento pausado para o robô e encaminhado ao atendente humano no uTalk."
+                        })
+                    } else {
+                        serde_json::json!({ "is_transferred": false })
+                    };
+
                     return (StatusCode::OK, Json(serde_json::json!({
                         "success": true,
                         "chat_id": chat_id,
@@ -954,7 +966,8 @@ async fn simulate_chat_handler(
                         "reply_type": reply_type,
                         "reply_text": txt_msg,
                         "reply_audio_url": audio_url,
-                        "was_ai_intervention": false
+                        "was_ai_intervention": false,
+                        "transfer_info": transfer_info
                     })));
                 }
             }
@@ -966,7 +979,12 @@ async fn simulate_chat_handler(
             );
 
             match deepseek::generate_deepseek_response(state.db.clone(), &cfg_snapshot, chat_id, &prompt_with_stage_ctx).await {
-                Ok(ai_reply) => {
+                Ok(mut ai_reply) => {
+                    let is_transfer = ai_reply.contains("[TRANSFERIR]");
+                    if is_transfer {
+                        ai_reply = ai_reply.replace("[TRANSFERIR]", "").trim().to_string();
+                    }
+
                     let audio_url_for_stage = match current_stage.as_str() {
                         "STAGE_1" => "/assets/stage_1_puck.mp3",
                         "STAGE_2" => "/assets/stage_2_puck.mp3",
@@ -977,6 +995,16 @@ async fn simulate_chat_handler(
                     let reply_type = if is_client_audio { "Audio" } else { "Text" };
                     state.db.save_message(chat_id, "assistant", &ai_reply);
 
+                    let transfer_info = if is_transfer {
+                        serde_json::json!({
+                            "is_transferred": true,
+                            "operator": "Leandro Humberto (Rodízio de Atendentes)",
+                            "summary": "DeepSeek detectou a conclusão do atendimento / solicitação especial. Atendimento transferido ao humano no uTalk."
+                        })
+                    } else {
+                        serde_json::json!({ "is_transferred": false })
+                    };
+
                     return (StatusCode::OK, Json(serde_json::json!({
                         "success": true,
                         "chat_id": chat_id,
@@ -984,7 +1012,8 @@ async fn simulate_chat_handler(
                         "reply_type": reply_type,
                         "reply_text": ai_reply,
                         "reply_audio_url": audio_url_for_stage,
-                        "was_ai_intervention": true
+                        "was_ai_intervention": true,
+                        "transfer_info": transfer_info
                     })));
                 }
                 Err(err) => {
