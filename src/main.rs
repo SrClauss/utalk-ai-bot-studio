@@ -272,10 +272,6 @@ async fn handle_webhook(
             println!("🏷️ Tags no uTalk    : {}", tags_info);
             println!("👤 Status Atendente: {}", attendant_info);
 
-            if let Ok(pretty_json) = serde_json::to_string_pretty(&payload) {
-                println!("📦 PAYLOAD JSON BRUTO:\n{}", pretty_json);
-            }
-
             // 🎯 TRAVA ESTRITA DE CANAIS SINCRONIZADOS DO UTALK:
             let synced_webhooks_json = state.db.get_synced_webhooks();
             let mut allowed_channels = Vec::new();
