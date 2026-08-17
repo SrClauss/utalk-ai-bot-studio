@@ -221,28 +221,58 @@ async fn handle_webhook(
     if let Ok(body_str) = std::str::from_utf8(&bytes) {
         let parsed: Result<Value, _> = serde_json::from_str(body_str);
         if let Ok(payload) = parsed {
-            if let Ok(pretty) = serde_json::to_string_pretty(&payload) {
-                println!("📦 Payload JSON:\n{}", pretty);
-            }
+            let content_obj = &payload["Payload"]["Content"];
+            let payload_type = payload["Payload"]["Type"].as_str().unwrap_or_default();
+            let msg_obj = if payload_type == "Message" || content_obj["MessageType"].is_string() {
+                content_obj
+            } else {
+                &content_obj["LastMessage"]
+            };
+
+            let chat_obj = if payload_type == "Chat" { content_obj } else { &content_obj["Chat"] };
+            let channel_name = chat_obj["Channel"]["Name"].as_str().or_else(|| content_obj["Channel"]["Name"].as_str()).unwrap_or("Canal Geral");
+            let channel_id = chat_obj["Channel"]["Id"].as_str().or_else(|| content_obj["Channel"]["Id"].as_str()).unwrap_or("N/A");
+            
+            let contact_name = content_obj["Contact"]["Name"].as_str().or_else(|| msg_obj["Chat"]["Contact"]["Name"].as_str()).unwrap_or("Cliente");
+            let phone = content_obj["Contact"]["PhoneNumber"].as_str().or_else(|| msg_obj["Chat"]["Contact"]["PhoneNumber"].as_str()).unwrap_or("N/A");
+            let text = msg_obj["Content"].as_str().unwrap_or("[Mídia / Áudio / Sistema]");
+
+            let has_human_member = chat_obj["OrganizationMember"].is_object()
+                || chat_obj["organizationMember"].is_object()
+                || chat_obj["Member"].is_object()
+                || content_obj["OrganizationMember"].is_object()
+                || content_obj["organizationMember"].is_object()
+                || chat_obj["MemberId"].as_str().map(|s| !s.is_empty()).unwrap_or(false)
+                || chat_obj["memberId"].as_str().map(|s| !s.is_empty()).unwrap_or(false);
+
+            let attendant_info = if has_human_member { "👤 Atendente Humano Atribuído no uTalk" } else { "✅ Nenhum (Chat Livre)" };
+
+            println!("\n========================================================");
+            println!("📩 MENSAGEM RECEBIDA NO WEBHOOK [uTalk]");
+            println!("📡 Canal Receptor  : {} (ID: {})", channel_name, channel_id);
+            println!("👤 Cliente / Remet. : {} ({})", contact_name, phone);
+            println!("💬 Conteúdo Texto  : \"{}\"", text);
+            println!("👤 Status Atendente: {}", attendant_info);
 
             if config_snapshot.bot_enabled {
-                let state_clone = state.clone();
-                tokio::spawn(async move {
-                    process_incoming_webhook(state_clone, payload).await;
-                });
+                if has_human_member {
+                    println!("⚡ Decisão da IA    : ⏸️ [SILÊNCIOSO] Atendente humano atribuído no uTalk. IA pausada.");
+                } else {
+                    println!("⚡ Decisão da IA    : 🤖 [LIGADO] Processando com Gemini...");
+                    let state_clone = state.clone();
+                    tokio::spawn(async move {
+                        process_incoming_webhook(state_clone, payload).await;
+                    });
+                }
             } else {
-                let content_obj = &payload["Payload"]["Content"];
-                let msg_obj = if payload["Payload"]["Type"] == "Message" || content_obj["MessageType"].is_string() { content_obj } else { &content_obj["LastMessage"] };
-                let contact_name = content_obj["Contact"]["Name"].as_str().or_else(|| msg_obj["Chat"]["Contact"]["Name"].as_str()).unwrap_or("Cliente");
-                let text = msg_obj["Content"].as_str().unwrap_or("[Mídia/Outro]");
-                println!("⏸️ [ROBÔ PAUSADO] Mensagem recebida de '{}': \"{}\"", contact_name, text);
+                println!("⚡ Decisão da IA    : ⏸️ [PAUSADO] Robô inativo no Dashboard.");
             }
+            println!("========================================================\n");
         } else if !body_str.is_empty() {
-            println!("📦 Body Texto:\n{}", body_str);
+            println!("📦 Body Texto sem formatação:\n{}", body_str);
         }
     }
 
-    println!("========================================================\n");
     (StatusCode::OK, "OK")
 }
 
@@ -274,24 +304,6 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
 
     let is_audio = msg_type == "Audio";
     if (source == "Contact" || is_audio) && !chat_id.is_empty() {
-        // 🎯 A UMBLER (uTalk) É A FONTE DA VERDADE ÚNICA EM TEMPO REAL:
-        // Checamos se a Umbler indica se existe um atendente humano atribuído ao chat
-        let chat_obj = if payload_type == "Chat" { content_obj } else { &content_obj["Chat"] };
-        let has_human_member = chat_obj["OrganizationMember"].is_object()
-            || chat_obj["organizationMember"].is_object()
-            || chat_obj["Member"].is_object()
-            || content_obj["OrganizationMember"].is_object()
-            || content_obj["organizationMember"].is_object()
-            || chat_obj["MemberId"].as_str().map(|s| !s.is_empty()).unwrap_or(false)
-            || chat_obj["memberId"].as_str().map(|s| !s.is_empty()).unwrap_or(false);
-
-        if has_human_member {
-            println!("⏸️ Chat {} possui atendente humano atribuído na Umbler/uTalk. IA pausada automaticamente.", chat_id);
-            return;
-        }
-
-        println!("🤖 Processando mensagem de '{}' [ChatId: {}, Type: {}, MsgId: {}]", contact_name, chat_id, msg_type, msg_id);
-
         let cfg_snapshot = state.db.get_config();
         let mut audio_data_tuple: Option<(String, String)> = None;
 
