@@ -950,10 +950,12 @@ async fn simulate_chat_handler(
 
                     let is_transfer = next_stage == "STAGE_TRANSFER";
                     let transfer_info = if is_transfer {
+                        let project_data = deepseek::extract_project_summary(state.db.clone(), &cfg_snapshot, chat_id).await;
                         serde_json::json!({
                             "is_transferred": true,
                             "operator": "Leandro Humberto (Rodízio de Atendentes)",
-                            "summary": "Coleta de dados da bomba solar finalizada com sucesso. Atendimento pausado para o robô e encaminhado ao atendente humano no uTalk."
+                            "summary": "Coleta de dados da bomba solar finalizada com sucesso. Atendimento pausado para o robô e encaminhado ao atendente humano no uTalk.",
+                            "details": project_data
                         })
                     } else {
                         serde_json::json!({ "is_transferred": false })
@@ -996,10 +998,12 @@ async fn simulate_chat_handler(
                     state.db.save_message(chat_id, "assistant", &ai_reply);
 
                     let transfer_info = if is_transfer {
+                        let project_data = deepseek::extract_project_summary(state.db.clone(), &cfg_snapshot, chat_id).await;
                         serde_json::json!({
                             "is_transferred": true,
                             "operator": "Leandro Humberto (Rodízio de Atendentes)",
-                            "summary": "DeepSeek detectou a conclusão do atendimento / solicitação especial. Atendimento transferido ao humano no uTalk."
+                            "summary": "DeepSeek detectou a conclusão da triagem ou solicitação especial de orçamento. Atendimento transferido ao humano no uTalk.",
+                            "details": project_data
                         })
                     } else {
                         serde_json::json!({ "is_transferred": false })

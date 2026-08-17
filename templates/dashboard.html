@@ -1102,16 +1102,43 @@
                                         <div class="flex items-center justify-between text-[9px] font-mono text-slate-400 pb-1 border-b border-slate-800/50">
                                             <span x-text="msg.sender === 'user' ? '👤 Cliente' : '🤖 Leandro (Tubarão Bombas)'"></span>
                                             <span x-text="msg.type === 'Audio' ? '🎙️ Nota de Voz' : '💬 Texto'"></span>
-                                         <!-- Card de Transferência se houver -->
+                                        <!-- Card de Transferência com Ficha do Projeto Extraído -->
                                         <template x-if="msg.transfer_info && msg.transfer_info.is_transferred">
-                                            <div class="mt-2 p-3 bg-purple-950/80 border border-purple-800/80 rounded-xl space-y-1 text-purple-200">
-                                                <div class="flex items-center justify-between font-bold text-[11px] text-purple-300">
-                                                    <span><i class="fa-solid fa-headset text-purple-400 mr-1"></i> ENCAMINHAMENTO AO ESPECIALISTA</span>
-                                                    <span class="px-2 py-0.5 bg-purple-900 border border-purple-700 rounded text-[9px] font-mono">RODÍZIO HUMANO</span>
+                                            <div class="mt-2 p-3.5 bg-purple-950/90 border border-purple-700/80 rounded-2xl space-y-2.5 text-purple-100 shadow-xl">
+                                                <div class="flex items-center justify-between font-bold text-xs text-purple-300 border-b border-purple-800/80 pb-2">
+                                                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-clipboard-check text-purple-400"></i> RESUMO DO PROJETO COLETADO PELA IA</span>
+                                                    <span class="px-2 py-0.5 bg-purple-900 border border-purple-700 rounded text-[9px] font-mono text-emerald-400 font-extrabold">TRIAGEM OK</span>
                                                 </div>
-                                                <p class="text-[10px] leading-relaxed font-mono" x-text="msg.transfer_info.summary"></p>
-                                                <div class="text-[10px] font-mono text-purple-400 font-extrabold pt-1">
-                                                    👤 Atendente Designado: <span x-text="msg.transfer_info.operator" class="text-white"></span>
+
+                                                <template x-if="msg.transfer_info.details">
+                                                    <div class="grid grid-cols-2 gap-2 text-[11px] font-mono bg-purple-900/40 p-2.5 rounded-xl border border-purple-800/50">
+                                                        <div class="space-y-0.5">
+                                                            <span class="text-purple-400 text-[9px] uppercase font-bold block">⛲ Fonte de Água:</span>
+                                                            <span class="font-extrabold text-white" x-text="msg.transfer_info.details.fonte_agua || 'Poço Artesiano'"></span>
+                                                        </div>
+                                                        <div class="space-y-0.5">
+                                                            <span class="text-purple-400 text-[9px] uppercase font-bold block">📏 Profundidade:</span>
+                                                            <span class="font-extrabold text-white" x-text="msg.transfer_info.details.profundidade || 'Não informado'"></span>
+                                                        </div>
+                                                        <div class="space-y-0.5">
+                                                            <span class="text-purple-400 text-[9px] uppercase font-bold block">🚩 Distância Exata:</span>
+                                                            <span class="font-extrabold text-white" x-text="msg.transfer_info.details.distancia || 'Não informado'"></span>
+                                                        </div>
+                                                        <div class="space-y-0.5">
+                                                            <span class="text-purple-400 text-[9px] uppercase font-bold block">💧 Vazão Desejada:</span>
+                                                            <span class="font-extrabold text-white" x-text="msg.transfer_info.details.vazao || 'Não informado'"></span>
+                                                        </div>
+                                                        <div class="col-span-2 pt-1 border-t border-purple-800/40 space-y-0.5">
+                                                            <span class="text-purple-400 text-[9px] uppercase font-bold block">☀️ Fonte de Energia:</span>
+                                                            <span class="font-extrabold text-amber-300" x-text="msg.transfer_info.details.energia || 'Solar'"></span>
+                                                        </div>
+                                                    </div>
+                                                </template>
+
+                                                <p class="text-[10px] leading-relaxed font-sans text-purple-200" x-text="msg.transfer_info.summary"></p>
+                                                <div class="text-[10px] font-mono text-purple-300 font-extrabold pt-1 flex items-center justify-between border-t border-purple-800/60">
+                                                    <span>👤 Encaminhado para:</span>
+                                                    <span x-text="msg.transfer_info.operator" class="text-white px-2 py-0.5 bg-purple-900 border border-purple-700 rounded font-bold"></span>
                                                 </div>
                                             </div>
                                         </template>

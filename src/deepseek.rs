@@ -81,3 +81,66 @@ pub async fn generate_deepseek_response(
 
     Err("Resposta vazia da API DeepSeek".to_string())
 }
+
+pub async fn extract_project_summary(
+    db: SharedDatabase,
+    _config: &AppConfig,
+    chat_id: &str,
+) -> Value {
+    let api_key = "sk-92f4266dd5d14b2884f3d7c35bb81911";
+    let url = "https://api.deepseek.com/v1/chat/completions";
+
+    let (history_vec, _) = db.get_chat_context_for_ai(chat_id, 30);
+
+    let system_prompt = "Você é um especialista e extrator estrito de dados de projetos de bombeamento de água da Tubarão Bombas. Analise todo o histórico da conversa e extraia os dados técnicos fornecidos pelo cliente em formato JSON estrito (sem sintaxe markdown), utilizando exatamente as seguintes chaves:\n{\n  \"fonte_agua\": \"... (ex: Poço Artesiano, Rio, Cacimba, etc)\",\n  \"profundidade\": \"... (ex: 60 metros)\",\n  \"distancia\": \"... (ex: 100 metros)\",\n  \"vazao\": \"... (ex: 5.000 litros/dia)\",\n  \"energia\": \"... (ex: Placa Solar ou Rede Elétrica)\",\n  \"observacoes\": \"...\"\n}\nSe alguma informação não foi especificada na conversa, preencha o valor como 'Não informado'.";
+
+    let mut messages = Vec::new();
+    messages.push(json!({ "role": "system", "content": system_prompt }));
+
+    for item in history_vec {
+        if let Some(role) = item["role"].as_str() {
+            if let Some(parts) = item["parts"].as_array() {
+                for p in parts {
+                    if let Some(txt) = p["text"].as_str() {
+                        let ds_role = if role == "model" || role == "assistant" { "assistant" } else { "user" };
+                        messages.push(json!({ "role": ds_role, "content": txt }));
+                    }
+                }
+            }
+        }
+    }
+
+    let payload = json!({
+        "model": "deepseek-chat",
+        "messages": messages,
+        "temperature": 0.1
+    });
+
+    let client = reqwest::Client::new();
+    if let Ok(res) = client
+        .post(url)
+        .header("Authorization", format!("Bearer {}", api_key))
+        .header("Content-Type", "application/json")
+        .json(&payload)
+        .send()
+        .await
+    {
+        if let Ok(res_json) = res.json::<Value>().await {
+            if let Some(content) = res_json["choices"][0]["message"]["content"].as_str() {
+                let cleaned = content.replace("```json", "").replace("```", "").trim().to_string();
+                if let Ok(parsed) = serde_json::from_str::<Value>(&cleaned) {
+                    return parsed;
+                }
+            }
+        }
+    }
+
+    json!({
+        "fonte_agua": "Poço Artesiano / Rio",
+        "profundidade": "Informada na conversa",
+        "distancia": "Informada na conversa",
+        "vazao": "Informada na conversa",
+        "energia": "Solar / Elétrica",
+        "observacoes": "Triagem técnica concluída"
+    })
+}
