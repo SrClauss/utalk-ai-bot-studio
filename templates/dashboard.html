@@ -268,8 +268,8 @@
         <!-- Main Container (Ajusta margem esquerda conforme expansão/recolhimento da Sidebar no Desktop) -->
         <main class="transition-all duration-300 flex-1 min-w-0 max-w-full overflow-x-hidden px-4 sm:px-6 pt-6 pb-24 md:pb-12 space-y-6">
 
-            <!-- Banner Hero Integrado com Imagem Neuronal (/assets/banner.jpg) -->
-            <div class="relative overflow-hidden rounded-2xl border border-indigo-500/30 bg-slate-900/90 shadow-2xl">
+            <!-- Banner Hero Integrado com Imagem Neuronal (Exibido apenas na aba de métricas) -->
+            <div x-show="activeTab === 'metrics'" class="relative overflow-hidden rounded-2xl border border-indigo-500/30 bg-slate-900/90 shadow-2xl">
                 <!-- Imagem Neuronal de Fundo -->
                 <div class="absolute inset-0 z-0 opacity-40 mix-blend-luminosity">
                     <img src="/assets/banner.jpg" alt="AI Neural Banner" class="w-full h-full object-cover">
