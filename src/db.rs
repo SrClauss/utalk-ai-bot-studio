@@ -65,9 +65,28 @@ impl Database {
             );
 
             CREATE INDEX IF NOT EXISTS idx_transfers_member ON transfers(member_id);
+
+            CREATE TABLE IF NOT EXISTS admin_users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT UNIQUE NOT NULL,
+                password TEXT NOT NULL,
+                created_at TEXT NOT NULL
+            );
             ",
         )
         .map_err(|e| format!("Erro ao inicializar tabelas SQLite/FTS5: {}", e))?;
+
+        // Inicializar usuario admin padrao se tabela vazia
+        let count: i64 = conn
+            .query_row("SELECT COUNT(*) FROM admin_users", [], |row| row.get(0))
+            .unwrap_or(0);
+
+        if count == 0 {
+            let _ = conn.execute(
+                "INSERT INTO admin_users (username, password, created_at) VALUES ('admin', 'admin123', datetime('now'))",
+                [],
+            );
+        }
 
         Ok(Self {
             conn: Arc::new(Mutex::new(conn)),
@@ -308,6 +327,14 @@ impl Database {
         stmt.exists(params![token, now_iso]).unwrap_or(false)
     }
 
+    pub fn get_session_user(&self, token: &str) -> Option<String> {
+        let conn = self.conn.lock().unwrap();
+        let now_iso = Utc::now().to_rfc3339();
+
+        let mut stmt = conn.prepare("SELECT username FROM sessions WHERE token = ?1 AND expires_at > ?2").ok()?;
+        stmt.query_row(params![token, now_iso], |row| row.get::<_, String>(0)).ok()
+    }
+
     pub fn delete_session(&self, token: &str) {
         let conn = self.conn.lock().unwrap();
         let _ = conn.execute("DELETE FROM sessions WHERE token = ?1", params![token]);
@@ -405,6 +432,90 @@ impl Database {
             "transfers_by_operator": transfers_by_operator,
             "recent_transfers": recent_transfers
         })
+    }
+
+    pub fn verify_user(&self, username: &str, password: &str) -> bool {
+        let conn = self.conn.lock().unwrap();
+        let mut stmt = match conn.prepare("SELECT password FROM admin_users WHERE username = ?1") {
+            Ok(s) => s,
+            Err(_) => return false,
+        };
+
+        if let Ok(db_password) = stmt.query_row([username], |row| row.get::<_, String>(0)) {
+            db_password == password
+        } else {
+            // Fallback para configuracao em memoria
+            let cfg = self.get_config();
+            username == cfg.admin_username && password == cfg.admin_password
+        }
+    }
+
+    pub fn list_admin_users(&self) -> Vec<serde_json::Value> {
+        let conn = self.conn.lock().unwrap();
+        let mut users = Vec::new();
+        if let Ok(mut stmt) = conn.prepare("SELECT id, username, created_at FROM admin_users ORDER BY id ASC") {
+            if let Ok(rows) = stmt.query_map([], |row| {
+                Ok(serde_json::json!({
+                    "id": row.get::<_, i64>(0)?,
+                    "username": row.get::<_, String>(1)?,
+                    "created_at": row.get::<_, String>(2)?
+                }))
+            }) {
+                for r in rows.flatten() {
+                    users.push(r);
+                }
+            }
+        }
+        users
+    }
+
+    pub fn add_admin_user(&self, username: &str, password: &str) -> Result<i64, String> {
+        let conn = self.conn.lock().unwrap();
+        conn.execute(
+            "INSERT INTO admin_users (username, password, created_at) VALUES (?1, ?2, datetime('now'))",
+            [username, password],
+        )
+        .map_err(|e| format!("Erro ao adicionar administrador: {}", e))?;
+        Ok(conn.last_insert_rowid())
+    }
+
+    pub fn delete_admin_user_with_check(&self, id: i64, current_logged_user: &str) -> Result<(), String> {
+        let conn = self.conn.lock().unwrap();
+
+        let target_username: String = match conn.query_row(
+            "SELECT username FROM admin_users WHERE id = ?1",
+            [id],
+            |row| row.get(0),
+        ) {
+            Ok(u) => u,
+            Err(_) => return Err("Administrador não encontrado.".to_string()),
+        };
+
+        if target_username.to_lowercase() == current_logged_user.to_lowercase() {
+            return Err("Você não pode excluir o seu próprio usuário enquanto estiver logado.".to_string());
+        }
+
+        let count: i64 = conn
+            .query_row("SELECT COUNT(*) FROM admin_users", [], |row| row.get(0))
+            .unwrap_or(0);
+
+        if count <= 1 {
+            return Err("Não é possível excluir o único administrador do sistema.".to_string());
+        }
+
+        conn.execute("DELETE FROM admin_users WHERE id = ?1", [id])
+            .map_err(|e| format!("Erro ao remover administrador: {}", e))?;
+        Ok(())
+    }
+
+    pub fn change_user_password(&self, username: &str, new_password: &str) -> Result<(), String> {
+        let conn = self.conn.lock().unwrap();
+        conn.execute(
+            "UPDATE admin_users SET password = ?1 WHERE username = ?2",
+            [new_password, username],
+        )
+        .map_err(|e| format!("Erro ao alterar senha: {}", e))?;
+        Ok(())
     }
 }
 

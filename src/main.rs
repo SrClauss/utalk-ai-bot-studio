@@ -13,6 +13,7 @@ use axum::{
     routing::{any, get},
     Json, Router,
 };
+use serde::Deserialize;
 use config::AppConfig;
 use db::{Database, SharedDatabase};
 use serde_json::Value;
@@ -89,8 +90,7 @@ async fn login_handler(
     State(state): State<AppState>,
     Json(req): Json<LoginRequest>,
 ) -> (StatusCode, HeaderMap, Json<LoginResponse>) {
-    let cfg = state.db.get_config();
-    if req.username == cfg.admin_username && req.password == cfg.admin_password {
+    if state.db.verify_user(&req.username, &req.password) {
         let token = state.db.create_session(&req.username, 24);
         let mut headers = HeaderMap::new();
         let cookie_val = format!("session_token={}; Path=/; HttpOnly; SameSite=Lax; Max-Age=86400", token);
@@ -481,6 +481,88 @@ async fn delete_chat_handler(
     Err(StatusCode::UNAUTHORIZED)
 }
 
+async fn get_admin_users_handler(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+) -> Result<Json<Value>, StatusCode> {
+    if let Some(token) = extract_token(&headers) {
+        if state.db.validate_session(&token) {
+            let users = state.db.list_admin_users();
+            return Ok(Json(serde_json::json!(users)));
+        }
+    }
+    Err(StatusCode::UNAUTHORIZED)
+}
+
+#[derive(Deserialize)]
+struct AddUserRequest {
+    username: String,
+    password: String,
+}
+
+async fn add_admin_user_handler(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+    Json(req): Json<AddUserRequest>,
+) -> (StatusCode, Json<Value>) {
+    if let Some(token) = extract_token(&headers) {
+        if state.db.validate_session(&token) {
+            if req.username.trim().is_empty() || req.password.trim().is_empty() {
+                return (
+                    StatusCode::BAD_REQUEST,
+                    Json(serde_json::json!({ "error": "Usuário e senha são obrigatórios." })),
+                );
+            }
+            match state.db.add_admin_user(req.username.trim(), req.password.trim()) {
+                Ok(id) => return (StatusCode::OK, Json(serde_json::json!({ "success": true, "id": id }))),
+                Err(err) => return (StatusCode::BAD_REQUEST, Json(serde_json::json!({ "error": err }))),
+            }
+        }
+    }
+    (StatusCode::UNAUTHORIZED, Json(serde_json::json!({ "error": "Não autorizado" })))
+}
+
+async fn delete_admin_user_handler(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+    axum::extract::Path(id): axum::extract::Path<i64>,
+) -> (StatusCode, Json<Value>) {
+    if let Some(token) = extract_token(&headers) {
+        if state.db.validate_session(&token) {
+            let logged_user = state.db.get_session_user(&token).unwrap_or_default();
+            match state.db.delete_admin_user_with_check(id, &logged_user) {
+                Ok(_) => return (StatusCode::OK, Json(serde_json::json!({ "success": true }))),
+                Err(err) => return (StatusCode::BAD_REQUEST, Json(serde_json::json!({ "error": err }))),
+            }
+        }
+    }
+    (StatusCode::UNAUTHORIZED, Json(serde_json::json!({ "error": "Não autorizado" })))
+}
+
+#[derive(Deserialize)]
+struct ChangePasswordRequest {
+    new_password: String,
+}
+
+async fn change_password_handler(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+    Json(req): Json<ChangePasswordRequest>,
+) -> (StatusCode, Json<Value>) {
+    if let Some(token) = extract_token(&headers) {
+        if let Some(username) = state.db.get_session_user(&token) {
+            if req.new_password.trim().is_empty() {
+                return (StatusCode::BAD_REQUEST, Json(serde_json::json!({ "error": "Nova senha não pode ser vazia." })));
+            }
+            match state.db.change_user_password(&username, req.new_password.trim()) {
+                Ok(_) => return (StatusCode::OK, Json(serde_json::json!({ "success": true }))),
+                Err(err) => return (StatusCode::BAD_REQUEST, Json(serde_json::json!({ "error": err }))),
+            }
+        }
+    }
+    (StatusCode::UNAUTHORIZED, Json(serde_json::json!({ "error": "Não autorizado" })))
+}
+
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt::init();
@@ -503,6 +585,9 @@ async fn main() {
         .route("/api/stats", get(get_stats_handler))
         .route("/api/chats", get(get_chats_handler))
         .route("/api/chats/:chat_id", axum::routing::delete(delete_chat_handler))
+        .route("/api/users", get(get_admin_users_handler).post(add_admin_user_handler))
+        .route("/api/users/:id", axum::routing::delete(delete_admin_user_handler))
+        .route("/api/change-password", axum::routing::post(change_password_handler))
         .route("/webhook", any(handle_webhook))
         .with_state(state);
 
