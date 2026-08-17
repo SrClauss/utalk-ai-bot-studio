@@ -1141,10 +1141,74 @@
                         </button>
                     </div>
 
-                    <!-- Resultado do Teste ao Vivo -->
-                    <div x-show="webhookTestResult" x-transition class="p-4 rounded-2xl text-xs font-mono border"
-                        :class="webhookTestResultSuccess ? 'bg-emerald-950/60 border-emerald-800 text-emerald-300' : 'bg-rose-950/60 border-rose-800 text-rose-300'"
-                        x-text="webhookTestResult"></div>
+                <!-- Painel de Webhooks Cadastrados no uTalk (Sincronização via API) -->
+                <div class="glass-panel p-6 rounded-3xl space-y-4 border border-indigo-500/30 shadow-xl">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-4">
+                        <div class="space-y-1">
+                            <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+                                <i class="fa-solid fa-[#00d2ff] fa-satellite text-sky-400"></i>
+                                <span>Webhooks Cadastrados na sua Conta uTalk</span>
+                            </h3>
+                            <p class="text-xs text-slate-400">Sincronize a lista oficial de webhooks e canais configurados diretamente da API do uTalk</p>
+                        </div>
+                        <button @click="syncWebhooksFromUtalk()" :disabled="loadingWebhooks"
+                            class="px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-500 hover:to-sky-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-indigo-600/25 flex items-center gap-2 transition-all">
+                            <i x-show="!loadingWebhooks" class="fa-solid fa-rotate-right"></i>
+                            <i x-show="loadingWebhooks" class="fa-solid fa-circle-notch fa-spin"></i>
+                            <span x-text="loadingWebhooks ? 'Sincronizando...' : '🔄 Sincronizar Webhooks do uTalk Agora'"></span>
+                        </button>
+                    </div>
+
+                    <!-- Lista de Webhooks Sincronizados -->
+                    <div x-show="loadingWebhooks" class="p-6 text-center text-xs text-slate-400 animate-pulse">
+                        Consultando API do uTalk para buscar os webhooks cadastrados...
+                    </div>
+
+                    <div x-show="!loadingWebhooks && syncedWebhooks && syncedWebhooks.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                        <template x-for="wh in syncedWebhooks" :key="wh.id">
+                            <div class="glass-card p-4 rounded-2xl border border-slate-800 hover:border-sky-500/40 transition-all space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-2.5 h-2.5 rounded-full" :class="wh.paused ? 'bg-amber-500' : 'bg-emerald-500 animate-pulse'"></span>
+                                        <h4 class="font-extrabold text-xs text-slate-100" x-text="wh.name"></h4>
+                                    </div>
+                                    <span class="text-[10px] font-mono px-2 py-0.5 rounded-full font-bold"
+                                        :class="wh.paused ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'"
+                                        x-text="wh.paused ? 'PAUSADO' : 'ATIVO'"></span>
+                                </div>
+
+                                <div class="space-y-1.5 bg-slate-950/80 p-3 rounded-xl border border-slate-900 font-mono text-[11px]">
+                                    <div class="flex items-center justify-between text-slate-400">
+                                        <span>URL:</span>
+                                        <span class="text-sky-300 font-bold truncate max-w-[200px]" x-text="wh.url"></span>
+                                    </div>
+                                    <div class="flex items-center justify-between text-slate-400">
+                                        <span>Eventos:</span>
+                                        <span class="text-indigo-300 font-bold" x-text="wh.events ? wh.events.join(', ') : 'Message'"></span>
+                                    </div>
+                                    <div class="flex items-start justify-between text-slate-400 pt-1 border-t border-slate-900">
+                                        <span>Canais (forChannels):</span>
+                                        <div class="text-right">
+                                            <template x-if="wh.forChannels && wh.forChannels.length > 0">
+                                                <div class="flex flex-wrap justify-end gap-1">
+                                                    <template x-for="chId in wh.forChannels" :key="chId">
+                                                        <span class="px-2 py-0.5 bg-indigo-950 text-indigo-300 border border-indigo-800/60 rounded text-[10px] font-bold" x-text="chId === 'ahWh7_1n1geSwJtc' ? 'TUBARÃO INSTAGRAM' : (chId === 'alIuF9FJlvWlJVis' ? 'WHATSAPP (38) 9907-3038' : chId)"></span>
+                                                    </template>
+                                                </div>
+                                            </template>
+                                            <template x-if="!wh.forChannels || wh.forChannels.length === 0">
+                                                <span class="text-emerald-400 font-bold text-[10px]">TODOS OS CANAIS DA EMPRESA</span>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+
+                    <div x-show="!loadingWebhooks && (!syncedWebhooks || syncedWebhooks.length === 0)" class="p-6 text-center text-xs text-slate-400">
+                        Nenhum webhook encontrado ou você ainda não clicou em "Sincronizar Webhooks do uTalk Agora".
+                    </div>
                 </div>
 
                 <!-- Painel com Exemplo de Payload JSON Formatado -->
@@ -1230,15 +1294,19 @@
                     testingWebhook: false,
                     webhookTestResult: '',
                     webhookTestResultSuccess: true,
+                    syncedWebhooks: [],
+                    loadingWebhooks: false,
 
                     init() {
                         this.loadConfig();
+                        this.fetchSyncedWebhooks();
                     },
 
                     switchTab(tabId) {
                         this.activeTab = tabId;
                         if (tabId === 'metrics') this.loadStats();
                         if (tabId === 'rotation' && this.operators.length === 0) this.fetchOperators();
+                        if (tabId === 'webhooks') this.fetchSyncedWebhooks();
                         if (tabId === 'access') this.loadAdminUsers();
                     },
 
@@ -1332,6 +1400,35 @@
                             this.showAlert('Falha ao se comunicar com o backend Rust.', 'error');
                         } finally {
                             this.loadingOperators = false;
+                        }
+                    },
+
+                    async fetchSyncedWebhooks() {
+                        try {
+                            const res = await fetch('/api/webhooks/synced');
+                            if (res.ok) {
+                                this.syncedWebhooks = await res.json();
+                            }
+                        } catch (err) {
+                            console.error('Erro ao buscar webhooks salvos:', err);
+                        }
+                    },
+
+                    async syncWebhooksFromUtalk() {
+                        this.loadingWebhooks = true;
+                        try {
+                            const res = await fetch('/api/webhooks/sync', { method: 'POST' });
+                            if (res.ok) {
+                                const data = await res.json();
+                                this.syncedWebhooks = data.webhooks || [];
+                                this.showAlert('Webhooks do uTalk sincronizados com sucesso!');
+                            } else {
+                                this.showAlert('Erro ao sincronizar webhooks do uTalk.', 'error');
+                            }
+                        } catch (err) {
+                            this.showAlert('Falha ao se comunicar com o servidor.', 'error');
+                        } finally {
+                            this.loadingWebhooks = false;
                         }
                     },
 

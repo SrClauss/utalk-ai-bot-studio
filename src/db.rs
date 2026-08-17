@@ -384,6 +384,29 @@ impl Database {
         Some(selected_id)
     }
 
+    pub fn save_synced_webhooks(&self, json_val: &Value) {
+        let conn = self.conn.lock().unwrap();
+        let val_str = serde_json::to_string(json_val).unwrap_or_default();
+        let _ = conn.execute(
+            "INSERT INTO settings (key, value) VALUES ('synced_utalk_webhooks', ?1)
+             ON CONFLICT(key) DO UPDATE SET value = ?1",
+            params![val_str],
+        );
+    }
+
+    pub fn get_synced_webhooks(&self) -> Value {
+        let conn = self.conn.lock().unwrap();
+        let mut stmt = match conn.prepare("SELECT value FROM settings WHERE key = 'synced_utalk_webhooks'") {
+            Ok(s) => s,
+            Err(_) => return Value::Array(vec![]),
+        };
+        if let Ok(val_str) = stmt.query_row([], |row| row.get::<_, String>(0)) {
+            serde_json::from_str(&val_str).unwrap_or(Value::Array(vec![]))
+        } else {
+            Value::Array(vec![])
+        }
+    }
+
     pub fn get_dashboard_stats(&self) -> Value {
         let conn = self.conn.lock().unwrap();
 

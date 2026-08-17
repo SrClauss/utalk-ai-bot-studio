@@ -127,6 +127,74 @@ pub async fn fetch_human_operators(
     Ok(operators)
 }
 
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct UtalkWebhookConfig {
+    pub id: String,
+    pub name: String,
+    pub url: String,
+    pub paused: bool,
+    #[serde(rename = "forChannels")]
+    pub for_channels: Vec<String>,
+    pub events: Vec<String>,
+}
+
+pub async fn fetch_utalk_webhooks(
+    api_url: &str,
+    token: &str,
+    org_id: &str,
+) -> Result<Vec<UtalkWebhookConfig>, String> {
+    if token.is_empty() || org_id.is_empty() {
+        return Err("Token ou Organization ID do uTalk não configurados".to_string());
+    }
+
+    let client = reqwest::Client::new();
+    let url = format!("{}/webhooks?organizationId={}", api_url.trim_end_matches('/'), org_id);
+
+    let response = client
+        .get(&url)
+        .header("Authorization", format!("Bearer {}", token))
+        .header("Accept", "application/json")
+        .send()
+        .await
+        .map_err(|e| format!("Erro HTTP ao consultar webhooks do uTalk: {}", e))?;
+
+    if !response.status().is_success() {
+        return Err(format!("Erro HTTP {} ao buscar webhooks do uTalk", response.status()));
+    }
+
+    let items: Vec<serde_json::Value> = response
+        .json()
+        .await
+        .map_err(|e| format!("Erro ao decodificar JSON dos webhooks: {}", e))?;
+
+    let mut result = Vec::new();
+    for item in items {
+        let id = item["id"].as_str().unwrap_or_default().to_string();
+        let name = item["name"].as_str().unwrap_or("Sem nome").to_string();
+        let url_str = item["url"].as_str().unwrap_or_default().to_string();
+        let paused = item["paused"].as_bool().unwrap_or(false);
+        let for_channels = item["forChannels"]
+            .as_array()
+            .map(|arr| arr.iter().filter_map(|v| v.as_str().map(|s| s.to_string())).collect())
+            .unwrap_or_default();
+        let events = item["events"]
+            .as_array()
+            .map(|arr| arr.iter().filter_map(|v| v.as_str().map(|s| s.to_string())).collect())
+            .unwrap_or_default();
+
+        result.push(UtalkWebhookConfig {
+            id,
+            name,
+            url: url_str,
+            paused,
+            for_channels,
+            events,
+        });
+    }
+
+    Ok(result)
+}
+
 pub async fn fetch_online_members(
     api_url: &str,
     token: &str,

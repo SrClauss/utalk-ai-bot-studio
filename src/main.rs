@@ -612,6 +612,58 @@ async fn change_password_handler(
     (StatusCode::UNAUTHORIZED, Json(serde_json::json!({ "error": "Não autorizado" })))
 }
 
+async fn sync_webhooks_handler(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+) -> (StatusCode, Json<Value>) {
+    if let Some(token) = extract_token(&headers) {
+        if state.db.validate_session(&token) {
+            let cfg = state.db.get_config();
+            match utalk::fetch_utalk_webhooks(
+                &cfg.utalk_api_url,
+                &cfg.utalk_api_token,
+                &cfg.utalk_organization_id,
+            )
+            .await
+            {
+                Ok(webhooks) => {
+                    let json_val = serde_json::to_value(&webhooks).unwrap_or_default();
+                    state.db.save_synced_webhooks(&json_val);
+                    println!("🔄 Webhooks do uTalk sincronizados com sucesso! (Total: {})", webhooks.len());
+                    return (
+                        StatusCode::OK,
+                        Json(serde_json::json!({
+                            "success": true,
+                            "webhooks": webhooks
+                        })),
+                    );
+                }
+                Err(err) => {
+                    println!("❌ Erro ao sincronizar webhooks do uTalk: {}", err);
+                    return (
+                        StatusCode::BAD_REQUEST,
+                        Json(serde_json::json!({ "error": err })),
+                    );
+                }
+            }
+        }
+    }
+    (StatusCode::UNAUTHORIZED, Json(serde_json::json!({ "error": "Não autorizado" })))
+}
+
+async fn get_synced_webhooks_handler(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+) -> Result<Json<Value>, StatusCode> {
+    if let Some(token) = extract_token(&headers) {
+        if state.db.validate_session(&token) {
+            let val = state.db.get_synced_webhooks();
+            return Ok(Json(val));
+        }
+    }
+    Err(StatusCode::UNAUTHORIZED)
+}
+
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt::init();
@@ -637,6 +689,8 @@ async fn main() {
         .route("/api/users", get(get_admin_users_handler).post(add_admin_user_handler))
         .route("/api/users/:id", axum::routing::delete(delete_admin_user_handler))
         .route("/api/change-password", axum::routing::post(change_password_handler))
+        .route("/api/webhooks/synced", get(get_synced_webhooks_handler))
+        .route("/api/webhooks/sync", axum::routing::post(sync_webhooks_handler))
         .route("/webhook", any(handle_webhook))
         .with_state(state);
 
