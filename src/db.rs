@@ -630,19 +630,19 @@ impl Database {
                     "STAGE_1",
                     "Apresentação e Fonte de Água",
                     "Olá! Bom dia! Sou o Leandro da equipe da Tubarão Bombas. É um prazer falar com você.\n\nEstou aqui para ajudar a encontrar a bomba solar ideal para o seu projeto. Para começarmos, você poderia me dizer qual é a fonte de água que você vai utilizar? (Por exemplo: poço artesiano, rio, represa ou cacimba?)",
-                    "/assets/vendas_leandro_puck.mp3",
+                    "/assets/stage_1_puck.mp3",
                 ),
                 (
                     "STAGE_2",
                     "Profundidade do Poço e Distância",
                     "Excelente! E qual é a profundidade aproximada do poço (ou nível da água) e a distância até o reservatório ou caixa d'água?",
-                    "",
+                    "/assets/stage_2_puck.mp3",
                 ),
                 (
                     "STAGE_3",
                     "Vazão Desejada e Tipo de Energia",
                     "Perfeito! Quantos litros de água por dia (ou por hora) você precisa abastecer? E pretende utilizar energia por placas solares ou rede elétrica?",
-                    "",
+                    "/assets/stage_3_puck.mp3",
                 ),
             ];
 

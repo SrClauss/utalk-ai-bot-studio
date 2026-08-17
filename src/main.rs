@@ -839,6 +839,41 @@ async fn get_assets_handler(
     (StatusCode::NOT_FOUND, "Arquivo não encontrado").into_response()
 }
 
+async fn upload_audio_handler(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+    mut multipart: axum::extract::Multipart,
+) -> (StatusCode, Json<Value>) {
+    if let Some(token) = extract_token(&headers) {
+        if state.db.validate_session(&token) {
+            while let Ok(Some(field)) = multipart.next_field().await {
+                let name = field.name().unwrap_or("file").to_string();
+                if name == "file" || name == "audio" {
+                    let original_name = field.file_name().unwrap_or("audio.mp3").to_string();
+                    let ext = if original_name.ends_with(".wav") { ".wav" } else { ".mp3" };
+                    use std::hash::{Hash, Hasher};
+                    let mut hasher = std::collections::hash_map::DefaultHasher::new();
+                    original_name.hash(&mut hasher);
+                    let time_now = chrono::Utc::now().timestamp_millis();
+                    let filename = format!("upload_{}_{}{}", time_now, hasher.finish(), ext);
+                    let save_path = format!("assets/uploads/{}", filename);
+                    let _ = std::fs::create_dir_all("assets/uploads");
+
+                    if let Ok(bytes) = field.bytes().await {
+                        if std::fs::write(&save_path, bytes).is_ok() {
+                            let rel_url = format!("/assets/uploads/{}", filename);
+                            println!("📁 Upload de áudio salvo em: {}", save_path);
+                            return (StatusCode::OK, Json(serde_json::json!({ "success": true, "url": rel_url })));
+                        }
+                    }
+                }
+            }
+            return (StatusCode::BAD_REQUEST, Json(serde_json::json!({ "error": "Nenhum arquivo enviado" })));
+        }
+    }
+    (StatusCode::UNAUTHORIZED, Json(serde_json::json!({ "error": "Não autorizado" })))
+}
+
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt::init();
@@ -868,6 +903,7 @@ async fn main() {
         .route("/api/webhooks/synced", get(get_synced_webhooks_handler))
         .route("/api/webhooks/sync", axum::routing::post(sync_webhooks_handler))
         .route("/api/stages", get(get_stages_handler).post(save_stage_handler))
+        .route("/api/upload-audio", axum::routing::post(upload_audio_handler))
         .route("/webhook", any(handle_webhook))
         .with_state(state);
 
