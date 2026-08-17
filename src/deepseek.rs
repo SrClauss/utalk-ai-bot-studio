@@ -70,26 +70,22 @@ pub async fn generate_deepseek_response(
         .json(&payload)
         .send()
         .await
-        .map_err(|e| format!("Erro HTTP ao chamar DeepSeek: {}", e))?;
+        .map_err(|e| format!("Erro HTTP ao conectar no DeepSeek: {}", e))?;
 
-    let res_json: Value = res
-        .json()
-        .await
-        .map_err(|e| format!("Erro ao parsear JSON do DeepSeek: {}", e))?;
+    let status = res.status();
+    let res_text = res.text().await.map_err(|e| format!("Erro ao ler resposta do DeepSeek: {}", e))?;
 
-    if let Some(choices) = res_json["choices"].as_array() {
-        if let Some(first) = choices.first() {
-            if let Some(content) = first["message"]["content"].as_str() {
-                return Ok(content.trim().to_string());
-            }
+    println!("📡 [DEEPSEEK API] Status: {}, Resposta: {}", status, res_text);
+
+    if status.is_success() {
+        let json_val: Value = serde_json::from_str(&res_text)
+            .map_err(|e| format!("Erro ao parsear JSON do DeepSeek: {}", e))?;
+        if let Some(content) = json_val["choices"][0]["message"]["content"].as_str() {
+            return Ok(content.to_string());
         }
     }
 
-    if let Some(err_msg) = res_json["error"]["message"].as_str() {
-        return Err(format!("Erro da API DeepSeek: {}", err_msg));
-    }
-
-    Err("Resposta vazia da API DeepSeek".to_string())
+    Err(format!("Falha na API DeepSeek [{}]: {}", status, res_text))
 }
 
 pub async fn extract_project_summary(
