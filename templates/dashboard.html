@@ -1388,28 +1388,8 @@
                     </div>
                 </div>
             </div>
-                                        <div class="p-3 bg-slate-950/80 rounded-xl border border-slate-900 flex items-center gap-3">
-                                            <i class="fa-solid fa-volume-high text-amber-400 text-sm"></i>
-                                            <span class="text-xs font-mono text-slate-400">Prévia do Áudio:</span>
-                                            <audio controls :src="stg.audio_url" class="h-8 w-full max-w-md"></audio>
-                                        </div>
-                                    </template>
-                                </div>
 
-                                <div class="flex justify-end pt-2">
-                                    <button @click="saveStageConfig(stg)"
-                                        class="px-5 py-2 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white font-bold text-xs rounded-xl shadow-lg shadow-amber-600/20 flex items-center gap-2 transition-all">
-                                        <i class="fa-solid fa-floppy-disk"></i>
-                                        <span>Salvar Configuração da Etapa</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </template>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 8: TUTORIAL & CONFIGURAÇÃO DE WEBHOOKS -->
+            <!-- TAB 9: TUTORIAL & CONFIGURAÇÃO DE WEBHOOKS -->
             <div x-show="activeTab === 'webhooks'" class="space-y-6" x-transition>
                 <!-- Hero Header com Status do Endpoint -->
                 <div class="relative overflow-hidden glass-panel p-6 md:p-8 rounded-3xl border border-sky-500/40 shadow-2xl space-y-6">
