@@ -276,8 +276,30 @@ async fn handle_webhook(
                 println!("📦 PAYLOAD JSON BRUTO:\n{}", pretty_json);
             }
 
+            // 🎯 TRAVA ESTRITA DE CANAIS SINCRONIZADOS DO UTALK:
+            let synced_webhooks_json = state.db.get_synced_webhooks();
+            let mut allowed_channels = Vec::new();
+            if let Some(arr) = synced_webhooks_json.as_array() {
+                for item in arr {
+                    let is_paused = item["paused"].as_bool().unwrap_or(false);
+                    if !is_paused {
+                        if let Some(chans) = item["for_channels"].as_array().or_else(|| item["forChannels"].as_array()) {
+                            for ch in chans {
+                                if let Some(s) = ch.as_str() {
+                                    allowed_channels.push(s.to_string());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            let channel_allowed = allowed_channels.is_empty() || allowed_channels.contains(&channel_id.to_string());
+
             if config_snapshot.bot_enabled {
-                if has_human_member {
+                if !channel_allowed {
+                    println!("⚡ Decisão da IA    : ⏸️ [IGNORADO] Canal '{}' (ID: {}) não está na lista de canais permitidos do Webhook.", channel_name, channel_id);
+                } else if has_human_member {
                     println!("⚡ Decisão da IA    : ⏸️ [SILÊNCIOSO] Atendente humano atribuído no uTalk. IA pausada.");
                 } else {
                     println!("⚡ Decisão da IA    : 🤖 [LIGADO] Processando com Gemini...");
