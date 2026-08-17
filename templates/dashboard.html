@@ -119,6 +119,105 @@
     </div>
 
     <div x-show="loggedIn" class="flex flex-col md:flex-row min-h-screen w-full max-w-full overflow-x-hidden" x-transition>
+        <!-- MOBILE NAVBAR (Exibida apenas em celulares e tablets < md) -->
+        <header class="md:hidden sticky top-0 z-50 bg-slate-950/95 backdrop-blur-xl border-b border-slate-800 px-4 py-3 flex items-center justify-between shadow-2xl">
+            <div class="flex items-center gap-3">
+                <img src="/assets/logo.png" alt="Logo" class="w-8 h-8 rounded-lg object-cover border border-indigo-500/30">
+                <div>
+                    <h1 class="text-xs font-extrabold text-white glow-title">uTalk AI Studio</h1>
+                    <span class="text-[9px] font-mono text-emerald-400 font-bold" x-text="config.enabled ? '● ROBÔ ATIVO' : '○ ROBÔ PAUSADO'"></span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <button @click="mobileMenuOpen = !mobileMenuOpen"
+                    class="px-3 py-2 bg-indigo-600/20 text-indigo-300 border border-indigo-500/40 rounded-xl font-bold text-xs flex items-center gap-2 cursor-pointer shadow-md">
+                    <i class="fa-solid" :class="mobileMenuOpen ? 'fa-xmark text-base text-rose-400' : 'fa-bars text-base text-indigo-400'"></i>
+                    <span class="text-[11px] font-bold" x-text="mobileMenuOpen ? 'Fechar' : 'Menu'"></span>
+                </button>
+            </div>
+        </header>
+
+        <!-- MOBILE DRAWER OVERLAY & SLIDING MENU -->
+        <div x-show="mobileMenuOpen" 
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            @click="mobileMenuOpen = false"
+            class="md:hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md">
+        </div>
+
+        <div x-show="mobileMenuOpen"
+            x-transition:enter="transition ease-out duration-300 transform"
+            x-transition:enter-start="-translate-x-full"
+            x-transition:enter-end="translate-x-0"
+            x-transition:leave="transition ease-in duration-200 transform"
+            x-transition:leave-start="translate-x-0"
+            x-transition:leave-end="-translate-x-full"
+            class="md:hidden fixed inset-y-0 left-0 z-50 w-72 bg-slate-950 border-r border-slate-800 p-4 space-y-4 overflow-y-auto shadow-2xl flex flex-col justify-between">
+            
+            <div class="space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <div class="flex items-center gap-3">
+                        <img src="/assets/logo.png" alt="Logo" class="w-9 h-9 rounded-xl border border-indigo-400/30">
+                        <div>
+                            <h2 class="text-sm font-bold text-white">Menu de Navegação</h2>
+                            <p class="text-[10px] font-mono text-slate-400">uTalk AI Studio v2.5</p>
+                        </div>
+                    </div>
+                    <button @click="mobileMenuOpen = false" class="text-slate-400 hover:text-white p-1">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+
+                <nav class="space-y-1.5">
+                    <button @click="switchTab('metrics')" :class="{ 'bg-indigo-600/20 text-indigo-300 border-indigo-500/40': activeTab === 'metrics' }"
+                        class="w-full flex items-center gap-3 p-2.5 rounded-xl text-xs font-bold text-slate-300 hover:bg-slate-900 border border-transparent transition-all">
+                        <i class="fa-solid fa-chart-pie text-indigo-400 w-5"></i> Métricas & Dashboard
+                    </button>
+                    <button @click="switchTab('simulator')" :class="{ 'bg-emerald-600/20 text-emerald-300 border-emerald-500/40': activeTab === 'simulator' }"
+                        class="w-full flex items-center gap-3 p-2.5 rounded-xl text-xs font-bold text-slate-300 hover:bg-slate-900 border border-transparent transition-all">
+                        <i class="fa-solid fa-comments text-emerald-400 w-5"></i> Simulador de Chat AI
+                    </button>
+                    <button @click="switchTab('stages')" :class="{ 'bg-amber-600/20 text-amber-300 border-amber-500/40': activeTab === 'stages' }"
+                        class="w-full flex items-center gap-3 p-2.5 rounded-xl text-xs font-bold text-slate-300 hover:bg-slate-900 border border-transparent transition-all">
+                        <i class="fa-solid fa-database text-amber-400 w-5"></i> Banco de Áudios Indexado
+                    </button>
+                    <button @click="switchTab('rotation')" :class="{ 'bg-emerald-600/20 text-emerald-300 border-emerald-500/40': activeTab === 'rotation' }"
+                        class="w-full flex items-center gap-3 p-2.5 rounded-xl text-xs font-bold text-slate-300 hover:bg-slate-900 border border-transparent transition-all">
+                        <i class="fa-solid fa-users-gear text-emerald-400 w-5"></i> Rodízio de Atendentes
+                    </button>
+                    <button @click="switchTab('prompt')" :class="{ 'bg-purple-600/20 text-purple-300 border-purple-500/40': activeTab === 'prompt' }"
+                        class="w-full flex items-center gap-3 p-2.5 rounded-xl text-xs font-bold text-slate-300 hover:bg-slate-900 border border-transparent transition-all">
+                        <i class="fa-solid fa-brain text-purple-400 w-5"></i> Prompt & Engenharia IA
+                    </button>
+                    <button @click="switchTab('credentials')" :class="{ 'bg-amber-600/20 text-amber-300 border-amber-500/40': activeTab === 'credentials' }"
+                        class="w-full flex items-center gap-3 p-2.5 rounded-xl text-xs font-bold text-slate-300 hover:bg-slate-900 border border-transparent transition-all">
+                        <i class="fa-solid fa-key text-amber-400 w-5"></i> Credenciais & Chaves API
+                    </button>
+                    <button @click="switchTab('webhooks')" :class="{ 'bg-cyan-600/20 text-cyan-300 border-cyan-500/40': activeTab === 'webhooks' }"
+                        class="w-full flex items-center gap-3 p-2.5 rounded-xl text-xs font-bold text-slate-300 hover:bg-slate-900 border border-transparent transition-all">
+                        <i class="fa-solid fa-network-wired text-cyan-400 w-5"></i> Webhooks & Canais uTalk
+                    </button>
+                    <button @click="switchTab('apis')" :class="{ 'bg-pink-600/20 text-pink-300 border-pink-500/40': activeTab === 'apis' }"
+                        class="w-full flex items-center gap-3 p-2.5 rounded-xl text-xs font-bold text-slate-300 hover:bg-slate-900 border border-transparent transition-all">
+                        <i class="fa-solid fa-plug text-pink-400 w-5"></i> APIs Externas
+                    </button>
+                    <button @click="switchTab('access')" :class="{ 'bg-cyan-600/20 text-cyan-300 border-cyan-500/40': activeTab === 'access' }"
+                        class="w-full flex items-center gap-3 p-2.5 rounded-xl text-xs font-bold text-slate-300 hover:bg-slate-900 border border-transparent transition-all">
+                        <i class="fa-solid fa-user-shield text-cyan-400 w-5"></i> Gestão de Usuários
+                    </button>
+                </nav>
+            </div>
+
+            <button @click="doLogout()" class="w-full py-2.5 bg-rose-950/40 text-rose-300 font-bold text-xs rounded-xl border border-rose-800 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-right-from-bracket"></i> Sair do Painel
+            </button>
+        </div>
+
         <!-- SIDEBAR RETRÁTIL DESKTOP (Com Ícones Duotone e Alinhamento Perfeito) -->
         <aside
             class="hidden md:flex flex-col sticky top-0 h-screen shrink-0 z-40 bg-slate-950/95 backdrop-blur-xl border-r border-slate-800/80 transition-all duration-300 select-none shadow-2xl"
@@ -695,7 +794,18 @@
                         </div>
 
                         <div>
-                            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Gemini API Key</label>
+                            <label class="block text-xs font-semibold text-purple-400 mb-1.5">DeepSeek API Key (API de Texto & Triagem Autônoma)</label>
+                            <div class="relative" x-data="{ show: false }">
+                                <input :type="show ? 'text' : 'password'" x-model="config.deepseek_api_key" autocomplete="new-password" placeholder="sk-..."
+                                    class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-3.5 pr-10 py-2.5 text-xs font-mono text-purple-300 focus:outline-none focus:border-purple-500">
+                                <button type="button" @click="show = !show" title="Mostrar/Ocultar Chave" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 text-xs p-1">
+                                    <i class="fa-solid" :class="show ? 'fa-eye-slash text-purple-400' : 'fa-eye'"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Gemini API Key (API Multimodal & Síntese de Voz)</label>
                             <div class="relative" x-data="{ show: false }">
                                 <input :type="show ? 'text' : 'password'" x-model="config.gemini_api_key" autocomplete="new-password" placeholder="AIzaSy..."
                                     class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-3.5 pr-10 py-2.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500">
@@ -1694,10 +1804,12 @@
                         }
                     },
 
+                    mobileMenuOpen: false,
                     audioBankItems: [],
 
                     switchTab(tabId) {
                         this.activeTab = tabId;
+                        this.mobileMenuOpen = false;
                         if (tabId === 'metrics') this.loadStats();
                         if (tabId === 'rotation' && this.operators.length === 0) this.fetchOperators();
                         if (tabId === 'webhooks') this.fetchSyncedWebhooks();

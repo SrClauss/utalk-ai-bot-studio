@@ -8,7 +8,16 @@ pub async fn generate_deepseek_response(
     chat_id: &str,
     user_message: &str,
 ) -> Result<String, String> {
-    let api_key = "sk-92f4266dd5d14b2884f3d7c35bb81911";
+    let api_key = if !config.deepseek_api_key.trim().is_empty() {
+        config.deepseek_api_key.trim().to_string()
+    } else {
+        std::env::var("DEEPSEEK_API_KEY").unwrap_or_default()
+    };
+
+    if api_key.is_empty() {
+        return Err("Chave de API do DeepSeek não configurada no Painel ou nas Variáveis de Ambiente.".to_string());
+    }
+
     let url = "https://api.deepseek.com/v1/chat/completions";
 
     let (history_vec, _) = db.get_chat_context_for_ai(chat_id, 24);
@@ -25,7 +34,7 @@ pub async fn generate_deepseek_response(
     }
 
     let system_prompt = format!(
-        "{}\n\n{}\n### REGRA DE SELEÇÃO AUTÔNOMA DA IA (TUBARÃO BOMBAS):\n1. Você é o Leandro da Tubarão Bombas e decide livremente como responder o cliente.\n2. Se um áudio do catálogo acima corresponder exatamente ao que você deseja responder, inclua a tag `[AUDIO_KEY: chave_do_audio]` no final.\n3. CASO NENHUM ÁUDIO DO CATÁLOGO SIRVA para a resposta ou o cliente tenha feito uma dúvida específica fora do catálogo, NÃO inclua a tag `[AUDIO_KEY: ...]`. O sistema enviará sua resposta como Texto.\n4. Ao concluir a coleta de dados de poço/vazão ou se o cliente solicitar um orçamento final/humano, inclua a tag `[AUDIO_KEY: encaminhamento_especialista] [TRANSFERIR]`.",
+        "{}\n\n{}\n### REGRA DE ENGENHARIA DE POÇOS E ELEVAÇÃO (TUBARÃO BOMBAS):\n1. Você é o Leandro da Tubarão Bombas, especialista consultivo em bombeamento solar de água.\n2. Ao conversar sobre poços artesianos ou cacimbas, considere que a altura manométrica depende de: Profundidade do poço (nível dinâmico) + ACLIVE/subida de terreno (elevação vertical) + Distância horizontal.\n3. Se o cliente informar profundidade do poço e aclive/subida (ex: 100 metros de poço + 20 metros de aclive), RECONHEÇA E SOMA AMBOS OS VALORES na sua resposta consultiva e pergunte a vazão diária/energia.\n4. Se um áudio do catálogo acima corresponder à sua resposta, inclua a tag `[AUDIO_KEY: chave_do_audio]` no final.\n5. CASO NENHUM ÁUDIO DO CATÁLOGO SIRVA (por exemplo, ao detalhar aclives e elevacões técnicas), NÃO inclua a tag `[AUDIO_KEY: ...]`. O sistema enviará sua resposta como Texto.\n6. Ao concluir a coleta de dados de poço/aclive/vazão ou se o cliente solicitar um orçamento final/humano, inclua a tag `[AUDIO_KEY: encaminhamento_especialista] [TRANSFERIR]`.",
         config.system_prompt, catalog_text
     );
 
@@ -90,10 +99,14 @@ pub async fn generate_deepseek_response(
 
 pub async fn extract_project_summary(
     db: SharedDatabase,
-    _config: &AppConfig,
+    config: &AppConfig,
     chat_id: &str,
 ) -> Value {
-    let api_key = "sk-92f4266dd5d14b2884f3d7c35bb81911";
+    let api_key = if !config.deepseek_api_key.trim().is_empty() {
+        config.deepseek_api_key.trim().to_string()
+    } else {
+        std::env::var("DEEPSEEK_API_KEY").unwrap_or_default()
+    };
     let url = "https://api.deepseek.com/v1/chat/completions";
 
     let (history_vec, _) = db.get_chat_context_for_ai(chat_id, 30);
