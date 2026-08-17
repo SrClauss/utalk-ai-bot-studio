@@ -1634,9 +1634,13 @@
                     },
 
                     async sendSimulationMessage() {
-                        if (!this.simInputText.trim() || this.simSending) return;
+                        if (this.simSending) return;
 
-                        const textToSend = this.simInputText.trim();
+                        let textToSend = this.simInputText.trim();
+                        if (!textToSend) {
+                            textToSend = "Olá, bom dia! Gostaria de um orçamento.";
+                        }
+
                         const mediaType = this.simMediaType;
                         this.simInputText = '';
                         this.simSending = true;

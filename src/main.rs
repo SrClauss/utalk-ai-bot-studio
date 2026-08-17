@@ -912,6 +912,8 @@ async fn simulate_chat_handler(
     let user_prompt = req.content.clone();
     let cfg_snapshot = state.db.get_config();
 
+    println!("🧪 [SIMULADOR DE CHAT] Nova mensagem recebida. Chat ID: '{}', Mídia: '{}', Mensagem: '{}'", chat_id, req.msg_type, user_prompt);
+
     // Salva a mensagem do usuario no historico
     state.db.save_message(chat_id, "user", &user_prompt);
 
