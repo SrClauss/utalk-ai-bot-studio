@@ -231,7 +231,11 @@ async fn handle_webhook(
                     process_incoming_webhook(state_clone, payload).await;
                 });
             } else {
-                println!("⏸️ Robô está PAUSADO no Dashboard. Evento ignorado.");
+                let content_obj = &payload["Payload"]["Content"];
+                let msg_obj = if payload["Payload"]["Type"] == "Message" || content_obj["MessageType"].is_string() { content_obj } else { &content_obj["LastMessage"] };
+                let contact_name = content_obj["Contact"]["Name"].as_str().or_else(|| msg_obj["Chat"]["Contact"]["Name"].as_str()).unwrap_or("Cliente");
+                let text = msg_obj["Content"].as_str().unwrap_or("[Mídia/Outro]");
+                println!("⏸️ [ROBÔ PAUSADO] Mensagem recebida de '{}': \"{}\"", contact_name, text);
             }
         } else if !body_str.is_empty() {
             println!("📦 Body Texto:\n{}", body_str);
