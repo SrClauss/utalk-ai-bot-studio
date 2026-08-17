@@ -1684,13 +1684,66 @@
                         }
                     },
 
+                    audioBankItems: [],
+
                     switchTab(tabId) {
                         this.activeTab = tabId;
                         if (tabId === 'metrics') this.loadStats();
                         if (tabId === 'rotation' && this.operators.length === 0) this.fetchOperators();
                         if (tabId === 'webhooks') this.fetchSyncedWebhooks();
-                        if (tabId === 'stages') this.fetchStages();
+                        if (tabId === 'stages') this.fetchAudioBank();
                         if (tabId === 'access') this.loadAdminUsers();
+                    },
+
+                    async fetchAudioBank() {
+                        try {
+                            const res = await fetch('/api/audio-bank');
+                            if (res.ok) {
+                                this.audioBankItems = await res.json();
+                            }
+                        } catch (err) {
+                            console.error('Erro ao buscar banco de áudios:', err);
+                        }
+                    },
+
+                    async saveAudioBankItem(item) {
+                        try {
+                            const res = await fetch('/api/audio-bank', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(item)
+                            });
+                            if (res.ok) {
+                                this.showAlert(`Áudio '${item.title}' salvo com sucesso!`);
+                                this.fetchAudioBank();
+                            } else {
+                                this.showAlert('Erro ao salvar item no banco de áudios.', 'error');
+                            }
+                        } catch (err) {
+                            this.showAlert('Falha ao comunicar com o servidor.', 'error');
+                        }
+                    },
+
+                    async uploadAudioForBank(event, item) {
+                        const file = event.target.files[0];
+                        if (!file) return;
+                        const formData = new FormData();
+                        formData.append('file', file);
+                        try {
+                            const res = await fetch('/api/upload-audio', {
+                                method: 'POST',
+                                body: formData
+                            });
+                            const data = await res.json();
+                            if (res.ok && data.success) {
+                                item.audio_url = data.url;
+                                this.showAlert('Áudio enviado com sucesso! Clique em Salvar Configuração.');
+                            } else {
+                                this.showAlert(data.error || 'Erro no upload do áudio.', 'error');
+                            }
+                        } catch (err) {
+                            this.showAlert('Erro de conexão no upload do áudio.', 'error');
+                        }
                     },
 
                     showAlert(msg, type = 'success') {
