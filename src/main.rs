@@ -237,6 +237,18 @@ async fn handle_webhook(
             let phone = content_obj["Contact"]["PhoneNumber"].as_str().or_else(|| msg_obj["Chat"]["Contact"]["PhoneNumber"].as_str()).unwrap_or("N/A");
             let text = msg_obj["Content"].as_str().unwrap_or("[Mídia / Áudio / Sistema]");
 
+            let tag_names: Vec<String> = chat_obj["Tags"].as_array()
+                .or_else(|| content_obj["Contact"]["Tags"].as_array())
+                .or_else(|| content_obj["Tags"].as_array())
+                .map(|arr| {
+                    arr.iter()
+                        .filter_map(|t| t.get("name").or_else(|| t.get("Name")).and_then(|n| n.as_str()).map(|s| s.to_string()))
+                        .collect()
+                })
+                .unwrap_or_default();
+
+            let tags_info = if tag_names.is_empty() { "Nenhuma".to_string() } else { tag_names.join(", ") };
+
             let has_human_member = chat_obj["OrganizationMember"].is_object()
                 || chat_obj["organizationMember"].is_object()
                 || chat_obj["Member"].is_object()
@@ -252,6 +264,7 @@ async fn handle_webhook(
             println!("📡 Canal Receptor  : {} (ID: {})", channel_name, channel_id);
             println!("👤 Cliente / Remet. : {} ({})", contact_name, phone);
             println!("💬 Conteúdo Texto  : \"{}\"", text);
+            println!("🏷️ Tags no uTalk    : {}", tags_info);
             println!("👤 Status Atendente: {}", attendant_info);
 
             if config_snapshot.bot_enabled {
