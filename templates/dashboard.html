@@ -1102,6 +1102,12 @@
                                         <div class="flex items-center justify-between text-[9px] font-mono text-slate-400 pb-1 border-b border-slate-800/50">
                                             <span x-text="msg.sender === 'user' ? '👤 Cliente' : '🤖 Leandro (Tubarão Bombas)'"></span>
                                             <span x-text="msg.type === 'Audio' ? '🎙️ Nota de Voz' : '💬 Texto'"></span>
+                                        </div>
+
+                                        <!-- Conteúdo da Mensagem (Texto) -->
+                                        <template x-if="msg.text">
+                                            <p class="text-xs text-slate-100 whitespace-pre-wrap leading-relaxed pt-1" x-text="msg.text"></p>
+                                        </template>
                                         <!-- Card de Transferência com Ficha do Projeto Extraído -->
                                         <template x-if="msg.transfer_info && msg.transfer_info.is_transferred">
                                             <div class="mt-2 p-3.5 bg-purple-950/90 border border-purple-700/80 rounded-2xl space-y-2.5 text-purple-100 shadow-xl">
