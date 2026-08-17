@@ -270,8 +270,25 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
 
     let is_audio = msg_type == "Audio";
     if (source == "Contact" || is_audio) && !chat_id.is_empty() {
+        // 1. Checa se o chat já foi transferido no banco local/VPS
         if state.db.is_chat_transferred(chat_id) {
             println!("⏸️ Chat {} já foi transferido para o atendimento humano. IA pausada para este contato.", chat_id);
+            return;
+        }
+
+        // 2. Checa se o próprio payload da Umbler/uTalk indica que já existe um atendente humano atribuído a esta conversa
+        let chat_obj = if payload_type == "Chat" { content_obj } else { &content_obj["Chat"] };
+        let has_human_member = chat_obj["OrganizationMember"].is_object()
+            || chat_obj["organizationMember"].is_object()
+            || chat_obj["Member"].is_object()
+            || content_obj["OrganizationMember"].is_object()
+            || content_obj["organizationMember"].is_object()
+            || chat_obj["MemberId"].as_str().map(|s| !s.is_empty()).unwrap_or(false)
+            || chat_obj["memberId"].as_str().map(|s| !s.is_empty()).unwrap_or(false);
+
+        if has_human_member {
+            println!("⏸️ Chat {} já possui atendente humano atribuído no uTalk/Umbler. IA pausada automaticamente.", chat_id);
+            let _ = state.db.record_transfer(chat_id, "uTalk-Attendant", "Atendente uTalk");
             return;
         }
 
