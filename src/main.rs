@@ -259,6 +259,11 @@ async fn handle_webhook(
 
             let attendant_info = if has_human_member { "👤 Atendente Humano Atribuído no uTalk" } else { "✅ Nenhum (Chat Livre)" };
 
+            // Salvar o último payload bruto em arquivo na VPS para inspeção
+            if let Ok(pretty_json) = serde_json::to_string_pretty(&payload) {
+                let _ = std::fs::write("/tmp/last_webhook.json", &pretty_json);
+            }
+
             println!("\n========================================================");
             println!("📩 MENSAGEM RECEBIDA NO WEBHOOK [uTalk]");
             println!("📡 Canal Receptor  : {} (ID: {})", channel_name, channel_id);
@@ -266,6 +271,10 @@ async fn handle_webhook(
             println!("💬 Conteúdo Texto  : \"{}\"", text);
             println!("🏷️ Tags no uTalk    : {}", tags_info);
             println!("👤 Status Atendente: {}", attendant_info);
+
+            if let Ok(pretty_json) = serde_json::to_string_pretty(&payload) {
+                println!("📦 PAYLOAD JSON BRUTO:\n{}", pretty_json);
+            }
 
             if config_snapshot.bot_enabled {
                 if has_human_member {
