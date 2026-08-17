@@ -1299,13 +1299,10 @@
                                 </button>
 
                                 <!-- Botão Enviar -->
-                                <button @click="sendSimulationMessage()" :disabled="simSending || !simInputText.trim()"
+                                <button @click="sendSimulationMessage()" :disabled="simSending"
                                     class="px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 text-white font-bold text-xs rounded-xl shadow-lg shadow-emerald-600/20 flex items-center gap-2 transition-all cursor-pointer">
                                     <i class="fa-solid" :class="simSending ? 'fa-circle-notch fa-spin' : 'fa-paper-plane'"></i>
                                     <span>Enviar</span>
-                                </button>
-                            </div>
-                        </div>                                 <span>Enviar</span>
                                 </button>
                             </div>
                         </div>
@@ -1629,7 +1626,9 @@
 }</code></pre>
                 </div>
             </div>
-<!-- Script Alpine.js Reativo com Estado da Sidebar Retrátil -->
+        </main>
+
+        <!-- Script Alpine.js Reativo com Estado da Sidebar Retrátil -->
         <script>
             function dashboardApp() {
                 return {
