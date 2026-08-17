@@ -1312,53 +1312,79 @@
 
             <!-- TAB 8: BANCO DE ÁUDIOS INDEXADO POR DESCRIÇÃO (IA AUTÔNOMA DEEPSEEK) -->
             <div x-show="activeTab === 'stages'" class="space-y-6" x-transition>
-                <div class="glass-panel p-4 sm:p-6 rounded-3xl space-y-6 border border-amber-500/30 shadow-xl">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-4">
-                        <div class="space-y-1">
-                            <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
-                                <i class="fa-solid fa-database text-amber-400"></i>
-                                <span>Banco de Áudios Indexado por Descrição (IA Autônoma DeepSeek)</span>
-                            </h3>
-                            <p class="text-xs text-slate-400">A IA lê a descrição/intenção de cada áudio no banco e escolhe autonomamente qual voz Puck enviar em cada momento</p>
+                <div class="glass-panel p-5 sm:p-8 rounded-3xl space-y-6 border border-amber-500/30 shadow-2xl relative overflow-hidden">
+                    <div class="absolute -top-16 -right-16 w-72 h-72 bg-amber-500/10 blur-3xl rounded-full pointer-events-none"></div>
+
+                    <!-- Header Banner -->
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-5">
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-600 via-orange-500 to-yellow-400 flex items-center justify-center font-bold text-xl text-white shadow-lg shadow-amber-600/30 shrink-0">
+                                <i class="fa-solid fa-database"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h3 class="text-lg font-extrabold text-white tracking-tight">Banco de Áudios Indexado</h3>
+                                    <span class="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono text-[10px] font-bold">DeepSeek V3 Autônomo</span>
+                                </div>
+                                <p class="text-xs text-slate-400">A IA lê o catálogo de intenções abaixo e decide autonomamente qual áudio enviar ao cliente</p>
+                            </div>
                         </div>
-                        <button @click="fetchAudioBank()"
-                            class="w-full sm:w-auto px-4 py-2.5 bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 font-bold text-xs rounded-xl border border-amber-500/30 flex items-center justify-center gap-2 transition-all">
-                            <i class="fa-solid fa-rotate-right"></i>
-                            <span>Atualizar Banco de Áudios</span>
-                        </button>
+
+                        <div class="flex items-center gap-3 w-full md:w-auto">
+                            <button @click="fetchAudioBank()"
+                                class="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-amber-300 font-bold text-xs rounded-xl border border-slate-800 hover:border-amber-500/40 flex items-center justify-center gap-2 transition-all cursor-pointer">
+                                <i class="fa-solid fa-rotate-right"></i>
+                                <span>Atualizar Banco</span>
+                            </button>
+                        </div>
                     </div>
 
+                    <!-- Audio Catalog Cards Grid -->
                     <div class="grid grid-cols-1 gap-6">
                         <template x-for="item in audioBankItems" :key="item.key">
-                            <div class="glass-card p-4 sm:p-5 rounded-2xl border border-slate-800 space-y-4 hover:border-amber-500/40 transition-all">
+                            <div class="glass-card p-5 sm:p-6 rounded-2xl border border-slate-800/90 space-y-4 hover:border-amber-500/50 transition-all shadow-lg bg-slate-950/60 backdrop-blur-md">
+                                <!-- Card Header -->
                                 <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800/80 pb-3 gap-2">
-                                    <div class="flex items-center gap-2">
-                                        <span class="px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono text-xs font-bold" x-text="item.key"></span>
+                                    <div class="flex items-center gap-2.5 flex-wrap">
+                                        <span class="px-3 py-1 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono text-xs font-bold tracking-wide" x-text="item.key"></span>
                                         <h4 class="font-extrabold text-sm text-slate-100" x-text="item.title"></h4>
                                     </div>
-                                    <span class="w-fit text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold">INDEXADO PARA IA</span>
+                                    <span class="w-fit text-[10px] font-mono px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold flex items-center gap-1.5">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                        INDEXADO PARA DEEPSEEK
+                                    </span>
                                 </div>
 
                                 <div class="space-y-4">
-                                    <div>
-                                        <label class="block text-xs font-semibold text-amber-400 mb-1 flex items-center gap-1">
-                                            <i class="fa-solid fa-brain"></i> Descrição / Intenção lida pelo DeepSeek para decidir quando usar este áudio:
+                                    <!-- Intenção IA -->
+                                    <div class="space-y-1.5">
+                                        <label class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+                                            <i class="fa-solid fa-brain text-amber-400"></i>
+                                            <span>Descrição / Intenção lida pelo DeepSeek para selecionar este áudio:</span>
                                         </label>
                                         <textarea x-model="item.description" rows="2"
-                                            class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-sans text-slate-200 focus:outline-none focus:border-amber-500 transition-all leading-relaxed"></textarea>
+                                            class="w-full bg-slate-900/90 border border-slate-800 rounded-xl p-3 text-xs font-sans text-slate-200 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all leading-relaxed placeholder:text-slate-600"></textarea>
                                     </div>
 
-                                    <div>
-                                        <label class="block text-xs font-semibold text-slate-300 mb-1">Transcrição / Mensagem de Texto Equivalente:</label>
+                                    <!-- Mensagem de Texto Equivalente -->
+                                    <div class="space-y-1.5">
+                                        <label class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                                            <i class="fa-solid fa-align-left text-slate-400"></i>
+                                            <span>Transcrição / Mensagem de Texto Equivalente:</span>
+                                        </label>
                                         <textarea x-model="item.text_message" rows="2"
-                                            class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-slate-300 focus:outline-none focus:border-amber-500 transition-all leading-relaxed"></textarea>
+                                            class="w-full bg-slate-900/90 border border-slate-800 rounded-xl p-3 text-xs font-mono text-slate-300 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all leading-relaxed placeholder:text-slate-600"></textarea>
                                     </div>
 
-                                    <div>
-                                        <label class="block text-xs font-semibold text-slate-300 mb-1">URL do Áudio MP3 (Voz Puck):</label>
+                                    <!-- URL do Audio MP3 -->
+                                    <div class="space-y-1.5">
+                                        <label class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                                            <i class="fa-solid fa-music text-amber-400"></i>
+                                            <span>URL do Áudio MP3 (Voz Puck do Gemini):</span>
+                                        </label>
                                         <div class="flex flex-col sm:flex-row gap-2">
                                             <input type="text" x-model="item.audio_url" placeholder="/assets/stage_1_puck.mp3"
-                                                class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs font-mono text-amber-300 focus:outline-none focus:border-amber-500 transition-all">
+                                                class="flex-1 bg-slate-900/90 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-mono text-amber-300 focus:outline-none focus:border-amber-500 transition-all">
                                             <label class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl cursor-pointer flex items-center justify-center gap-2 border border-slate-700 shrink-0 shadow-sm hover:border-amber-500/50 transition-all">
                                                 <i class="fa-solid fa-cloud-arrow-up text-amber-400"></i>
                                                 <span>Subir MP3</span>
@@ -1367,18 +1393,25 @@
                                         </div>
                                     </div>
 
-                                    <!-- Audio Preview Player -->
+                                    <!-- Audio Preview Player Container -->
                                     <template x-if="item.audio_url">
-                                        <div class="p-3 bg-slate-950/80 rounded-xl border border-slate-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                                            <span class="text-xs font-mono text-amber-400 font-bold flex items-center gap-2">
-                                                <i class="fa-solid fa-volume-high"></i> Prévia do Áudio:
-                                            </span>
+                                        <div class="p-3.5 bg-slate-900/90 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-inner">
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center text-xs">
+                                                    <i class="fa-solid fa-circle-play"></i>
+                                                </div>
+                                                <div>
+                                                    <span class="text-xs font-bold text-slate-200">Prévia do Áudio MP3</span>
+                                                    <p class="text-[10px] font-mono text-amber-300/80 truncate max-w-[200px]" x-text="item.audio_url"></p>
+                                                </div>
+                                            </div>
                                             <audio controls :src="item.audio_url" class="w-full sm:w-auto h-8 rounded-lg"></audio>
                                         </div>
                                     </template>
 
+                                    <!-- Save Config Button -->
                                     <button @click="saveAudioBankItem(item)"
-                                        class="w-full py-3 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-black text-xs rounded-xl shadow-lg flex items-center justify-center gap-2 transition-all cursor-pointer">
+                                        class="w-full py-3 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-black text-xs rounded-xl shadow-lg shadow-amber-600/20 flex items-center justify-center gap-2 transition-all cursor-pointer">
                                         <i class="fa-solid fa-floppy-disk"></i>
                                         <span>Salvar Configuração deste Áudio</span>
                                     </button>
