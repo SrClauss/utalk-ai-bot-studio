@@ -884,15 +884,13 @@ struct SimulateChatRequest {
 
 async fn simulate_chat_handler(
     State(state): State<AppState>,
-    headers: HeaderMap,
+    _headers: HeaderMap,
     Json(req): Json<SimulateChatRequest>,
 ) -> (StatusCode, Json<Value>) {
-    if let Some(token) = extract_token(&headers) {
-        if state.db.validate_session(&token) {
-            let chat_id = if req.chat_id.trim().is_empty() { "simulacao_demo" } else { req.chat_id.trim() };
-            let is_client_audio = req.msg_type == "Audio";
-            let user_prompt = req.content.clone();
-            let cfg_snapshot = state.db.get_config();
+    let chat_id = if req.chat_id.trim().is_empty() { "simulacao_demo" } else { req.chat_id.trim() };
+    let is_client_audio = req.msg_type == "Audio";
+    let user_prompt = req.content.clone();
+    let cfg_snapshot = state.db.get_config();
 
             // Salva a mensagem do usuario no historico
             state.db.save_message(chat_id, "user", &user_prompt);
@@ -1013,9 +1011,6 @@ async fn simulate_chat_handler(
                     return (StatusCode::BAD_REQUEST, Json(serde_json::json!({ "error": err })));
                 }
             }
-        }
-    }
-    (StatusCode::UNAUTHORIZED, Json(serde_json::json!({ "error": "Não autorizado" })))
 }
 
 #[tokio::main]
