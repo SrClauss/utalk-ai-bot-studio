@@ -13,13 +13,23 @@ pub async fn generate_deepseek_response(
 
     let (history_vec, _) = db.get_chat_context_for_ai(chat_id, 24);
 
-    let mut messages = Vec::new();
+    let audio_items = db.get_all_audio_bank_items();
+    let mut catalog_text = String::from("### CATÁLOGO DE ÁUDIOS PRÉ-GRAVADOS DISPONÍVEIS (VOZ PUCK):\n");
+    if let Some(arr) = audio_items.as_array() {
+        for item in arr {
+            let key = item["key"].as_str().unwrap_or_default();
+            let desc = item["description"].as_str().unwrap_or_default();
+            let txt = item["text_message"].as_str().unwrap_or_default();
+            catalog_text.push_str(&format!("- CHAVE: [{}]\n  Intenção/Uso: {}\n  Mensagem: {}\n\n", key, desc, txt));
+        }
+    }
 
     let system_prompt = format!(
-        "{}\n\n### REGRA MANDATÓRIA DE ATENDIMENTO TUBARÃO BOMBAS:\n- Você é o Leandro, consultor técnico da Tubarão Bombas.\n- Atenda o cliente de forma cortês, neutra, formal e objetiva (tom consultivo, sem entonação de locutor/político).\n- Não invente preços ou dados irreais. Ao concluir a coleta de dados de poço/vazão ou se o cliente solicitar um orçamento final/projeto especial, inclua OBRIGATORIAMENTE a tag `[TRANSFERIR]` no final da resposta.",
-        config.system_prompt
+        "{}\n\n{}\n### REGRA DE SELEÇÃO AUTÔNOMA DA IA (TUBARÃO BOMBAS):\n1. Você é o Leandro da Tubarão Bombas e decide livremente como responder o cliente.\n2. Se um áudio do catálogo acima corresponder exatamente ao que você deseja responder, inclua a tag `[AUDIO_KEY: chave_do_audio]` no final.\n3. CASO NENHUM ÁUDIO DO CATÁLOGO SIRVA para a resposta ou o cliente tenha feito uma dúvida específica fora do catálogo, NÃO inclua a tag `[AUDIO_KEY: ...]`. O sistema enviará sua resposta como Texto.\n4. Ao concluir a coleta de dados de poço/vazão ou se o cliente solicitar um orçamento final/humano, inclua a tag `[AUDIO_KEY: encaminhamento_especialista] [TRANSFERIR]`.",
+        config.system_prompt, catalog_text
     );
 
+    let mut messages = Vec::new();
     messages.push(json!({
         "role": "system",
         "content": system_prompt

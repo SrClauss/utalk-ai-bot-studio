@@ -875,6 +875,26 @@ async fn upload_audio_handler(
     (StatusCode::UNAUTHORIZED, Json(serde_json::json!({ "error": "Não autorizado" })))
 }
 
+async fn get_audio_bank_handler(State(state): State<AppState>) -> Json<Value> {
+    Json(state.db.get_all_audio_bank_items())
+}
+
+async fn save_audio_bank_handler(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+    Json(item): Json<Value>,
+) -> (StatusCode, Json<Value>) {
+    if let Some(token) = extract_token(&headers) {
+        if state.db.validate_session(&token) {
+            if state.db.save_audio_bank_item(&item) {
+                return (StatusCode::OK, Json(serde_json::json!({ "success": true })));
+            }
+            return (StatusCode::BAD_REQUEST, Json(serde_json::json!({ "error": "Falha ao salvar item no Banco de Áudios" })));
+        }
+    }
+    (StatusCode::UNAUTHORIZED, Json(serde_json::json!({ "error": "Não autorizado" })))
+}
+
 #[derive(Deserialize)]
 struct SimulateChatRequest {
     chat_id: String,
@@ -892,158 +912,79 @@ async fn simulate_chat_handler(
     let user_prompt = req.content.clone();
     let cfg_snapshot = state.db.get_config();
 
-            // Salva a mensagem do usuario no historico
-            state.db.save_message(chat_id, "user", &user_prompt);
+    // Salva a mensagem do usuario no historico
+    state.db.save_message(chat_id, "user", &user_prompt);
 
-            let current_stage = state.db.get_chat_stage(chat_id);
-            let text_low = user_prompt.to_lowercase();
+    match deepseek::generate_deepseek_response(state.db.clone(), &cfg_snapshot, chat_id, &user_prompt).await {
+        Ok(mut ai_reply) => {
+            let is_transfer = ai_reply.contains("[TRANSFERIR]");
+            if is_transfer {
+                ai_reply = ai_reply.replace("[TRANSFERIR]", "").trim().to_string();
+            }
 
-            let (history_vec, _) = state.db.get_chat_context_for_ai(chat_id, 24);
-            let is_first_contact = history_vec.len() <= 1; // Apenas a mensagem atual que acabamos de salvar
+            let mut selected_audio_url = String::new();
 
-            if is_first_contact {
-                state.db.set_chat_stage(chat_id, "STAGE_1");
-                if let Some(stage_cfg) = state.db.get_stage_config("STAGE_1") {
-                    let txt_msg = stage_cfg["text_message"].as_str().unwrap_or_default();
-                    let audio_url = stage_cfg["audio_url"].as_str().unwrap_or_default();
+            // Extrai a chave de audio selecionada pela IA DeepSeek
+            if let Some(pos) = ai_reply.find("[AUDIO_KEY:") {
+                if let Some(end_pos) = ai_reply[pos..].find(']') {
+                    let audio_key = ai_reply[pos + 11..pos + end_pos].trim().to_string();
+                    let cleaned_text = ai_reply[..pos].to_string() + &ai_reply[pos + end_pos + 1..];
+                    ai_reply = cleaned_text.trim().to_string();
 
-                    state.db.save_message(chat_id, "assistant", txt_msg);
-                    let reply_type = if is_client_audio && !audio_url.is_empty() { "Audio" } else { "Text" };
-                    return (StatusCode::OK, Json(serde_json::json!({
-                        "success": true,
-                        "chat_id": chat_id,
-                        "current_stage": "STAGE_1",
-                        "reply_type": reply_type,
-                        "reply_text": txt_msg,
-                        "reply_audio_url": audio_url,
-                        "was_ai_intervention": false
-                    })));
+                    let audio_items = state.db.get_all_audio_bank_items();
+                    if let Some(arr) = audio_items.as_array() {
+                        for item in arr {
+                            if item["key"].as_str().unwrap_or_default() == audio_key {
+                                selected_audio_url = item["audio_url"].as_str().unwrap_or_default().to_string();
+                                break;
+                            }
+                        }
+                    }
                 }
             }
 
-            // Verifica se a resposta corresponde ao esperado para cada etapa
-            let (is_expected_stage_answer, next_stage) = match current_stage.as_str() {
-                "STAGE_1" => {
-                    let is_match = text_low.contains("poço") || text_low.contains("poco") || text_low.contains("rio") || text_low.contains("represa") || text_low.contains("cacimba") || text_low.contains("artesiano") || text_low.contains("cisterna") || text_low.contains("nascente") || text_low.contains("lago");
-                    (is_match, "STAGE_2")
-                },
-                "STAGE_2" => {
-                    let is_match = text_low.contains("metro") || text_low.contains("m") || text_low.contains("profund") || text_low.contains("distancia") || text_low.contains("caixa") || text_low.contains("0") || text_low.contains("1") || text_low.contains("2") || text_low.contains("3") || text_low.contains("4") || text_low.contains("5") || text_low.contains("6") || text_low.contains("7") || text_low.contains("8") || text_low.contains("9");
-                    (is_match, "STAGE_3")
-                },
-                "STAGE_3" => {
-                    let is_match = text_low.contains("litro") || text_low.contains("l") || text_low.contains("placa") || text_low.contains("solar") || text_low.contains("eletric") || text_low.contains("rede") || text_low.contains("0") || text_low.contains("1") || text_low.contains("2") || text_low.contains("3") || text_low.contains("4") || text_low.contains("5") || text_low.contains("6") || text_low.contains("7") || text_low.contains("8") || text_low.contains("9");
-                    (is_match, "STAGE_TRANSFER")
-                },
-                _ => (false, "STAGE_TRANSFER"),
+            let has_matching_audio = !selected_audio_url.is_empty();
+
+            let reply_type = if is_client_audio && has_matching_audio {
+                "Audio"
+            } else {
+                "Text"
             };
 
-            if is_expected_stage_answer {
-                state.db.set_chat_stage(chat_id, next_stage);
+            let reply_audio_url = if reply_type == "Audio" {
+                selected_audio_url
+            } else {
+                String::new()
+            };
 
-                if let Some(stage_cfg) = state.db.get_stage_config(next_stage) {
-                    let txt_msg = stage_cfg["text_message"].as_str().unwrap_or_default();
-                    let audio_url = stage_cfg["audio_url"].as_str().unwrap_or_default();
+            state.db.save_message(chat_id, "assistant", &ai_reply);
 
-                    state.db.save_message(chat_id, "assistant", txt_msg);
-                    let reply_type = if is_client_audio && !audio_url.is_empty() { "Audio" } else { "Text" };
+            let transfer_info = if is_transfer {
+                let project_data = deepseek::extract_project_summary(state.db.clone(), &cfg_snapshot, chat_id).await;
+                serde_json::json!({
+                    "is_transferred": true,
+                    "operator": "Leandro Humberto (Rodízio de Atendentes)",
+                    "summary": "DeepSeek concluiu a triagem autônoma do projeto solar. Atendimento pausado para o robô e encaminhado ao especialista humano.",
+                    "details": project_data
+                })
+            } else {
+                serde_json::json!({ "is_transferred": false })
+            };
 
-                    let is_transfer = next_stage == "STAGE_TRANSFER";
-                    let transfer_info = if is_transfer {
-                        let project_data = deepseek::extract_project_summary(state.db.clone(), &cfg_snapshot, chat_id).await;
-                        serde_json::json!({
-                            "is_transferred": true,
-                            "operator": "Leandro Humberto (Rodízio de Atendentes)",
-                            "summary": "Coleta de dados da bomba solar finalizada com sucesso. Atendimento pausado para o robô e encaminhado ao atendente humano no uTalk.",
-                            "details": project_data
-                        })
-                    } else {
-                        serde_json::json!({ "is_transferred": false })
-                    };
-
-                    return (StatusCode::OK, Json(serde_json::json!({
-                        "success": true,
-                        "chat_id": chat_id,
-                        "current_stage": next_stage,
-                        "reply_type": reply_type,
-                        "reply_text": txt_msg,
-                        "reply_audio_url": audio_url,
-                        "was_ai_intervention": false,
-                        "transfer_info": transfer_info
-                    })));
-                }
-            }
-
-            // Intervenção da IA DeepSeek em dúvidas e exceções
-            let prompt_with_stage_ctx = format!(
-                "{}\n[INSTRUÇÃO DE ETAPA: O cliente está na etapa '{}'. Responda à dúvida dele de forma objetiva, cortês e formal (tom consultivo, sem entonação de locutor/político) e conclua a resposta fazendo a pergunta pendente da etapa '{}']",
-                user_prompt, current_stage, current_stage
-            );
-
-            match deepseek::generate_deepseek_response(state.db.clone(), &cfg_snapshot, chat_id, &prompt_with_stage_ctx).await {
-                Ok(mut ai_reply) => {
-                    let is_transfer = ai_reply.contains("[TRANSFERIR]");
-                    if is_transfer {
-                        ai_reply = ai_reply.replace("[TRANSFERIR]", "").trim().to_string();
-                    }
-
-                    let audio_url_for_stage = match current_stage.as_str() {
-                        "STAGE_1" => "/assets/stage_1_puck.mp3",
-                        "STAGE_2" => "/assets/stage_2_puck.mp3",
-                        "STAGE_3" => "/assets/stage_3_puck.mp3",
-                        _ => "/assets/stage_transfer_puck.mp3",
-                    };
-
-                    let reply_type = if is_client_audio { "Audio" } else { "Text" };
-                    state.db.save_message(chat_id, "assistant", &ai_reply);
-
-                    let transfer_info = if is_transfer {
-                        let project_data = deepseek::extract_project_summary(state.db.clone(), &cfg_snapshot, chat_id).await;
-                        serde_json::json!({
-                            "is_transferred": true,
-                            "operator": "Leandro Humberto (Rodízio de Atendentes)",
-                            "summary": "DeepSeek detectou a conclusão da triagem ou solicitação especial de orçamento. Atendimento transferido ao humano no uTalk.",
-                            "details": project_data
-                        })
-                    } else {
-                        serde_json::json!({ "is_transferred": false })
-                    };
-
-                    return (StatusCode::OK, Json(serde_json::json!({
-                        "success": true,
-                        "chat_id": chat_id,
-                        "current_stage": current_stage,
-                        "reply_type": reply_type,
-                        "reply_text": ai_reply,
-                        "reply_audio_url": audio_url_for_stage,
-                        "was_ai_intervention": true,
-                        "transfer_info": transfer_info
-                    })));
-                }
-                Err(err) => {
-                    println!("⚠️ Falha no DeepSeek, usando resposta de contingência: {}", err);
-                    let audio_url_for_stage = match current_stage.as_str() {
-                        "STAGE_1" => "/assets/stage_1_puck.mp3",
-                        "STAGE_2" => "/assets/stage_2_puck.mp3",
-                        "STAGE_3" => "/assets/stage_3_puck.mp3",
-                        _ => "/assets/stage_transfer_puck.mp3",
-                    };
-                    if let Some(stage_cfg) = state.db.get_stage_config(&current_stage) {
-                        let txt_msg = stage_cfg["text_message"].as_str().unwrap_or_default();
-                        state.db.save_message(chat_id, "assistant", txt_msg);
-                        return (StatusCode::OK, Json(serde_json::json!({
-                            "success": true,
-                            "chat_id": chat_id,
-                            "current_stage": current_stage,
-                            "reply_type": if is_client_audio { "Audio" } else { "Text" },
-                            "reply_text": txt_msg,
-                            "reply_audio_url": audio_url_for_stage,
-                            "was_ai_intervention": false
-                        })));
-                    }
-                    return (StatusCode::BAD_REQUEST, Json(serde_json::json!({ "error": err })));
-                }
-            }
+            return (StatusCode::OK, Json(serde_json::json!({
+                "success": true,
+                "chat_id": chat_id,
+                "reply_type": reply_type,
+                "reply_text": ai_reply,
+                "reply_audio_url": reply_audio_url,
+                "was_ai_intervention": true,
+                "transfer_info": transfer_info
+            })));
+        }
+        Err(err) => {
+            return (StatusCode::BAD_REQUEST, Json(serde_json::json!({ "error": err })));
+        }
+    }
 }
 
 #[tokio::main]
@@ -1075,6 +1016,7 @@ async fn main() {
         .route("/api/webhooks/synced", get(get_synced_webhooks_handler))
         .route("/api/webhooks/sync", axum::routing::post(sync_webhooks_handler))
         .route("/api/stages", get(get_stages_handler).post(save_stage_handler))
+        .route("/api/audio-bank", get(get_audio_bank_handler).post(save_audio_bank_handler))
         .route("/api/upload-audio", axum::routing::post(upload_audio_handler))
         .route("/api/simulate", axum::routing::post(simulate_chat_handler))
         .route("/webhook", any(handle_webhook))

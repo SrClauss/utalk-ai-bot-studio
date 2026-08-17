@@ -85,6 +85,14 @@ impl Database {
                 text_message TEXT NOT NULL,
                 audio_url TEXT NOT NULL
             );
+
+            CREATE TABLE IF NOT EXISTS audio_bank (
+                key TEXT PRIMARY KEY,
+                title TEXT NOT NULL,
+                description TEXT NOT NULL,
+                text_message TEXT NOT NULL,
+                audio_url TEXT NOT NULL
+            );
             ",
         )
         .map_err(|e| format!("Erro ao inicializar tabelas SQLite/FTS5: {}", e))?;
@@ -681,6 +689,94 @@ impl Database {
         }
 
         json!(list)
+    }
+
+    pub fn get_all_audio_bank_items(&self) -> Value {
+        let conn = self.conn.lock().unwrap();
+
+        let defaults = vec![
+            (
+                "saudacao_fonte",
+                "Apresentação e Fonte de Água",
+                "Usado no início do atendimento para saudar o cliente e perguntar a fonte de água (poço artesiano, rio, represa, cacimba).",
+                "Olá! Bom dia! Sou o Leandro da equipe da Tubarão Bombas. É um prazer falar com você.\n\nEstou aqui para ajudar a encontrar a bomba solar ideal para o seu projeto. Para começarmos, você poderia me dizer qual é a fonte de água que você vai utilizar? (Por exemplo: poço artesiano, rio, represa ou cacimba?)",
+                "/assets/stage_1_puck.mp3",
+            ),
+            (
+                "profundidade_distancia",
+                "Profundidade do Poço e Distância",
+                "Usado quando a fonte de água foi informada e precisamos saber a profundidade do poço e a distância até a caixa d'água.",
+                "Excelente! E qual é a profundidade aproximada do poço (ou nível da água) e a distância até o reservatório ou caixa d'água?",
+                "/assets/stage_2_puck.mp3",
+            ),
+            (
+                "vazao_energia",
+                "Vazão Desejada e Tipo de Energia",
+                "Usado quando a profundidade foi informada e precisamos saber a vazão em litros/dia e se usará placas solares ou rede elétrica.",
+                "Perfeito! Quantos litros de água por dia (ou por hora) você precisa abastecer? E pretende utilizar energia por placas solares ou rede elétrica?",
+                "/assets/stage_3_puck.mp3",
+            ),
+            (
+                "encaminhamento_especialista",
+                "Encaminhamento e Transferência ao Especialista",
+                "Usado quando todos os dados técnicos foram coletados ou quando o cliente solicita transferência para o especialista humano.",
+                "Perfeito! Coletei todas as informações do seu projeto com sucesso. Já estou encaminhando os seus dados para a nossa equipe de especialistas para calcular o orçamento ideal para você. Um momento que um atendente continuará o seu atendimento!",
+                "/assets/stage_transfer_puck.mp3",
+            ),
+        ];
+
+        for (key, title, desc, txt, audio) in defaults {
+            let _ = conn.execute(
+                "INSERT INTO audio_bank (key, title, description, text_message, audio_url) VALUES (?1, ?2, ?3, ?4, ?5)
+                 ON CONFLICT(key) DO UPDATE SET 
+                 description = excluded.description,
+                 text_message = excluded.text_message,
+                 audio_url = CASE WHEN audio_bank.audio_url IS NULL OR audio_bank.audio_url = '' THEN excluded.audio_url ELSE audio_bank.audio_url END",
+                params![key, title, desc, txt, audio],
+            );
+        }
+
+        let mut stmt = match conn.prepare("SELECT key, title, description, text_message, audio_url FROM audio_bank ORDER BY key") {
+            Ok(s) => s,
+            Err(_) => return json!([]),
+        };
+
+        let rows = stmt.query_map([], |row| {
+            Ok(json!({
+                "key": row.get::<_, String>(0)?,
+                "title": row.get::<_, String>(1)?,
+                "description": row.get::<_, String>(2)?,
+                "text_message": row.get::<_, String>(3)?,
+                "audio_url": row.get::<_, String>(4)?,
+            }))
+        });
+
+        let mut list = Vec::new();
+        if let Ok(iter) = rows {
+            for item in iter.flatten() {
+                list.push(item);
+            }
+        }
+
+        json!(list)
+    }
+
+    pub fn save_audio_bank_item(&self, item: &Value) -> bool {
+        let conn = self.conn.lock().unwrap();
+        let key = item["key"].as_str().unwrap_or_default();
+        let title = item["title"].as_str().unwrap_or_default();
+        let description = item["description"].as_str().unwrap_or_default();
+        let text_message = item["text_message"].as_str().unwrap_or_default();
+        let audio_url = item["audio_url"].as_str().unwrap_or_default();
+
+        if key.is_empty() { return false; }
+
+        let res = conn.execute(
+            "INSERT INTO audio_bank (key, title, description, text_message, audio_url) VALUES (?1, ?2, ?3, ?4, ?5)
+             ON CONFLICT(key) DO UPDATE SET title = ?2, description = ?3, text_message = ?4, audio_url = ?5",
+            params![key, title, description, text_message, audio_url],
+        );
+        res.is_ok()
     }
 }
 
