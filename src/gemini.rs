@@ -365,3 +365,91 @@ pub async fn generate_gemini_response(
 
     Err(format!("Resposta inesperada do Gemini: {:?}", res_json))
 }
+
+pub async fn generate_gemini_tts_audio(
+    api_key: &str,
+    text: &str,
+    voice_name: &str,
+    output_mp3_path: &str,
+) -> Result<(), String> {
+    if api_key.is_empty() {
+        return Err("Gemini API Key não configurada".to_string());
+    }
+
+    let voice = if voice_name.is_empty() { "Puck" } else { voice_name };
+
+    let prompt = format!(
+        "Fale como um consultor técnico corporativo em um telefonema real. Fale de forma totalmente natural, sóbria, respeitosa, neutra e formal. Não use entonação de locutor de rádio, não use entusiasmo artificial e não fale como político. Fale como uma pessoa comum conversando no WhatsApp:\n\n{}",
+        text
+    );
+
+    let url = format!(
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-tts-preview:generateContent?key={}",
+        api_key
+    );
+
+    let payload = json!({
+        "contents": [{ "parts": [{ "text": prompt }] }],
+        "generationConfig": {
+            "responseModalities": ["AUDIO"],
+            "speechConfig": {
+                "voiceConfig": {
+                    "prebuiltVoiceConfig": {
+                        "voiceName": voice
+                    }
+                }
+            }
+        }
+    });
+
+    let client = reqwest::Client::new();
+    let res = client
+        .post(&url)
+        .header("Content-Type", "application/json")
+        .json(&payload)
+        .send()
+        .await
+        .map_err(|e| format!("Erro HTTP ao gerar TTS no Gemini: {}", e))?;
+
+    let res_json: Value = res
+        .json()
+        .await
+        .map_err(|e| format!("Erro ao parsear JSON do Gemini TTS: {}", e))?;
+
+    if let Some(candidates) = res_json["candidates"].as_array() {
+        for c in candidates {
+            if let Some(parts) = c["content"]["parts"].as_array() {
+                for p in parts {
+                    if let Some(inline_data) = p.get("inlineData") {
+                        if let Some(b64_str) = inline_data["data"].as_str() {
+                            use base64::Engine;
+                            let raw_bytes = base64::engine::general_purpose::STANDARD
+                                .decode(b64_str)
+                                .map_err(|e| format!("Erro ao decodificar áudio base64: {}", e))?;
+
+                            let temp_wav = format!("{}.wav", output_mp3_path);
+                            std::fs::write(&temp_wav, &raw_bytes)
+                                .map_err(|e| format!("Erro ao salvar WAV temporário: {}", e))?;
+
+                            let output = std::process::Command::new("ffmpeg")
+                                .args(&["-y", "-f", "s16le", "-ar", "24000", "-ac", "1", "-i", &temp_wav, output_mp3_path])
+                                .output()
+                                .map_err(|e| format!("Erro ao executar ffmpeg: {}", e))?;
+
+                            let _ = std::fs::remove_file(temp_wav);
+
+                            if output.status.success() {
+                                println!("✅ Áudio TTS gerado com sucesso via Gemini [Voz: {}] -> {}", voice, output_mp3_path);
+                                return Ok(());
+                            } else {
+                                return Err(format!("Erro no ffmpeg ao converter para MP3: {}", String::from_utf8_lossy(&output.stderr)));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    Err(format!("Resposta inesperada do Gemini TTS: {:?}", res_json))
+}

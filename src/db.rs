@@ -72,6 +72,19 @@ impl Database {
                 password TEXT NOT NULL,
                 created_at TEXT NOT NULL
             );
+
+            CREATE TABLE IF NOT EXISTS chat_stages (
+                chat_id TEXT PRIMARY KEY,
+                current_stage TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            );
+
+            CREATE TABLE IF NOT EXISTS stage_config (
+                stage_key TEXT PRIMARY KEY,
+                title TEXT NOT NULL,
+                text_message TEXT NOT NULL,
+                audio_url TEXT NOT NULL
+            );
             ",
         )
         .map_err(|e| format!("Erro ao inicializar tabelas SQLite/FTS5: {}", e))?;
@@ -539,6 +552,115 @@ impl Database {
         )
         .map_err(|e| format!("Erro ao alterar senha: {}", e))?;
         Ok(())
+    }
+
+    pub fn get_chat_stage(&self, chat_id: &str) -> String {
+        let conn = self.conn.lock().unwrap();
+        conn.query_row(
+            "SELECT current_stage FROM chat_stages WHERE chat_id = ?1",
+            [chat_id],
+            |row| row.get(0),
+        )
+        .unwrap_or_else(|_| "STAGE_1".to_string())
+    }
+
+    pub fn set_chat_stage(&self, chat_id: &str, stage: &str) {
+        let conn = self.conn.lock().unwrap();
+        let now = Utc::now().to_rfc3339();
+        let _ = conn.execute(
+            "INSERT INTO chat_stages (chat_id, current_stage, updated_at) VALUES (?1, ?2, ?3)
+             ON CONFLICT(chat_id) DO UPDATE SET current_stage = excluded.current_stage, updated_at = excluded.updated_at",
+            params![chat_id, stage, now],
+        );
+    }
+
+    pub fn get_stage_config(&self, stage_key: &str) -> Option<Value> {
+        let conn = self.conn.lock().unwrap();
+        conn.query_row(
+            "SELECT stage_key, title, text_message, audio_url FROM stage_config WHERE stage_key = ?1",
+            [stage_key],
+            |row| {
+                Ok(json!({
+                    "stage_key": row.get::<_, String>(0)?,
+                    "title": row.get::<_, String>(1)?,
+                    "text_message": row.get::<_, String>(2)?,
+                    "audio_url": row.get::<_, String>(3)?,
+                }))
+            },
+        )
+        .ok()
+    }
+
+    pub fn save_stage_config(&self, stage_key: &str, title: &str, text_message: &str, audio_url: &str) {
+        let conn = self.conn.lock().unwrap();
+        let _ = conn.execute(
+            "INSERT INTO stage_config (stage_key, title, text_message, audio_url) VALUES (?1, ?2, ?3, ?4)
+             ON CONFLICT(stage_key) DO UPDATE SET title = excluded.title, text_message = excluded.text_message, audio_url = excluded.audio_url",
+            params![stage_key, title, text_message, audio_url],
+        );
+    }
+
+    pub fn get_all_stage_configs(&self) -> Value {
+        let conn = self.conn.lock().unwrap();
+        let mut stmt = match conn.prepare("SELECT stage_key, title, text_message, audio_url FROM stage_config") {
+            Ok(s) => s,
+            Err(_) => return json!([]),
+        };
+
+        let rows = stmt.query_map([], |row| {
+            Ok(json!({
+                "stage_key": row.get::<_, String>(0)?,
+                "title": row.get::<_, String>(1)?,
+                "text_message": row.get::<_, String>(2)?,
+                "audio_url": row.get::<_, String>(3)?,
+            }))
+        });
+
+        let mut list = Vec::new();
+        if let Ok(iter) = rows {
+            for item in iter.flatten() {
+                list.push(item);
+            }
+        }
+
+        if list.is_empty() {
+            // Inicializar estagios padrao
+            let defaults = vec![
+                (
+                    "STAGE_1",
+                    "Apresentação e Fonte de Água",
+                    "Olá! Bom dia! Sou o Leandro da equipe da Tubarão Bombas. É um prazer falar com você.\n\nEstou aqui para ajudar a encontrar a bomba solar ideal para o seu projeto. Para começarmos, você poderia me dizer qual é a fonte de água que você vai utilizar? (Por exemplo: poço artesiano, rio, represa ou cacimba?)",
+                    "/assets/vendas_leandro_puck.mp3",
+                ),
+                (
+                    "STAGE_2",
+                    "Profundidade do Poço e Distância",
+                    "Excelente! E qual é a profundidade aproximada do poço (ou nível da água) e a distância até o reservatório ou caixa d'água?",
+                    "",
+                ),
+                (
+                    "STAGE_3",
+                    "Vazão Desejada e Tipo de Energia",
+                    "Perfeito! Quantos litros de água por dia (ou por hora) você precisa abastecer? E pretende utilizar energia por placas solares ou rede elétrica?",
+                    "",
+                ),
+            ];
+
+            for (key, title, txt, audio) in defaults {
+                let _ = conn.execute(
+                    "INSERT INTO stage_config (stage_key, title, text_message, audio_url) VALUES (?1, ?2, ?3, ?4)",
+                    params![key, title, txt, audio],
+                );
+                list.push(json!({
+                    "stage_key": key,
+                    "title": title,
+                    "text_message": txt,
+                    "audio_url": audio
+                }));
+            }
+        }
+
+        json!(list)
     }
 }
 

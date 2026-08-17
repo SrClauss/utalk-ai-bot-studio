@@ -221,6 +221,17 @@
                     <span x-show="!sidebarCollapsed" x-transition class="truncate">Gestão de Acesso</span>
                 </button>
 
+                <button @click="switchTab('stages')"
+                    :class="{ 'active': activeTab === 'stages', 'justify-center px-0': sidebarCollapsed, 'justify-start px-2': !sidebarCollapsed }"
+                    class="sidebar-item w-full flex items-center gap-3 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-900/60 group"
+                    :title="sidebarCollapsed ? 'Etapas & Áudios Padrão' : ''">
+                    <div
+                        class="w-9 h-9 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-sm">
+                        <i class="fa-solid fa-layer-group text-amber-400 text-sm"></i>
+                    </div>
+                    <span x-show="!sidebarCollapsed" x-transition class="truncate">Etapas & Áudios Padrão</span>
+                </button>
+
                 <button @click="switchTab('webhooks')"
                     :class="{ 'active': activeTab === 'webhooks', 'justify-center px-0': sidebarCollapsed, 'justify-start px-2': !sidebarCollapsed }"
                     class="sidebar-item w-full flex items-center gap-3 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-900/60 group"
@@ -1028,7 +1039,74 @@
                 </div>
             </div>
 
-            <!-- TAB 7: TUTORIAL & CONFIGURAÇÃO DE WEBHOOKS -->
+            <!-- TAB 7: ETAPAS DE ATENDIMENTO & MENSAGENS / ÁUDIOS PADRÃO -->
+            <div x-show="activeTab === 'stages'" class="space-y-6" x-transition>
+                <div class="glass-panel p-6 rounded-3xl space-y-6 border border-amber-500/30 shadow-xl">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-4">
+                        <div class="space-y-1">
+                            <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+                                <i class="fa-solid fa-layer-group text-amber-400"></i>
+                                <span>Gerenciador de Etapas do Funil & Mensagens/Áudios Padrão</span>
+                            </h3>
+                            <p class="text-xs text-slate-400">Configure os textos e URLs dos áudios reutilizáveis (R$ 0,00 de IA) para cada etapa do atendimento</p>
+                        </div>
+                        <button @click="fetchStages()"
+                            class="px-4 py-2 bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 font-bold text-xs rounded-xl border border-amber-500/30 flex items-center gap-2 transition-all">
+                            <i class="fa-solid fa-rotate-right"></i>
+                            <span>Atualizar Lista</span>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-6">
+                        <template x-for="stg in stages" :key="stg.stage_key">
+                            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4 hover:border-amber-500/40 transition-all">
+                                <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+                                    <div class="flex items-center gap-2">
+                                        <span class="px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono text-xs font-bold" x-text="stg.stage_key"></span>
+                                        <h4 class="font-extrabold text-sm text-slate-100" x-text="stg.title"></h4>
+                                    </div>
+                                    <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold">R$ 0,00 - REUTILIZÁVEL</span>
+                                </div>
+
+                                <div class="space-y-3">
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-300 mb-1">Mensagem de Texto Padrão (Enviada quando o cliente usa Texto):</label>
+                                        <textarea x-model="stg.text_message" rows="3"
+                                            class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-slate-200 focus:outline-none focus:border-amber-500 transition-all leading-relaxed"></textarea>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-300 mb-1">URL do Áudio MP3 Padrão (Enviado quando o cliente usa Voz):</label>
+                                        <div class="flex gap-2">
+                                            <input type="text" x-model="stg.audio_url" placeholder="/assets/vendas_leandro_puck.mp3 ou URL pública https://..."
+                                                class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs font-mono text-amber-300 focus:outline-none focus:border-amber-500 transition-all">
+                                        </div>
+                                    </div>
+
+                                    <!-- Audio Preview Player -->
+                                    <template x-if="stg.audio_url">
+                                        <div class="p-3 bg-slate-950/80 rounded-xl border border-slate-900 flex items-center gap-3">
+                                            <i class="fa-solid fa-volume-high text-amber-400 text-sm"></i>
+                                            <span class="text-xs font-mono text-slate-400">Prévia do Áudio:</span>
+                                            <audio controls :src="stg.audio_url" class="h-8 w-full max-w-md"></audio>
+                                        </div>
+                                    </template>
+                                </div>
+
+                                <div class="flex justify-end pt-2">
+                                    <button @click="saveStageConfig(stg)"
+                                        class="px-5 py-2 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white font-bold text-xs rounded-xl shadow-lg shadow-amber-600/20 flex items-center gap-2 transition-all">
+                                        <i class="fa-solid fa-floppy-disk"></i>
+                                        <span>Salvar Configuração da Etapa</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 8: TUTORIAL & CONFIGURAÇÃO DE WEBHOOKS -->
             <div x-show="activeTab === 'webhooks'" class="space-y-6" x-transition>
                 <!-- Hero Header com Status do Endpoint -->
                 <div class="relative overflow-hidden glass-panel p-6 md:p-8 rounded-3xl border border-sky-500/40 shadow-2xl space-y-6">
@@ -1296,10 +1374,12 @@
                     webhookTestResultSuccess: true,
                     syncedWebhooks: [],
                     loadingWebhooks: false,
+                    stages: [],
 
                     init() {
                         this.loadConfig();
                         this.fetchSyncedWebhooks();
+                        this.fetchStages();
                     },
 
                     switchTab(tabId) {
@@ -1307,6 +1387,7 @@
                         if (tabId === 'metrics') this.loadStats();
                         if (tabId === 'rotation' && this.operators.length === 0) this.fetchOperators();
                         if (tabId === 'webhooks') this.fetchSyncedWebhooks();
+                        if (tabId === 'stages') this.fetchStages();
                         if (tabId === 'access') this.loadAdminUsers();
                     },
 
@@ -1411,6 +1492,35 @@
                             }
                         } catch (err) {
                             console.error('Erro ao buscar webhooks salvos:', err);
+                        }
+                    },
+
+                    async fetchStages() {
+                        try {
+                            const res = await fetch('/api/stages');
+                            if (res.ok) {
+                                this.stages = await res.json();
+                            }
+                        } catch (err) {
+                            console.error('Erro ao buscar etapas:', err);
+                        }
+                    },
+
+                    async saveStageConfig(stg) {
+                        try {
+                            const res = await fetch('/api/stages', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(stg)
+                            });
+                            if (res.ok) {
+                                this.showAlert(`Etapa ${stg.stage_key} salva com sucesso!`);
+                                this.fetchStages();
+                            } else {
+                                this.showAlert('Erro ao salvar etapa.', 'error');
+                            }
+                        } catch (err) {
+                            this.showAlert('Falha ao se comunicar com o servidor.', 'error');
                         }
                     },
 

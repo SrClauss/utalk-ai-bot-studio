@@ -412,7 +412,81 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
 
         let audio_ref = audio_data_tuple.as_ref().map(|(m, b)| (m.as_str(), b.as_str()));
 
-        match gemini::generate_gemini_response(state.db.clone(), &cfg_snapshot, chat_id, &user_prompt, audio_ref).await {
+        // 🎯 LÓGICA DE ESPELHAMENTO DE MÍDIA E ETAPAS (STATE-MACHINE):
+        let is_client_audio = msg_type == "Audio";
+        let current_stage = state.db.get_chat_stage(chat_id);
+        let text_low = user_prompt.to_lowercase();
+
+        // Verifica se a resposta do cliente corresponde ao esperado na etapa atual
+        let is_expected_stage_answer = match current_stage.as_str() {
+            "STAGE_1" => text_low.contains("poço") || text_low.contains("poco") || text_low.contains("rio") || text_low.contains("represa") || text_low.contains("cacimba") || text_low.contains("artesiano") || text_low.contains("cisterna"),
+            "STAGE_2" => text_low.contains("metro") || text_low.contains("m") || text_low.contains("profund") || text_low.contains("distancia") || text_low.contains("caixa"),
+            _ => false,
+        };
+
+        let (history_vec, _) = state.db.get_chat_context_for_ai(chat_id, 24);
+        let is_first_contact = history_vec.is_empty();
+
+        if is_first_contact {
+            println!("🆕 Primeiro contato detectado [ChatId: {}]. Enviando STAGE_1 (Apresentação)...", chat_id);
+            state.db.set_chat_stage(chat_id, "STAGE_1");
+            if let Some(stage_cfg) = state.db.get_stage_config("STAGE_1") {
+                let txt_msg = stage_cfg["text_message"].as_str().unwrap_or_default();
+                let audio_url = stage_cfg["audio_url"].as_str().unwrap_or_default();
+
+                if is_client_audio && !audio_url.is_empty() {
+                    let full_audio_url = if audio_url.starts_with("http://") || audio_url.starts_with("https://") {
+                        audio_url.to_string()
+                    } else {
+                        format!("https://tubaraoia.lysia.tech{}", audio_url)
+                    };
+                    println!("⚡ [R$ 0,00 - ETAPA ESTÁTICA ÁUDIO STAGE_1] Enviando nota de voz...");
+                    let _ = utalk::send_utalk_audio_message(&cfg_snapshot.utalk_api_url, &cfg_snapshot.utalk_api_token, &cfg_snapshot.utalk_organization_id, chat_id, &full_audio_url).await;
+                    return;
+                } else if !txt_msg.is_empty() {
+                    println!("⚡ [R$ 0,00 - ETAPA ESTÁTICA TEXTO STAGE_1] Enviando mensagem texto...");
+                    let _ = utalk::send_utalk_message(&cfg_snapshot.utalk_api_url, &cfg_snapshot.utalk_api_token, &cfg_snapshot.utalk_organization_id, chat_id, txt_msg).await;
+                    return;
+                }
+            }
+        } else if is_expected_stage_answer {
+            let next_stage = match current_stage.as_str() {
+                "STAGE_1" => "STAGE_2",
+                "STAGE_2" => "STAGE_3",
+                _ => "STAGE_3",
+            };
+            state.db.set_chat_stage(chat_id, next_stage);
+            println!("🔄 Avançando chat {} para {}", chat_id, next_stage);
+
+            if let Some(stage_cfg) = state.db.get_stage_config(next_stage) {
+                let txt_msg = stage_cfg["text_message"].as_str().unwrap_or_default();
+                let audio_url = stage_cfg["audio_url"].as_str().unwrap_or_default();
+
+                if is_client_audio && !audio_url.is_empty() {
+                    let full_audio_url = if audio_url.starts_with("http://") || audio_url.starts_with("https://") {
+                        audio_url.to_string()
+                    } else {
+                        format!("https://tubaraoia.lysia.tech{}", audio_url)
+                    };
+                    println!("⚡ [R$ 0,00 - ETAPA ESTÁTICA ÁUDIO {}] Enviando nota de voz...", next_stage);
+                    let _ = utalk::send_utalk_audio_message(&cfg_snapshot.utalk_api_url, &cfg_snapshot.utalk_api_token, &cfg_snapshot.utalk_organization_id, chat_id, &full_audio_url).await;
+                    return;
+                } else if !txt_msg.is_empty() {
+                    println!("⚡ [R$ 0,00 - ETAPA ESTÁTICA TEXTO {}] Enviando mensagem texto...", next_stage);
+                    let _ = utalk::send_utalk_message(&cfg_snapshot.utalk_api_url, &cfg_snapshot.utalk_api_token, &cfg_snapshot.utalk_organization_id, chat_id, txt_msg).await;
+                    return;
+                }
+            }
+        }
+
+        // Se for exceção / pergunta fora da caixinha -> O Gemini entra em ação
+        println!("🤖 [INTERVENÇÃO GEMINI AI] Cliente fez pergunta ou forneceu dados na etapa '{}'.", current_stage);
+        let prompt_with_stage_ctx = format!(
+            "{}\n[INSTRUÇÃO DE ETAPA: O cliente está na etapa '{}'. Responda à dúvida dele de forma objetiva, cortês e formal (tom consultivo, sem entonação de locutor/político) e conclua a resposta fazendo a pergunta pendente da etapa '{}']",
+            user_prompt, current_stage, current_stage
+        );
+
+        match gemini::generate_gemini_response(state.db.clone(), &cfg_snapshot, chat_id, &prompt_with_stage_ctx, audio_ref).await {
             Ok(mut ai_reply) => {
                 println!("✨ Gemini gerou resposta:\n{}", ai_reply);
 
@@ -425,16 +499,41 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
                     ai_reply = ai_reply.replace(&cfg_snapshot.rotation_trigger_keyword, "").trim().to_string();
                 }
 
-                // Envia a mensagem do bot se houver texto restante
                 if !ai_reply.is_empty() {
-                    let _ = utalk::send_utalk_message(
-                        &cfg_snapshot.utalk_api_url,
-                        &cfg_snapshot.utalk_api_token,
-                        &cfg_snapshot.utalk_organization_id,
-                        chat_id,
-                        &ai_reply,
-                    )
-                    .await;
+                    if is_client_audio {
+                        use std::hash::{Hash, Hasher};
+                        let mut hasher = std::collections::hash_map::DefaultHasher::new();
+                        ai_reply.hash(&mut hasher);
+                        let hash_val = hasher.finish();
+                        let hash_hex = format!("{:x}", hash_val);
+
+                        let out_mp3_rel = format!("/assets/audio_cache/{}.mp3", hash_hex);
+                        let out_mp3_full = format!("assets/audio_cache/{}.mp3", hash_hex);
+
+                        if !std::path::Path::new(&out_mp3_full).exists() {
+                            println!("🎙️ Sintetizando nova resposta de voz no Gemini TTS [Puck]...");
+                            let _ = gemini::generate_gemini_tts_audio(&cfg_snapshot.gemini_api_key, &ai_reply, "Puck", &out_mp3_full).await;
+                        } else {
+                            println!("⚡ [CACHE HIT] Áudio reutilizado do cache local!");
+                        }
+
+                        let full_audio_url = format!("https://tubaraoia.lysia.tech{}", out_mp3_rel);
+                        let _ = utalk::send_utalk_audio_message(
+                            &cfg_snapshot.utalk_api_url,
+                            &cfg_snapshot.utalk_api_token,
+                            &cfg_snapshot.utalk_organization_id,
+                            chat_id,
+                            &full_audio_url,
+                        ).await;
+                    } else {
+                        let _ = utalk::send_utalk_message(
+                            &cfg_snapshot.utalk_api_url,
+                            &cfg_snapshot.utalk_api_token,
+                            &cfg_snapshot.utalk_organization_id,
+                            chat_id,
+                            &ai_reply,
+                        ).await;
+                    }
                 }
 
                 // Executa a transferência de rodízio se ativada
@@ -682,6 +781,64 @@ async fn get_synced_webhooks_handler(
     Err(StatusCode::UNAUTHORIZED)
 }
 
+async fn get_stages_handler(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+) -> Result<Json<Value>, StatusCode> {
+    if let Some(token) = extract_token(&headers) {
+        if state.db.validate_session(&token) {
+            let stages = state.db.get_all_stage_configs();
+            return Ok(Json(stages));
+        }
+    }
+    Err(StatusCode::UNAUTHORIZED)
+}
+
+#[derive(Deserialize)]
+struct SaveStageRequest {
+    stage_key: String,
+    title: String,
+    text_message: String,
+    audio_url: String,
+}
+
+async fn save_stage_handler(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+    Json(req): Json<SaveStageRequest>,
+) -> (StatusCode, Json<Value>) {
+    if let Some(token) = extract_token(&headers) {
+        if state.db.validate_session(&token) {
+            state.db.save_stage_config(&req.stage_key, &req.title, &req.text_message, &req.audio_url);
+            return (StatusCode::OK, Json(serde_json::json!({ "success": true })));
+        }
+    }
+    (StatusCode::UNAUTHORIZED, Json(serde_json::json!({ "error": "Não autorizado" })))
+}
+
+async fn get_assets_handler(
+    axum::extract::Path(path): axum::extract::Path<String>,
+) -> axum::response::Response {
+    use axum::response::IntoResponse;
+    let full_path = format!("assets/{}", path);
+    if let Ok(bytes) = std::fs::read(&full_path) {
+        let mime = if path.ends_with(".mp3") {
+            "audio/mpeg"
+        } else if path.ends_with(".png") {
+            "image/png"
+        } else if path.ends_with(".jpg") || path.ends_with(".jpeg") {
+            "image/jpeg"
+        } else {
+            "application/octet-stream"
+        };
+        return (
+            [(axum::http::header::CONTENT_TYPE, mime)],
+            bytes,
+        ).into_response();
+    }
+    (StatusCode::NOT_FOUND, "Arquivo não encontrado").into_response()
+}
+
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt::init();
@@ -697,6 +854,7 @@ async fn main() {
         .route("/assets/logo.png", get(get_logo_asset))
         .route("/assets/banner.png", get(get_banner_asset))
         .route("/assets/banner.jpg", get(get_banner_asset))
+        .route("/assets/*path", get(get_assets_handler))
         .route("/api/login", axum::routing::post(login_handler))
         .route("/api/logout", axum::routing::post(logout_handler))
         .route("/api/config", get(get_config_handler).post(save_config_handler))
@@ -709,6 +867,7 @@ async fn main() {
         .route("/api/change-password", axum::routing::post(change_password_handler))
         .route("/api/webhooks/synced", get(get_synced_webhooks_handler))
         .route("/api/webhooks/sync", axum::routing::post(sync_webhooks_handler))
+        .route("/api/stages", get(get_stages_handler).post(save_stage_handler))
         .route("/webhook", any(handle_webhook))
         .with_state(state);
 
