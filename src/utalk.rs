@@ -368,7 +368,7 @@ pub async fn fetch_message_audio(
                     let bytes = audio_res.bytes().await.map_err(|e| format!("Erro nos bytes do áudio: {}", e))?;
                     use base64::Engine;
                     let b64 = base64::engine::general_purpose::STANDARD.encode(&bytes);
-                    println!("✅ Áudio baixado ({:.1} KB) e codificado em Base64 para envio direto ao Gemini!", bytes.len() as f64 / 1024.0);
+                    println!("✅ Áudio baixado ({:.1} KB) e codificado em Base64 para transcrição!", bytes.len() as f64 / 1024.0);
                     return Ok((content_type, b64));
                 }
             }
