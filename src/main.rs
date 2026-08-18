@@ -301,13 +301,26 @@ async fn handle_webhook(
 
             let is_vps_transferred = state.db.is_chat_transferred(target_chat_id);
 
+            // Sanitiza o número do remetente para verificação de permissão de teste
+            let clean_phone: String = phone.chars().filter(|c| c.is_ascii_digit()).collect();
+            let is_tester = config_snapshot.test_allowed_phones.iter().any(|p| {
+                let clean_p: String = p.chars().filter(|c| c.is_ascii_digit()).collect();
+                !clean_p.is_empty() && (clean_phone.ends_with(&clean_p) || clean_p.ends_with(&clean_phone))
+            });
+
             if config_snapshot.bot_enabled {
                 if !channel_allowed {
                     println!("⚡ Decisão da IA    : ⏸️ [IGNORADO] Canal '{}' (ID: {}) não está na lista de canais permitidos do Webhook.", channel_name, channel_id);
-                } else if has_human_member || is_vps_transferred {
+                } else if config_snapshot.test_mode_enabled && !is_tester {
+                    println!("⚡ Decisão da IA    : ⏸️ [MODO DE TESTE ATIVO] Mensagem ignorada pois o remetente '{}' não está na lista VIP de testes (Claus/Lucas).", phone);
+                } else if !is_tester && (has_human_member || is_vps_transferred) {
                     println!("⚡ Decisão da IA    : ⏸️ [SILÊNCIOSO] Atendente humano atribuído no uTalk/VPS (HasHumanMember: {}). IA pausada.", has_human_member);
                 } else {
-                    println!("⚡ Decisão da IA    : 🤖 [LIGADO] Processando com DeepSeek...");
+                    if is_tester {
+                        println!("🧪 Decisão da IA    : 🧪 [MODO TESTE VIP] Atendimento FORÇADO para o testador '{}' (Ignorando travas de atendente do uTalk).", phone);
+                    } else {
+                        println!("⚡ Decisão da IA    : 🤖 [LIGADO] Processando com DeepSeek...");
+                    }
                     let state_clone = state.clone();
                     tokio::spawn(async move {
                         process_incoming_webhook(state_clone, payload).await;

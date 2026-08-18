@@ -39,6 +39,10 @@ pub struct AppConfig {
     pub rotation_operator_ids: Vec<String>,
     pub rotation_strategy: String,
     pub rotation_trigger_keyword: String,
+
+    // Modo de Teste Restrito (Whitelist de Telefones)
+    pub test_mode_enabled: bool,
+    pub test_allowed_phones: Vec<String>,
 }
 
 impl Default for AppConfig {
@@ -86,6 +90,13 @@ impl Default for AppConfig {
             rotation_operator_ids: Vec::new(),
             rotation_strategy: "round_robin".to_string(),
             rotation_trigger_keyword: "[TRANSFERIR]".to_string(),
+
+            test_mode_enabled: true,
+            test_allowed_phones: vec![
+                "5527998870163".to_string(),
+                "553898328812".to_string(),
+                "5538998328812".to_string(),
+            ],
         }
     }
 }
