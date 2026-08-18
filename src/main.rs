@@ -435,13 +435,19 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
                 let txt_msg = stage_cfg["text_message"].as_str().unwrap_or_default();
                 let audio_url = stage_cfg["audio_url"].as_str().unwrap_or_default();
 
-                if is_client_audio && !audio_url.is_empty() {
-                    let full_audio_url = if audio_url.starts_with("http://") || audio_url.starts_with("https://") {
-                        audio_url.to_string()
+                let effective_audio_url = if audio_url.trim().is_empty() {
+                    "/assets/vendas_leandro_puck.mp3"
+                } else {
+                    audio_url
+                };
+
+                if is_client_audio && !effective_audio_url.is_empty() {
+                    let full_audio_url = if effective_audio_url.starts_with("http://") || effective_audio_url.starts_with("https://") {
+                        effective_audio_url.to_string()
                     } else {
-                        format!("https://tubaraoia.lysia.tech{}", audio_url)
+                        format!("https://tubaraoia.lysia.tech{}", effective_audio_url)
                     };
-                    println!("⚡ [R$ 0,00 - ETAPA ESTÁTICA ÁUDIO STAGE_1] Enviando nota de voz...");
+                    println!("⚡ [R$ 0,00 - ETAPA ESTÁTICA ÁUDIO STAGE_1] Enviando nota de voz: {}...", full_audio_url);
                     let _ = utalk::send_utalk_audio_message(&cfg_snapshot.utalk_api_url, &cfg_snapshot.utalk_api_token, &cfg_snapshot.utalk_organization_id, chat_id, &full_audio_url).await;
                     return;
                 } else if !txt_msg.is_empty() {
@@ -463,13 +469,22 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
                 let txt_msg = stage_cfg["text_message"].as_str().unwrap_or_default();
                 let audio_url = stage_cfg["audio_url"].as_str().unwrap_or_default();
 
-                if is_client_audio && !audio_url.is_empty() {
-                    let full_audio_url = if audio_url.starts_with("http://") || audio_url.starts_with("https://") {
-                        audio_url.to_string()
+                let default_audio = match current_stage.as_str() {
+                    "STAGE_1" => "/assets/vendas_leandro_puck.mp3",
+                    "STAGE_2" => "/assets/stage_2_puck.mp3",
+                    "STAGE_3" => "/assets/stage_3_puck.mp3",
+                    _ => "/assets/stage_transfer_puck.mp3",
+                };
+
+                let effective_audio_url = if audio_url.trim().is_empty() { default_audio } else { audio_url };
+
+                if is_client_audio && !effective_audio_url.is_empty() {
+                    let full_audio_url = if effective_audio_url.starts_with("http://") || effective_audio_url.starts_with("https://") {
+                        effective_audio_url.to_string()
                     } else {
-                        format!("https://tubaraoia.lysia.tech{}", audio_url)
+                        format!("https://tubaraoia.lysia.tech{}", effective_audio_url)
                     };
-                    println!("⚡ [R$ 0,00 - ETAPA ESTÁTICA ÁUDIO {}] Enviando nota de voz...", next_stage);
+                    println!("⚡ [R$ 0,00 - ETAPA ESTÁTICA ÁUDIO {}] Enviando nota de voz: {}...", next_stage, full_audio_url);
                     let _ = utalk::send_utalk_audio_message(&cfg_snapshot.utalk_api_url, &cfg_snapshot.utalk_api_token, &cfg_snapshot.utalk_organization_id, chat_id, &full_audio_url).await;
                     return;
                 } else if !txt_msg.is_empty() {

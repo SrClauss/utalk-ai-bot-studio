@@ -70,10 +70,14 @@ pub async fn send_utalk_audio_message(
     let client = reqwest::Client::new();
     let url = format!("{}/messages?organizationId={}", api_url.trim_end_matches('/'), org_id);
 
+    // Tenta formato padrão do uTalk para mídias/áudios com redundância de chaves exigidas pela API
     let body = json!({
         "ChatId": chat_id,
         "OrganizationId": org_id,
         "MediaUrl": audio_url,
+        "Url": audio_url,
+        "File": audio_url,
+        "Content": audio_url,
         "MessageType": "Audio"
     });
 
