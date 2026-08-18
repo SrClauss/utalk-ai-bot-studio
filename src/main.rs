@@ -384,11 +384,31 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
                     Ok(resp) => {
                         let bytes = resp.bytes().await.unwrap_or_default();
                         let b64 = base64::engine::general_purpose::STANDARD.encode(&bytes);
-                        audio_data_tuple = Some(("audio/mp3".to_string(), b64.clone()));
+                        audio_data_tuple = Some(("audio/mp3".to_string(), b64));
 
-                        println!("🎙️ Transcrevendo áudio do cliente via Gemini STT...");
-                        let stt_prompt = "Transcreva exatamente o que o cliente disse neste áudio em português do Brasil. Retorne APENAS o texto da transcrição limpo, sem explicações ou saudações.";
-                        gemini::generate_gemini_response(state.db.clone(), &cfg_snapshot, chat_id, stt_prompt, Some(("audio/mp3", &b64))).await.unwrap_or_else(|_| "[Áudio enviado pelo cliente]".to_string())
+                        println!("🎙️ Enviando áudio para o serviço LOCAL do Faster-Whisper (VPS porta 8080)...");
+                        let client = reqwest::Client::new();
+                        let part = reqwest::multipart::Part::bytes(bytes.to_vec())
+                            .file_name("recording.mp3")
+                            .mime_str("audio/mp3")
+                            .unwrap_or_else(|_| reqwest::multipart::Part::bytes(bytes.to_vec()));
+                        let form = reqwest::multipart::Form::new().part("file", part);
+
+                        if let Ok(stt_res) = client.post("http://localhost:8080/transcribe").multipart(form).send().await {
+                            if let Ok(json_res) = stt_res.json::<serde_json::Value>().await {
+                                let transcribed_text = json_res["text"].as_str().unwrap_or("").trim().to_string();
+                                if !transcribed_text.is_empty() {
+                                    println!("✅ Transcrição local do Whisper VPS: \"{}\"", transcribed_text);
+                                    transcribed_text
+                                } else {
+                                    "[Áudio enviado pelo cliente]".to_string()
+                                }
+                            } else {
+                                "[Áudio enviado pelo cliente]".to_string()
+                            }
+                        } else {
+                            "[Áudio enviado pelo cliente]".to_string()
+                        }
                     }
                     Err(e) => {
                         println!("⚠️ Falha no download direto, buscando via API uTalk: {}", e);
@@ -398,10 +418,34 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
                             &cfg_snapshot.utalk_organization_id,
                             msg_id,
                         ).await {
-                            audio_data_tuple = Some((mime.clone(), b64.clone()));
-                            println!("🎙️ Transcrevendo áudio do cliente via Gemini STT...");
-                            let stt_prompt = "Transcreva exatamente o que o cliente disse neste áudio em português do Brasil. Retorne APENAS o texto da transcrição limpo, sem explicações ou saudações.";
-                            gemini::generate_gemini_response(state.db.clone(), &cfg_snapshot, chat_id, stt_prompt, Some((&mime, &b64))).await.unwrap_or_else(|_| "[Áudio enviado pelo cliente]".to_string())
+                            audio_data_tuple = Some((mime, b64.clone()));
+                            if let Ok(bytes) = base64::engine::general_purpose::STANDARD.decode(&b64) {
+                                println!("🎙️ Enviando áudio para o serviço LOCAL do Faster-Whisper (VPS porta 8080)...");
+                                let client = reqwest::Client::new();
+                                let part = reqwest::multipart::Part::bytes(bytes.clone())
+                                    .file_name("recording.mp3")
+                                    .mime_str("audio/mp3")
+                                    .unwrap_or_else(|_| reqwest::multipart::Part::bytes(bytes));
+                                let form = reqwest::multipart::Form::new().part("file", part);
+
+                                if let Ok(stt_res) = client.post("http://localhost:8080/transcribe").multipart(form).send().await {
+                                    if let Ok(json_res) = stt_res.json::<serde_json::Value>().await {
+                                        let transcribed_text = json_res["text"].as_str().unwrap_or("").trim().to_string();
+                                        if !transcribed_text.is_empty() {
+                                            println!("✅ Transcrição local do Whisper VPS: \"{}\"", transcribed_text);
+                                            transcribed_text
+                                        } else {
+                                            "[Áudio enviado pelo cliente]".to_string()
+                                        }
+                                    } else {
+                                        "[Áudio enviado pelo cliente]".to_string()
+                                    }
+                                } else {
+                                    "[Áudio enviado pelo cliente]".to_string()
+                                }
+                            } else {
+                                "[Áudio enviado pelo cliente]".to_string()
+                            }
                         } else {
                             format!("O cliente '{}' enviou um áudio.", contact_name)
                         }
@@ -417,10 +461,34 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
                 .await
                 {
                     Ok((mime, b64)) => {
-                        audio_data_tuple = Some((mime.clone(), b64.clone()));
-                        println!("🎙️ Transcrevendo áudio do cliente via Gemini STT...");
-                        let stt_prompt = "Transcreva exatamente o que o cliente disse neste áudio em português do Brasil. Retorne APENAS o texto da transcrição limpo, sem explicações ou saudações.";
-                        gemini::generate_gemini_response(state.db.clone(), &cfg_snapshot, chat_id, stt_prompt, Some((&mime, &b64))).await.unwrap_or_else(|_| "[Áudio enviado pelo cliente]".to_string())
+                        audio_data_tuple = Some((mime, b64.clone()));
+                        if let Ok(bytes) = base64::engine::general_purpose::STANDARD.decode(&b64) {
+                            println!("🎙️ Enviando áudio para o serviço LOCAL do Faster-Whisper (VPS porta 8080)...");
+                            let client = reqwest::Client::new();
+                            let part = reqwest::multipart::Part::bytes(bytes.clone())
+                                .file_name("recording.mp3")
+                                .mime_str("audio/mp3")
+                                .unwrap_or_else(|_| reqwest::multipart::Part::bytes(bytes));
+                            let form = reqwest::multipart::Form::new().part("file", part);
+
+                            if let Ok(stt_res) = client.post("http://localhost:8080/transcribe").multipart(form).send().await {
+                                if let Ok(json_res) = stt_res.json::<serde_json::Value>().await {
+                                    let transcribed_text = json_res["text"].as_str().unwrap_or("").trim().to_string();
+                                    if !transcribed_text.is_empty() {
+                                        println!("✅ Transcrição local do Whisper VPS: \"{}\"", transcribed_text);
+                                        transcribed_text
+                                    } else {
+                                        "[Áudio enviado pelo cliente]".to_string()
+                                    }
+                                } else {
+                                    "[Áudio enviado pelo cliente]".to_string()
+                                }
+                            } else {
+                                "[Áudio enviado pelo cliente]".to_string()
+                            }
+                        } else {
+                            "[Áudio enviado pelo cliente]".to_string()
+                        }
                     }
                     Err(err) => {
                         println!("⚠️ Não foi possível baixar mídia de áudio do uTalk: {}", err);
