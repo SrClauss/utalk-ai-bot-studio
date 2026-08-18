@@ -252,6 +252,14 @@ impl Database {
         println!("🗑️ Histórico de chat e status de transferência deletados do BD local: {}", chat_id);
     }
 
+    pub fn reset_chat_state(&self, chat_id: &str) {
+        let conn = self.conn.lock().unwrap();
+        let _ = conn.execute("DELETE FROM messages WHERE chat_id = ?1", params![chat_id]);
+        let _ = conn.execute("DELETE FROM messages_fts WHERE chat_id = ?1", params![chat_id]);
+        let _ = conn.execute("DELETE FROM transfers WHERE chat_id = ?1", params![chat_id]);
+        let _ = conn.execute("DELETE FROM sessions WHERE chat_id = ?1 OR token = ?1", params![chat_id]);
+    }
+
     pub fn is_chat_transferred(&self, chat_id: &str) -> bool {
         let conn = self.conn.lock().unwrap();
         let mut stmt = match conn.prepare("SELECT COUNT(*) FROM transfers WHERE chat_id = ?1") {

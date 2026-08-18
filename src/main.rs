@@ -434,6 +434,25 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
 
         let audio_ref = audio_data_tuple.as_ref().map(|(m, b)| (m.as_str(), b.as_str()));
 
+        let phone = content_obj["Contact"]["PhoneNumber"].as_str().or_else(|| msg_obj["Chat"]["Contact"]["PhoneNumber"].as_str()).unwrap_or("N/A");
+
+        // 🧪 COMANDO DE RESET AUTOMÁTICO EXCLUSIVO PARA TESTADORES VIP (Claus e Lucas)
+        let clean_phone: String = phone.chars().filter(|c: &char| c.is_ascii_digit()).collect();
+        let is_tester = cfg_snapshot.test_allowed_phones.iter().any(|p| {
+            let clean_p: String = p.chars().filter(|c: &char| c.is_ascii_digit()).collect();
+            !clean_p.is_empty() && (clean_phone.ends_with(&clean_p) || clean_p.ends_with(&clean_phone))
+        });
+
+        if is_tester && user_prompt.to_lowercase().contains("tubarao_testes") {
+            println!("🔄 [MODO TESTE RESET] Comando 'tubarao_testes' recebido de testador VIP ({}). Zerando histórico e reiniciando atendimento...", phone);
+            state.db.reset_chat_state(chat_id);
+            state.db.set_chat_stage(chat_id, "STAGE_1");
+            
+            let confirm_msg = "🧪 *[MODO DE TESTE REINICIADO]*\nO seu histórico de testes foi completamente zerado! Olá! Sou o Leandro da equipe da Tubarão Bombas. Qual é a fonte de água que você vai utilizar no seu projeto (ex: poço artesiano, rio, açude)?";
+            let _ = utalk::send_utalk_message(&cfg_snapshot.utalk_api_url, &cfg_snapshot.utalk_api_token, &cfg_snapshot.utalk_organization_id, chat_id, confirm_msg).await;
+            return;
+        }
+
         // 🎯 LÓGICA DE ESPELHAMENTO DE MÍDIA E ETAPAS (STATE-MACHINE):
         let is_client_audio = msg_type == "Audio";
         let current_stage = state.db.get_chat_stage(chat_id);
