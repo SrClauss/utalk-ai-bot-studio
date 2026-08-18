@@ -460,7 +460,7 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
 
         // Verifica se a resposta do cliente corresponde ao esperado na etapa atual
         let is_expected_stage_answer = match current_stage.as_str() {
-            "STAGE_1" => text_low.contains("poço") || text_low.contains("poco") || text_low.contains("rio") || text_low.contains("represa") || text_low.contains("cacimba") || text_low.contains("artesiano") || text_low.contains("cisterna"),
+            "STAGE_1" => text_low.contains("poço") || text_low.contains("poco") || text_low.contains("rio") || text_low.contains("represa") || text_low.contains("cacimba") || text_low.contains("artesiano") || text_low.contains("arteziano") || text_low.contains("cisterna"),
             "STAGE_2" => text_low.contains("metro") || text_low.contains("m") || text_low.contains("profund") || text_low.contains("distancia") || text_low.contains("caixa"),
             _ => false,
         };
