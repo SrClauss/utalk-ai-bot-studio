@@ -384,23 +384,27 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
                     Ok(resp) => {
                         let bytes = resp.bytes().await.unwrap_or_default();
                         let b64 = base64::engine::general_purpose::STANDARD.encode(&bytes);
-                        audio_data_tuple = Some(("audio/mp3".to_string(), b64));
-                        "[Áudio enviado pelo cliente]".to_string()
+                        audio_data_tuple = Some(("audio/mp3".to_string(), b64.clone()));
+
+                        println!("🎙️ Transcrevendo áudio do cliente via Gemini STT...");
+                        let stt_prompt = "Transcreva exatamente o que o cliente disse neste áudio em português do Brasil. Retorne APENAS o texto da transcrição limpo, sem explicações ou saudações.";
+                        gemini::generate_gemini_response(state.db.clone(), &cfg_snapshot, chat_id, stt_prompt, Some(("audio/mp3", &b64))).await.unwrap_or_else(|_| "[Áudio enviado pelo cliente]".to_string())
                     }
                     Err(e) => {
                         println!("⚠️ Falha no download direto, buscando via API uTalk: {}", e);
-                        utalk::fetch_message_audio(
+                        if let Ok((mime, b64)) = utalk::fetch_message_audio(
                             &cfg_snapshot.utalk_api_url,
                             &cfg_snapshot.utalk_api_token,
                             &cfg_snapshot.utalk_organization_id,
                             msg_id,
-                        ).await.map(|(mime, b64)| {
-                            audio_data_tuple = Some((mime, b64));
-                            "[Áudio enviado pelo cliente]".to_string()
-                        }).unwrap_or_else(|err| {
-                            println!("⚠️ Não foi possível baixar mídia de áudio do uTalk: {}", err);
+                        ).await {
+                            audio_data_tuple = Some((mime.clone(), b64.clone()));
+                            println!("🎙️ Transcrevendo áudio do cliente via Gemini STT...");
+                            let stt_prompt = "Transcreva exatamente o que o cliente disse neste áudio em português do Brasil. Retorne APENAS o texto da transcrição limpo, sem explicações ou saudações.";
+                            gemini::generate_gemini_response(state.db.clone(), &cfg_snapshot, chat_id, stt_prompt, Some((&mime, &b64))).await.unwrap_or_else(|_| "[Áudio enviado pelo cliente]".to_string())
+                        } else {
                             format!("O cliente '{}' enviou um áudio.", contact_name)
-                        })
+                        }
                     }
                 }
             } else {
@@ -413,8 +417,10 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
                 .await
                 {
                     Ok((mime, b64)) => {
-                        audio_data_tuple = Some((mime, b64));
-                        "[Áudio enviado pelo cliente]".to_string()
+                        audio_data_tuple = Some((mime.clone(), b64.clone()));
+                        println!("🎙️ Transcrevendo áudio do cliente via Gemini STT...");
+                        let stt_prompt = "Transcreva exatamente o que o cliente disse neste áudio em português do Brasil. Retorne APENAS o texto da transcrição limpo, sem explicações ou saudações.";
+                        gemini::generate_gemini_response(state.db.clone(), &cfg_snapshot, chat_id, stt_prompt, Some((&mime, &b64))).await.unwrap_or_else(|_| "[Áudio enviado pelo cliente]".to_string())
                     }
                     Err(err) => {
                         println!("⚠️ Não foi possível baixar mídia de áudio do uTalk: {}", err);
