@@ -761,13 +761,19 @@ impl Database {
             ),
         ];
 
+        let _ = conn.execute(
+            "DELETE FROM audio_bank WHERE key NOT IN ('saudacao_bom_dia', 'saudacao_boa_tarde', 'saudacao_boa_noite', 'poco_cacimba_detalhes', 'rio_represa_detalhes', 'profundidade_distancia', 'vazao_agua', 'encaminhamento_resumo')",
+            [],
+        );
+
         for (key, title, desc, txt, audio) in defaults {
             let _ = conn.execute(
                 "INSERT INTO audio_bank (key, title, description, text_message, audio_url) VALUES (?1, ?2, ?3, ?4, ?5)
                  ON CONFLICT(key) DO UPDATE SET 
+                 title = excluded.title,
                  description = excluded.description,
                  text_message = excluded.text_message,
-                 audio_url = CASE WHEN audio_bank.audio_url IS NULL OR audio_bank.audio_url = '' THEN excluded.audio_url ELSE audio_bank.audio_url END",
+                 audio_url = excluded.audio_url",
                 params![key, title, desc, txt, audio],
             );
         }
