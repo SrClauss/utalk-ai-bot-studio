@@ -364,8 +364,7 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
         .or_else(|| msg_obj["Chat"]["Contact"]["Name"].as_str())
         .unwrap_or("Cliente");
 
-    let is_audio = msg_type == "Audio";
-    if (source == "Contact" || is_audio) && !chat_id.is_empty() {
+    if source == "Contact" && !chat_id.is_empty() {
         let cfg_snapshot = state.db.get_config();
         let mut audio_data_tuple: Option<(String, String)> = None;
 
