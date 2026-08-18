@@ -304,10 +304,10 @@ async fn handle_webhook(
             if config_snapshot.bot_enabled {
                 if !channel_allowed {
                     println!("⚡ Decisão da IA    : ⏸️ [IGNORADO] Canal '{}' (ID: {}) não está na lista de canais permitidos do Webhook.", channel_name, channel_id);
-                } else if is_vps_transferred {
-                    println!("⚡ Decisão da IA    : ⏸️ [SILÊNCIOSO] Chat '{}' foi transferido oficialmente para atendimento humano pela VPS. IA pausada.", target_chat_id);
+                } else if has_human_member || is_vps_transferred {
+                    println!("⚡ Decisão da IA    : ⏸️ [SILÊNCIOSO] Atendente humano atribuído no uTalk/VPS (HasHumanMember: {}). IA pausada.", has_human_member);
                 } else {
-                    println!("⚡ Decisão da IA    : 🤖 [LIGADO] Processando com DeepSeek (Triagem VPS ativa)...");
+                    println!("⚡ Decisão da IA    : 🤖 [LIGADO] Processando com DeepSeek...");
                     let state_clone = state.clone();
                     tokio::spawn(async move {
                         process_incoming_webhook(state_clone, payload).await;
