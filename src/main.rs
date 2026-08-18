@@ -458,91 +458,18 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
         let current_stage = state.db.get_chat_stage(chat_id);
         let text_low = user_prompt.to_lowercase();
 
-        // Verifica se a resposta do cliente corresponde ao esperado na etapa atual
-        let is_expected_stage_answer = match current_stage.as_str() {
-            "STAGE_1" => text_low.contains("poço") || text_low.contains("poco") || text_low.contains("rio") || text_low.contains("represa") || text_low.contains("cacimba") || text_low.contains("artesiano") || text_low.contains("arteziano") || text_low.contains("cisterna"),
-            "STAGE_2" => text_low.contains("metro") || text_low.contains("m") || text_low.contains("profund") || text_low.contains("distancia") || text_low.contains("caixa"),
-            _ => false,
-        };
-
         let (history_vec, _) = state.db.get_chat_context_for_ai(chat_id, 24);
         let is_first_contact = history_vec.is_empty();
 
         if is_first_contact {
-            println!("🆕 Primeiro contato detectado [ChatId: {}]. Enviando STAGE_1 (Apresentação)...", chat_id);
+            println!("🆕 Primeiro contato detectado [ChatId: {}]. IA (DeepSeek) assumindo apresentação inicial...", chat_id);
             state.db.set_chat_stage(chat_id, "STAGE_1");
-            if let Some(stage_cfg) = state.db.get_stage_config("STAGE_1") {
-                let txt_msg = stage_cfg["text_message"].as_str().unwrap_or_default();
-                let audio_url = stage_cfg["audio_url"].as_str().unwrap_or_default();
-
-                let effective_audio_url = if audio_url.trim().is_empty() {
-                    "/assets/vendas_leandro_puck.mp3"
-                } else {
-                    audio_url
-                };
-
-                if is_client_audio && !effective_audio_url.is_empty() {
-                    let full_audio_url = if effective_audio_url.starts_with("http://") || effective_audio_url.starts_with("https://") {
-                        effective_audio_url.to_string()
-                    } else {
-                        format!("https://tubaraoia.lysia.tech{}", effective_audio_url)
-                    };
-                    println!("⚡ [R$ 0,00 - ETAPA ESTÁTICA ÁUDIO STAGE_1] Enviando nota de voz: {}...", full_audio_url);
-                    let _ = utalk::send_utalk_audio_message(&cfg_snapshot.utalk_api_url, &cfg_snapshot.utalk_api_token, &cfg_snapshot.utalk_organization_id, chat_id, &full_audio_url).await;
-                    return;
-                } else if !txt_msg.is_empty() {
-                    println!("⚡ [R$ 0,00 - ETAPA ESTÁTICA TEXTO STAGE_1] Enviando mensagem texto...");
-                    let _ = utalk::send_utalk_message(&cfg_snapshot.utalk_api_url, &cfg_snapshot.utalk_api_token, &cfg_snapshot.utalk_organization_id, chat_id, txt_msg).await;
-                    return;
-                }
-            }
-        } else if is_expected_stage_answer {
-            let next_stage = match current_stage.as_str() {
-                "STAGE_1" => "STAGE_2",
-                "STAGE_2" => "STAGE_3",
-                _ => "STAGE_3",
-            };
-            state.db.set_chat_stage(chat_id, next_stage);
-            println!("🔄 Avançando chat {} para {}", chat_id, next_stage);
-
-            if let Some(stage_cfg) = state.db.get_stage_config(next_stage) {
-                let txt_msg = stage_cfg["text_message"].as_str().unwrap_or_default();
-                let audio_url = stage_cfg["audio_url"].as_str().unwrap_or_default();
-
-                let default_audio = match current_stage.as_str() {
-                    "STAGE_1" => "/assets/vendas_leandro_puck.mp3",
-                    "STAGE_2" => "/assets/stage_2_puck.mp3",
-                    "STAGE_3" => "/assets/stage_3_puck.mp3",
-                    _ => "/assets/stage_transfer_puck.mp3",
-                };
-
-                let effective_audio_url = if audio_url.trim().is_empty() { default_audio } else { audio_url };
-
-                if is_client_audio && !effective_audio_url.is_empty() {
-                    let full_audio_url = if effective_audio_url.starts_with("http://") || effective_audio_url.starts_with("https://") {
-                        effective_audio_url.to_string()
-                    } else {
-                        format!("https://tubaraoia.lysia.tech{}", effective_audio_url)
-                    };
-                    println!("⚡ [R$ 0,00 - ETAPA ESTÁTICA ÁUDIO {}] Enviando nota de voz: {}...", next_stage, full_audio_url);
-                    let _ = utalk::send_utalk_audio_message(&cfg_snapshot.utalk_api_url, &cfg_snapshot.utalk_api_token, &cfg_snapshot.utalk_organization_id, chat_id, &full_audio_url).await;
-                    return;
-                } else if !txt_msg.is_empty() {
-                    println!("⚡ [R$ 0,00 - ETAPA ESTÁTICA TEXTO {}] Enviando mensagem texto...", next_stage);
-                    let _ = utalk::send_utalk_message(&cfg_snapshot.utalk_api_url, &cfg_snapshot.utalk_api_token, &cfg_snapshot.utalk_organization_id, chat_id, txt_msg).await;
-                    return;
-                }
-            }
         }
 
-        // Se for exceção / pergunta fora da caixinha -> O DeepSeek AI entra em ação
-        println!("🤖 [INTERVENÇÃO DEEPSEEK AI] Cliente fez pergunta ou forneceu dados na etapa '{}'.", current_stage);
-        let prompt_with_stage_ctx = format!(
-            "{}\n[INSTRUÇÃO DE ETAPA: O cliente está na etapa '{}'. Responda à dúvida dele de forma objetiva, cortês e formal (tom consultivo, sem entonação de locutor/político) e conclua a resposta fazendo a pergunta pendente da etapa '{}']",
-            user_prompt, current_stage, current_stage
-        );
+        // 🤖 PASSAGEM DIRETA DE CONTROLE PARA A INTELIGÊNCIA ARTIFICIAL (DEEPSEEK)
+        println!("🤖 [PROCESSANDO COM DEEPSEEK IA] Analisando mensagem do cliente e conduzindo a triagem...");
 
-        match deepseek::generate_deepseek_response(state.db.clone(), &cfg_snapshot, chat_id, &prompt_with_stage_ctx).await {
+        match deepseek::generate_deepseek_response(state.db.clone(), &cfg_snapshot, chat_id, &user_prompt).await {
             Ok(mut ai_reply) => {
                 println!("✨ DeepSeek gerou resposta:\n{}", ai_reply);
 
