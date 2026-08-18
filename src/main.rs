@@ -466,12 +466,16 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
             state.db.set_chat_stage(chat_id, "STAGE_1");
         }
 
+        // Salva a mensagem do usuário no histórico para manter contexto contínuo
+        state.db.save_message(chat_id, "user", &user_prompt);
+
         // 🤖 PASSAGEM DIRETA DE CONTROLE PARA A INTELIGÊNCIA ARTIFICIAL (DEEPSEEK)
         println!("🤖 [PROCESSANDO COM DEEPSEEK IA] Analisando mensagem do cliente e conduzindo a triagem...");
 
         match deepseek::generate_deepseek_response(state.db.clone(), &cfg_snapshot, chat_id, &user_prompt).await {
             Ok(mut ai_reply) => {
                 println!("✨ DeepSeek gerou resposta:\n{}", ai_reply);
+                state.db.save_message(chat_id, "assistant", &ai_reply);
 
                 let should_transfer = cfg_snapshot.rotation_enabled
                     && !cfg_snapshot.rotation_trigger_keyword.is_empty()
