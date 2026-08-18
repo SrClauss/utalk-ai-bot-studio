@@ -1265,7 +1265,7 @@
                                                 <span class="text-[10px] font-mono text-amber-400 flex items-center gap-1">
                                                     <i class="fa-solid fa-volume-high"></i> Áudio MP3 Gerado (Voz Puck):
                                                 </span>
-                                                <audio controls :src="msg.audio_url" class="w-full h-8 rounded-lg"></audio>
+                                                <audio controls :src="msg.audio_url ? (msg.audio_url.startsWith('http') ? msg.audio_url : window.location.origin + msg.audio_url) : ''" class="w-full h-8 rounded-lg"></audio>
                                             </div>
                                         </template>
                                     </div>
@@ -1405,7 +1405,7 @@
                                                     <p class="text-[10px] font-mono text-amber-300/80 truncate max-w-[200px]" x-text="item.audio_url"></p>
                                                 </div>
                                             </div>
-                                            <audio controls :src="item.audio_url" class="w-full sm:w-auto h-8 rounded-lg"></audio>
+                                            <audio controls :src="item.audio_url ? (item.audio_url.startsWith('http') ? item.audio_url : window.location.origin + item.audio_url) : ''" class="w-full sm:w-auto h-8 rounded-lg"></audio>
                                         </div>
                                     </template>
 
