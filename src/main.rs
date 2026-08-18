@@ -480,16 +480,16 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
             }
         }
 
-        // Se for exceção / pergunta fora da caixinha -> O Gemini entra em ação
-        println!("🤖 [INTERVENÇÃO GEMINI AI] Cliente fez pergunta ou forneceu dados na etapa '{}'.", current_stage);
+        // Se for exceção / pergunta fora da caixinha -> O DeepSeek AI entra em ação
+        println!("🤖 [INTERVENÇÃO DEEPSEEK AI] Cliente fez pergunta ou forneceu dados na etapa '{}'.", current_stage);
         let prompt_with_stage_ctx = format!(
             "{}\n[INSTRUÇÃO DE ETAPA: O cliente está na etapa '{}'. Responda à dúvida dele de forma objetiva, cortês e formal (tom consultivo, sem entonação de locutor/político) e conclua a resposta fazendo a pergunta pendente da etapa '{}']",
             user_prompt, current_stage, current_stage
         );
 
-        match gemini::generate_gemini_response(state.db.clone(), &cfg_snapshot, chat_id, &prompt_with_stage_ctx, audio_ref).await {
+        match deepseek::generate_deepseek_response(state.db.clone(), &cfg_snapshot, chat_id, &prompt_with_stage_ctx).await {
             Ok(mut ai_reply) => {
-                println!("✨ Gemini gerou resposta:\n{}", ai_reply);
+                println!("✨ DeepSeek gerou resposta:\n{}", ai_reply);
 
                 let should_transfer = cfg_snapshot.rotation_enabled
                     && !cfg_snapshot.rotation_trigger_keyword.is_empty()
