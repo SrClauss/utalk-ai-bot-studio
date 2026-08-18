@@ -370,7 +370,7 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
             chrono::DateTime::parse_from_rfc3339(event_at_utc)
         ) {
             let diff = event_date.signed_duration_since(created_date);
-            if diff.num_hours() > 24 {
+            if diff.num_minutes() > 5 {
                 is_old_customer = true;
             }
         }
