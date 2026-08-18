@@ -386,8 +386,8 @@
             </div>
         </aside>
 
-        <!-- Main Container (Ajusta margem esquerda conforme expansão/recolhimento da Sidebar no Desktop) -->
-        <main class="transition-all duration-300 flex-1 min-w-0 max-w-full overflow-x-hidden px-4 sm:px-6 pt-6 pb-24 md:pb-12 space-y-6">
+        <!-- Main Container (Alinhado à esquerda no desktop ao lado da sidebar) -->
+        <main class="transition-all duration-300 flex-1 min-w-0 w-full overflow-x-hidden px-4 sm:px-6 pt-6 pb-24 md:pb-12 space-y-6">
 
             <!-- Banner Hero Integrado com Imagem Neuronal (Exibido apenas na aba de métricas) -->
             <div x-show="activeTab === 'metrics'" class="relative overflow-hidden rounded-2xl border border-indigo-500/30 bg-slate-900/90 shadow-2xl">
@@ -1396,16 +1396,16 @@
                                     <!-- Audio Preview Player Container -->
                                     <template x-if="item.audio_url">
                                         <div class="p-3.5 bg-slate-900/90 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-inner">
-                                            <div class="flex items-center gap-2">
-                                                <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center text-xs">
-                                                    <i class="fa-solid fa-circle-play"></i>
+                                            <div class="flex items-center gap-2.5">
+                                                <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center text-sm shrink-0">
+                                                    <i class="fa-solid fa-file-audio"></i>
                                                 </div>
-                                                <div>
-                                                    <span class="text-xs font-bold text-slate-200">Prévia do Áudio MP3</span>
-                                                    <p class="text-[10px] font-mono text-amber-300/80 truncate max-w-[200px]" x-text="item.audio_url"></p>
+                                                <div class="overflow-hidden">
+                                                    <span class="text-xs font-bold text-slate-200 block">Prévia da Nota de Voz (MP3)</span>
+                                                    <a :href="item.audio_url.startsWith('http') ? item.audio_url : window.location.origin + item.audio_url" target="_blank" class="text-[10px] font-mono text-amber-400 hover:underline truncate block" x-text="item.audio_url"></a>
                                                 </div>
                                             </div>
-                                            <audio controls :src="item.audio_url ? (item.audio_url.startsWith('http') ? item.audio_url : window.location.origin + item.audio_url) : ''" class="w-full sm:w-auto h-8 rounded-lg"></audio>
+                                            <audio controls preload="metadata" :src="item.audio_url.startsWith('http') ? item.audio_url : window.location.origin + item.audio_url" class="w-full sm:w-64 h-9 rounded-lg border border-slate-800 bg-slate-950"></audio>
                                         </div>
                                     </template>
 
