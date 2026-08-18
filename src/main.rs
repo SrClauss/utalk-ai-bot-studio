@@ -487,24 +487,35 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
                 }
 
                 if !ai_reply.is_empty() {
-                    if is_client_audio {
-                        use std::hash::{Hash, Hasher};
-                        let mut hasher = std::collections::hash_map::DefaultHasher::new();
-                        ai_reply.hash(&mut hasher);
-                        let hash_val = hasher.finish();
-                        let hash_hex = format!("{:x}", hash_val);
+                    let mut selected_audio_url = String::new();
 
-                        let out_mp3_rel = format!("/assets/audio_cache/{}.mp3", hash_hex);
-                        let out_mp3_full = format!("assets/audio_cache/{}.mp3", hash_hex);
+                    // Procura a tag [AUDIO_KEY: chave] sugerida pelo DeepSeek no catálogo de áudios pré-gravados
+                    if let Some(pos) = ai_reply.find("[AUDIO_KEY:") {
+                        if let Some(end_pos) = ai_reply[pos..].find(']') {
+                            let audio_key = ai_reply[pos + 11..pos + end_pos].trim().to_string();
+                            let cleaned_text = ai_reply[..pos].to_string() + &ai_reply[pos + end_pos + 1..];
+                            ai_reply = cleaned_text.trim().to_string();
 
-                        if !std::path::Path::new(&out_mp3_full).exists() {
-                            println!("🎙️ Sintetizando nova resposta de voz no Gemini TTS [Puck]...");
-                            let _ = gemini::generate_gemini_tts_audio(&cfg_snapshot.gemini_api_key, &ai_reply, "Puck", &out_mp3_full).await;
-                        } else {
-                            println!("⚡ [CACHE HIT] Áudio reutilizado do cache local!");
+                            let audio_items = state.db.get_all_audio_bank_items();
+                            if let Some(arr) = audio_items.as_array() {
+                                for item in arr {
+                                    if item["key"].as_str().unwrap_or_default() == audio_key {
+                                        selected_audio_url = item["audio_url"].as_str().unwrap_or_default().to_string();
+                                        break;
+                                    }
+                                }
+                            }
                         }
+                    }
 
-                        let full_audio_url = format!("https://tubaraoia.lysia.tech{}", out_mp3_rel);
+                    if is_client_audio && !selected_audio_url.is_empty() {
+                        let full_audio_url = if selected_audio_url.starts_with("http://") || selected_audio_url.starts_with("https://") {
+                            selected_audio_url
+                        } else {
+                            format!("https://tubaraoia.lysia.tech{}", selected_audio_url)
+                        };
+
+                        println!("🎙️ Enviando áudio pré-gravado do Catálogo ao cliente: {}...", full_audio_url);
                         let _ = utalk::send_utalk_audio_message(
                             &cfg_snapshot.utalk_api_url,
                             &cfg_snapshot.utalk_api_token,
