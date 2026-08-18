@@ -581,22 +581,29 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
                         }
                     }
 
-                    if is_client_audio && !selected_audio_url.is_empty() {
+                    let mut sent_audio = false;
+                    if !selected_audio_url.is_empty() {
                         let full_audio_url = if selected_audio_url.starts_with("http://") || selected_audio_url.starts_with("https://") {
                             selected_audio_url
                         } else {
                             format!("https://tubaraoia.lysia.tech{}", selected_audio_url)
                         };
 
-                        println!("🎙️ Enviando áudio pré-gravado do Catálogo ao cliente: {}...", full_audio_url);
-                        let _ = utalk::send_utalk_audio_message(
-                            &cfg_snapshot.utalk_api_url,
-                            &cfg_snapshot.utalk_api_token,
-                            &cfg_snapshot.utalk_organization_id,
-                            chat_id,
-                            &full_audio_url,
-                        ).await;
-                    } else {
+                        if is_client_audio {
+                            println!("🎙️ Enviando áudio pré-gravado do Catálogo ao cliente: {}...", full_audio_url);
+                            let _ = utalk::send_utalk_audio_message(
+                                &cfg_snapshot.utalk_api_url,
+                                &cfg_snapshot.utalk_api_token,
+                                &cfg_snapshot.utalk_organization_id,
+                                chat_id,
+                                &full_audio_url,
+                            ).await;
+                            sent_audio = true;
+                        }
+                    }
+
+                    // Se não enviou apenas o áudio, ou se a mensagem tem resumo de transferência, envia o texto
+                    if !sent_audio || should_transfer {
                         let _ = utalk::send_utalk_message(
                             &cfg_snapshot.utalk_api_url,
                             &cfg_snapshot.utalk_api_token,
