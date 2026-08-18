@@ -359,6 +359,23 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
         msg_obj["Chat"]["Id"].as_str().or_else(|| content_obj["Chat"]["Id"].as_str()).unwrap_or_default()
     };
 
+    let chat_obj = if payload_type == "Chat" { content_obj } else { &content_obj["Chat"] };
+    let created_at_utc = chat_obj["CreatedAtUTC"].as_str().unwrap_or_default();
+    let event_at_utc = payload["EventDate"].as_str().or_else(|| msg_obj["CreatedAtUTC"].as_str()).unwrap_or_default();
+
+    let mut is_old_customer = false;
+    if !created_at_utc.is_empty() && !event_at_utc.is_empty() {
+        if let (Ok(created_date), Ok(event_date)) = (
+            chrono::DateTime::parse_from_rfc3339(created_at_utc),
+            chrono::DateTime::parse_from_rfc3339(event_at_utc)
+        ) {
+            let diff = event_date.signed_duration_since(created_date);
+            if diff.num_hours() > 24 {
+                is_old_customer = true;
+            }
+        }
+    }
+
     let contact_name = content_obj["Contact"]["Name"]
         .as_str()
         .or_else(|| msg_obj["Chat"]["Contact"]["Name"].as_str())
@@ -535,8 +552,48 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
         let is_first_contact = history_vec.is_empty();
 
         if is_first_contact {
-            println!("🆕 Primeiro contato detectado [ChatId: {}]. IA (DeepSeek) assumindo apresentação inicial...", chat_id);
-            state.db.set_chat_stage(chat_id, "STAGE_1");
+            if is_old_customer {
+                println!("🔄 Cliente antigo detectado [ChatId: {}]. Realizando transbordo imediato (Opção A)...", chat_id);
+                let mut candidate_ids = cfg_snapshot.rotation_operator_ids.clone();
+                if let Ok(online_ids) = utalk::fetch_online_members(
+                    &cfg_snapshot.utalk_api_url,
+                    &cfg_snapshot.utalk_api_token,
+                    &cfg_snapshot.utalk_organization_id,
+                )
+                .await
+                {
+                    candidate_ids.retain(|id| online_ids.contains(id));
+                }
+
+                let target_op_name = if let Some(target_operator_id) = state.db.get_next_rotation_operator(&candidate_ids) {
+                    let _ = utalk::transfer_chat_to_member(
+                        &cfg_snapshot.utalk_api_url,
+                        &cfg_snapshot.utalk_api_token,
+                        &cfg_snapshot.utalk_organization_id,
+                        chat_id,
+                        &target_operator_id,
+                    ).await;
+                    "Equipe de Vendas".to_string()
+                } else {
+                    "Equipe (Nenhum Online)".to_string()
+                };
+
+                let transfer_msg = "Olá! Vi que você já conversou com a gente antes. Para agilizar seu atendimento, estou transferindo você diretamente para um de nossos especialistas. Aguarde um instante!";
+                let _ = utalk::send_utalk_message(
+                    &cfg_snapshot.utalk_api_url,
+                    &cfg_snapshot.utalk_api_token,
+                    &cfg_snapshot.utalk_organization_id,
+                    chat_id,
+                    transfer_msg,
+                ).await;
+
+                state.db.record_transfer(chat_id, "transferred", &target_op_name);
+                println!("📊 Transferência por CLIENTE ANTIGO gravada: Chat {} -> {}", chat_id, target_op_name);
+                return;
+            } else {
+                println!("🆕 Primeiro contato detectado [ChatId: {}]. IA (DeepSeek) assumindo apresentação inicial...", chat_id);
+                state.db.set_chat_stage(chat_id, "STAGE_1");
+            }
         }
 
         // Salva a mensagem do usuário no histórico para manter contexto contínuo

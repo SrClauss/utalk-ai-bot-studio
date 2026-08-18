@@ -7,10 +7,10 @@ from faster_whisper import WhisperModel
 
 app = FastAPI(title="Whisper Local Test Server")
 
-print("⚡ Carregando modelo Whisper 'base' C++ (int8 CPU)...")
+print("⚡ Carregando modelo Whisper 'small' C++ (int8 CPU)...")
 start_t = time.time()
-model = WhisperModel("base", device="cpu", compute_type="int8")
-print(f"✅ Modelo Whisper 'base' pronto em {time.time() - start_t:.2f}s!")
+model = WhisperModel("small", device="cpu", compute_type="int8")
+print(f"✅ Modelo Whisper 'small' pronto em {time.time() - start_t:.2f}s!")
 
 @app.get("/", response_class=HTMLResponse)
 def get_index():
@@ -37,7 +37,8 @@ async def transcribe_audio(file: UploadFile = File(...)):
             beam_size=5,
             initial_prompt=domain_prompt,
             vad_filter=True,
-            vad_parameters=dict(min_silence_duration_ms=500)
+            vad_parameters=dict(min_silence_duration_ms=500),
+            condition_on_previous_text=False
         )
         text_segments = [seg.text.strip() for seg in segments]
         full_text = " ".join(text_segments)
