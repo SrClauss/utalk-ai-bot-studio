@@ -508,6 +508,30 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
                         }
                     }
 
+                    // Se o cliente mandou áudio e a IA não especificou a tag [AUDIO_KEY], escolhemos o áudio ideal do catálogo inteligentemente
+                    if is_client_audio && selected_audio_url.is_empty() {
+                        let text_low = ai_reply.to_lowercase();
+                        let fallback_key = if text_low.contains("fonte") || text_low.contains("poço") || text_low.contains("rio") || text_low.contains("cacimba") {
+                            "saudacao_fonte"
+                        } else if text_low.contains("profundidade") || text_low.contains("metro") || text_low.contains("distância") || text_low.contains("subida") {
+                            "poco_artesiano_detalhes"
+                        } else if text_low.contains("litros") || text_low.contains("vazão") || text_low.contains("hora") {
+                            "vazao_energia"
+                        } else {
+                            "encaminhamento_especialista"
+                        };
+
+                        let audio_items = state.db.get_all_audio_bank_items();
+                        if let Some(arr) = audio_items.as_array() {
+                            for item in arr {
+                                if item["key"].as_str().unwrap_or_default() == fallback_key {
+                                    selected_audio_url = item["audio_url"].as_str().unwrap_or_default().to_string();
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
                     if is_client_audio && !selected_audio_url.is_empty() {
                         let full_audio_url = if selected_audio_url.starts_with("http://") || selected_audio_url.starts_with("https://") {
                             selected_audio_url
