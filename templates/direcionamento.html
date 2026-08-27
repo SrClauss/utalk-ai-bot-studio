@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Direcionamento uTalk - Roteamento ao Último Atendente</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        display: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #030712;
+            color: #f3f4f6;
+        }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .glow-cyan {
+            box-shadow: 0 0 25px -5px rgba(6, 182, 212, 0.35);
+        }
+        
+        .glow-emerald {
+            box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.35);
+        }
+
+        .glow-title {
+            background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen antialiased selection:bg-cyan-500 selection:text-white" x-data="direcionamentoApp()" x-init="init()">
+
+    <!-- NOTIFICAÇÃO TOAST EMBUTIDA -->
+    <div class="fixed bottom-5 right-5 z-50 space-y-2">
+        <template x-for="alert in alerts" :key="alert.id">
+            <div class="flex items-center gap-3 px-4 py-3 rounded-xl shadow-2xl text-xs font-semibold border transition-all duration-300 transform translate-y-0"
+                :class="alert.type === 'error' ? 'bg-rose-950/90 text-rose-200 border-rose-800' : (alert.type === 'warning' ? 'bg-amber-950/90 text-amber-200 border-amber-800' : 'bg-cyan-950/90 text-cyan-200 border-cyan-800')">
+                <i class="fa-solid" :class="alert.type === 'error' ? 'fa-circle-xmark text-rose-400' : (alert.type === 'warning' ? 'fa-triangle-exclamation text-amber-400' : 'fa-circle-check text-cyan-400')"></i>
+                <span x-text="alert.message"></span>
+            </div>
+        </template>
+    </div>
+
+    <!-- TELA DE LOGIN (Exibida quando não autenticado) -->
+    <div x-show="!loggedIn" class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden" x-transition>
+        <div class="absolute -top-40 -left-40 w-96 h-96 bg-cyan-600/10 blur-3xl rounded-full pointer-events-none"></div>
+        <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-indigo-600/10 blur-3xl rounded-full pointer-events-none"></div>
+
+        <div class="glass-panel w-full max-w-md p-8 rounded-3xl space-y-6 shadow-2xl border border-slate-800 relative z-10">
+            <div class="text-center space-y-2">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-cyan-600 to-indigo-600 shadow-lg shadow-cyan-600/30 mb-2">
+                    <i class="fa-solid fa-route text-2xl text-white"></i>
+                </div>
+                <h1 class="text-2xl font-black font-display tracking-tight text-white">Direcionamento uTalk</h1>
+                <p class="text-xs text-slate-400">Acesso ao Painel de Roteamento ao Último Atendente</p>
+            </div>
+
+            <form @submit.prevent="doLogin()" class="space-y-4">
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Usuário</label>
+                        <input type="text" x-model="loginUsername" placeholder="Usuário admin" required
+                            class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Senha</label>
+                        <input type="password" x-model="loginPassword" placeholder="Sua senha" required
+                            class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 transition-all">
+                    </div>
+                </div>
+
+                <button type="submit" :disabled="loginLoading"
+                    class="w-full py-3.5 bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-cyan-600/25 flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50">
+                    <span x-show="!loginLoading">Entrar no Sistema</span>
+                    <i x-show="loginLoading" class="fa-solid fa-circle-notch fa-spin"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- PAINEL PRINCIPAL DO DIRECIONAMENTO -->
+    <div x-show="loggedIn" class="min-h-screen p-4 md:p-8 space-y-8 max-w-7xl mx-auto" x-transition>
+
+        <!-- TOP BAR & STATUS DO SISTEMA -->
+        <header class="glass-panel p-5 md:p-6 rounded-3xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border border-slate-800 shadow-2xl">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-600 to-indigo-600 flex items-center justify-center text-xl text-white shadow-lg shadow-cyan-600/30 shrink-0">
+                    <i class="fa-solid fa-route"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-xl md:text-2xl font-black font-display tracking-tight text-white glow-title">Direcionamento uTalk</h1>
+                        <span class="text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-2.5 py-0.5 rounded-full uppercase">Módulo Independente</span>
+                    </div>
+                    <p class="text-xs text-slate-400 font-medium">Roteamento Inteligente de Conversas ao Último Atendente Humano</p>
+                </div>
+            </div>
+
+            <!-- CONTROLE CENTRAL: LIGAR / DESLIGAR O DIRECIONAMENTO -->
+            <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end border-t md:border-t-0 border-slate-800 pt-4 md:pt-0">
+                <div class="flex items-center gap-3 glass-card px-4 py-2 rounded-2xl border border-slate-800">
+                    <span class="text-xs font-bold text-slate-300">Status do Direcionamento:</span>
+                    <button @click="toggleDirection()" :disabled="toggling"
+                        class="px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer shadow-lg"
+                        :class="config.direction_enabled ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 glow-emerald' : 'bg-rose-500/20 text-rose-300 border border-rose-500/40'">
+                        <span class="w-2 h-2 rounded-full" :class="config.direction_enabled ? 'bg-emerald-400 animate-pulse' : 'bg-rose-500'"></span>
+                        <span x-text="config.direction_enabled ? 'LIGADO (ATIVO)' : 'DESLIGADO (INATIVO)'"></span>
+                        <i x-show="toggling" class="fa-solid fa-circle-notch fa-spin text-xs"></i>
+                    </button>
+                </div>
+
+                <button @click="doLogout()" class="p-2.5 bg-slate-900 hover:bg-rose-950/40 hover:text-rose-400 text-slate-400 text-xs rounded-xl border border-slate-800 transition-all" title="Sair">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- CARDS DE ESTATÍSTICAS EM TEMPO REAL -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <!-- Total Direcionados -->
+            <div class="glass-card p-6 rounded-3xl border border-cyan-500/20 space-y-2 relative overflow-hidden">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total de Direcionamentos</span>
+                    <div class="w-9 h-9 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center justify-center text-sm">
+                        <i class="fa-solid fa-arrows-turn-to-dots"></i>
+                    </div>
+                </div>
+                <div class="text-3xl font-black font-display text-white" x-text="stats.total_directed || 0"></div>
+                <p class="text-[11px] text-slate-400">Conversas encaminhadas com sucesso ao último atendente</p>
+            </div>
+
+            <!-- Direcionados Hoje -->
+            <div class="glass-card p-6 rounded-3xl border border-emerald-500/20 space-y-2 relative overflow-hidden">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Direcionados Hoje</span>
+                    <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center text-sm">
+                        <i class="fa-solid fa-calendar-day"></i>
+                    </div>
+                </div>
+                <div class="text-3xl font-black font-display text-emerald-400" x-text="stats.today_directed || 0"></div>
+                <p class="text-[11px] text-slate-400">Roteamentos efetuados na data de hoje</p>
+            </div>
+
+            <!-- Clientes Rastreados -->
+            <div class="glass-card p-6 rounded-3xl border border-purple-500/20 space-y-2 relative overflow-hidden">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Clientes Mapeados</span>
+                    <div class="w-9 h-9 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20 flex items-center justify-center text-sm">
+                        <i class="fa-solid fa-user-check"></i>
+                    </div>
+                </div>
+                <div class="text-3xl font-black font-display text-purple-300" x-text="stats.tracked_customers || 0"></div>
+                <p class="text-[11px] text-slate-400">Clientes cadastrados com histórico do último atendente</p>
+            </div>
+        </div>
+
+        <!-- TABELA DE LOGS & HISTÓRICO DE DIRECIONAMENTOS -->
+        <div class="glass-panel p-6 md:p-8 rounded-3xl space-y-6 border border-slate-800 shadow-2xl">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-4">
+                <div class="space-y-1">
+                    <h3 class="text-lg font-extrabold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-cyan-400"></i>
+                        <span>Histórico de Direcionamentos em Tempo Real</span>
+                    </h3>
+                    <p class="text-xs text-slate-400">Registros de todas as conversas roteadas automaticamente para o último atendente humano</p>
+                </div>
+
+                <div class="flex items-center gap-3 w-full sm:w-auto">
+                    <input type="text" x-model="searchQuery" placeholder="Buscar por cliente, telefone ou atendente..."
+                        class="w-full sm:w-64 bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500">
+                    
+                    <button @click="loadData()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-cyan-300 font-bold text-xs rounded-xl border border-slate-800 shrink-0 transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-rotate-right"></i>
+                        <span>Atualizar</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabela de Logs -->
+            <div class="overflow-x-auto rounded-2xl border border-slate-800">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-900/80 text-[11px] font-mono font-bold text-slate-400 uppercase tracking-wider border-b border-slate-800">
+                            <th class="py-3.5 px-4">Data / Hora</th>
+                            <th class="py-3.5 px-4">Cliente</th>
+                            <th class="py-3.5 px-4">Canal uTalk</th>
+                            <th class="py-3.5 px-4">Último Atendente Destino</th>
+                            <th class="py-3.5 px-4">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60 text-xs font-sans">
+                        <template x-for="log in filteredLogs" :key="log.id">
+                            <tr class="hover:bg-slate-900/40 transition-colors">
+                                <td class="py-3.5 px-4 font-mono text-slate-400 whitespace-nowrap" x-text="log.created_at"></td>
+                                <td class="py-3.5 px-4">
+                                    <div class="font-bold text-slate-200" x-text="log.customer_name || 'Cliente'"></div>
+                                    <div class="text-[11px] font-mono text-cyan-400" x-text="log.phone"></div>
+                                </td>
+                                <td class="py-3.5 px-4 font-semibold text-slate-300" x-text="log.channel_name"></td>
+                                <td class="py-3.5 px-4">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-7 h-7 rounded-lg bg-indigo-500/20 text-indigo-300 flex items-center justify-center text-xs font-bold shrink-0">
+                                            <i class="fa-solid fa-user"></i>
+                                        </div>
+                                        <div>
+                                            <div class="font-bold text-slate-100" x-text="log.member_name"></div>
+                                            <div class="text-[10px] font-mono text-slate-400" x-text="log.member_id"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-3.5 px-4">
+                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-mono font-bold border"
+                                        :class="log.status === 'Sucesso' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border-rose-500/30'"
+                                        x-text="log.status"></span>
+                                </td>
+                            </tr>
+                        </template>
+
+                        <tr x-show="filteredLogs.length === 0">
+                            <td colspan="5" class="py-8 text-center text-xs text-slate-500">
+                                Nenhum registro de direcionamento encontrado. Os direcionamentos aparecerão aqui assim que as conversas forem roteadas.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT ALPINE.JS -->
+    <script>
+        function direcionamentoApp() {
+            return {
+                loggedIn: false,
+                loginUsername: '',
+                loginPassword: '',
+                loginLoading: false,
+                toggling: false,
+                searchQuery: '',
+                config: {
+                    direction_enabled: true
+                },
+                stats: {
+                    total_directed: 0,
+                    today_directed: 0,
+                    tracked_customers: 0
+                },
+                logs: [],
+                alerts: [],
+
+                get filteredLogs() {
+                    if (!this.searchQuery.trim()) return this.logs;
+                    const q = this.searchQuery.toLowerCase();
+                    return this.logs.filter(l => 
+                        (l.customer_name && l.customer_name.toLowerCase().includes(q)) ||
+                        (l.phone && l.phone.includes(q)) ||
+                        (l.member_name && l.member_name.toLowerCase().includes(q)) ||
+                        (l.channel_name && l.channel_name.toLowerCase().includes(q))
+                    );
+                },
+
+                async init() {
+                    this.checkSession();
+                },
+
+                showAlert(msg, type = 'success') {
+                    const id = Date.now();
+                    this.alerts.push({ id, message: msg, type });
+                    setTimeout(() => {
+                        this.alerts = this.alerts.filter(a => a.id !== id);
+                    }, 4000);
+                },
+
+                async checkSession() {
+                    try {
+                        const res = await fetch('/api/config');
+                        if (res.ok) {
+                            const data = await res.json();
+                            this.config.direction_enabled = data.direction_enabled ?? true;
+                            this.loggedIn = true;
+                            this.loadData();
+                        } else {
+                            this.loggedIn = false;
+                        }
+                    } catch (err) {
+                        this.loggedIn = false;
+                    }
+                },
+
+                async doLogin() {
+                    this.loginLoading = true;
+                    try {
+                        const res = await fetch('/api/login', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                username: this.loginUsername,
+                                password: this.loginPassword
+                            })
+                        });
+                        const data = await res.json();
+                        if (res.ok && data.success) {
+                            this.loggedIn = true;
+                            this.showAlert('Login efetuado com sucesso!');
+                            this.loadData();
+                        } else {
+                            this.showAlert(data.message || 'Usuário ou senha incorretos.', 'error');
+                        }
+                    } catch (err) {
+                        this.showAlert('Falha ao autenticar com o servidor.', 'error');
+                    } finally {
+                        this.loginLoading = false;
+                    }
+                },
+
+                async doLogout() {
+                    await fetch('/api/logout', { method: 'POST' });
+                    this.loggedIn = false;
+                },
+
+                async loadData() {
+                    try {
+                        const [cfgRes, statsRes, logsRes] = await Promise.all([
+                            fetch('/api/config'),
+                            fetch('/api/direction-stats'),
+                            fetch('/api/direction-logs')
+                        ]);
+
+                        if (cfgRes.ok) {
+                            const cfgData = await cfgRes.json();
+                            this.config.direction_enabled = cfgData.direction_enabled ?? true;
+                        }
+
+                        if (statsRes.ok) {
+                            this.stats = await statsRes.json();
+                        }
+
+                        if (logsRes.ok) {
+                            this.logs = await logsRes.json();
+                        }
+                    } catch (err) {
+                        console.error('Erro ao carregar dados de direcionamento:', err);
+                    }
+                },
+
+                async toggleDirection() {
+                    this.toggling = true;
+                    try {
+                        const newStatus = !this.config.direction_enabled;
+                        const res = await fetch('/api/direction-toggle', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ enabled: newStatus })
+                        });
+                        if (res.ok) {
+                            this.config.direction_enabled = newStatus;
+                            this.showAlert(`Direcionamento ${newStatus ? 'LIGADO' : 'DESLIGADO'} com sucesso!`);
+                        } else {
+                            this.showAlert('Erro ao alterar status do direcionamento.', 'error');
+                        }
+                    } catch (err) {
+                        this.showAlert('Falha de conexão com o servidor.', 'error');
+                    } finally {
+                        this.toggling = false;
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

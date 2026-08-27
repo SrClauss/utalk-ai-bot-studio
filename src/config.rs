@@ -43,6 +43,9 @@ pub struct AppConfig {
     // Modo de Teste Restrito (Whitelist de Telefones)
     pub test_mode_enabled: bool,
     pub test_allowed_phones: Vec<String>,
+
+    // Sistema Independente de Direcionamento ao Último Atendente (direcionamentoumbler)
+    pub direction_enabled: bool,
 }
 
 impl Default for AppConfig {
@@ -60,6 +63,7 @@ impl Default for AppConfig {
 
         Self {
             bot_enabled: true,
+            direction_enabled: true,
             admin_username: admin_user,
             admin_password: admin_pass,
             gemini_api_key: gemini_key,

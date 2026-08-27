@@ -93,6 +93,26 @@ impl Database {
                 text_message TEXT NOT NULL,
                 audio_url TEXT NOT NULL
             );
+
+            CREATE TABLE IF NOT EXISTS customer_attendants (
+                phone TEXT PRIMARY KEY,
+                chat_id TEXT NOT NULL,
+                member_id TEXT NOT NULL,
+                member_name TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            );
+
+            CREATE TABLE IF NOT EXISTS direction_logs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                chat_id TEXT NOT NULL,
+                phone TEXT NOT NULL,
+                customer_name TEXT NOT NULL,
+                member_id TEXT NOT NULL,
+                member_name TEXT NOT NULL,
+                channel_name TEXT NOT NULL,
+                status TEXT NOT NULL,
+                created_at TEXT NOT NULL
+            );
             ",
         )
         .map_err(|e| format!("Erro ao inicializar tabelas SQLite/FTS5: {}", e))?;
@@ -819,6 +839,97 @@ impl Database {
             params![key, title, description, text_message, audio_url],
         );
         res.is_ok()
+    }
+
+    pub fn save_customer_last_attendant(&self, phone: &str, chat_id: &str, member_id: &str, member_name: &str) {
+        let clean_phone: String = phone.chars().filter(|c| c.is_ascii_digit()).collect();
+        let target_key = if !clean_phone.is_empty() { clean_phone } else { chat_id.to_string() };
+        if target_key.is_empty() || member_id.is_empty() { return; }
+
+        let conn = self.conn.lock().unwrap();
+        let _ = conn.execute(
+            "INSERT INTO customer_attendants (phone, chat_id, member_id, member_name, updated_at) 
+             VALUES (?1, ?2, ?3, ?4, datetime('now'))
+             ON CONFLICT(phone) DO UPDATE SET 
+             chat_id = excluded.chat_id,
+             member_id = excluded.member_id,
+             member_name = excluded.member_name,
+             updated_at = datetime('now')",
+            params![target_key, chat_id, member_id, member_name],
+        );
+    }
+
+    pub fn get_customer_last_attendant(&self, phone: &str, chat_id: &str) -> Option<(String, String)> {
+        let clean_phone: String = phone.chars().filter(|c| c.is_ascii_digit()).collect();
+        let target_key = if !clean_phone.is_empty() { clean_phone } else { chat_id.to_string() };
+        if target_key.is_empty() { return None; }
+
+        let conn = self.conn.lock().unwrap();
+        let mut stmt = conn.prepare("SELECT member_id, member_name FROM customer_attendants WHERE phone = ?1 OR chat_id = ?2 ORDER BY updated_at DESC LIMIT 1").ok()?;
+        stmt.query_row(params![target_key, chat_id], |row| {
+            Ok((row.get(0)?, row.get(1)?))
+        }).ok()
+    }
+
+    pub fn add_direction_log(
+        &self,
+        chat_id: &str,
+        phone: &str,
+        customer_name: &str,
+        member_id: &str,
+        member_name: &str,
+        channel_name: &str,
+        status: &str,
+    ) {
+        let conn = self.conn.lock().unwrap();
+        let _ = conn.execute(
+            "INSERT INTO direction_logs (chat_id, phone, customer_name, member_id, member_name, channel_name, status, created_at)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, datetime('now'))",
+            params![chat_id, phone, customer_name, member_id, member_name, channel_name, status],
+        );
+    }
+
+    pub fn get_direction_logs(&self, limit: usize) -> serde_json::Value {
+        let conn = self.conn.lock().unwrap();
+        let mut stmt = match conn.prepare("SELECT id, chat_id, phone, customer_name, member_id, member_name, channel_name, status, created_at FROM direction_logs ORDER BY id DESC LIMIT ?1") {
+            Ok(s) => s,
+            Err(_) => return serde_json::json!([]),
+        };
+
+        let rows = stmt.query_map(params![limit as i64], |row| {
+            Ok(serde_json::json!({
+                "id": row.get::<_, i64>(0)?,
+                "chat_id": row.get::<_, String>(1)?,
+                "phone": row.get::<_, String>(2)?,
+                "customer_name": row.get::<_, String>(3)?,
+                "member_id": row.get::<_, String>(4)?,
+                "member_name": row.get::<_, String>(5)?,
+                "channel_name": row.get::<_, String>(6)?,
+                "status": row.get::<_, String>(7)?,
+                "created_at": row.get::<_, String>(8)?,
+            }))
+        });
+
+        let mut list = Vec::new();
+        if let Ok(iter) = rows {
+            for item in iter.flatten() {
+                list.push(item);
+            }
+        }
+        serde_json::json!(list)
+    }
+
+    pub fn get_direction_stats(&self) -> serde_json::Value {
+        let conn = self.conn.lock().unwrap();
+        let total: i64 = conn.query_row("SELECT COUNT(*) FROM direction_logs", [], |r| r.get(0)).unwrap_or(0);
+        let today: i64 = conn.query_row("SELECT COUNT(*) FROM direction_logs WHERE date(created_at) = date('now')", [], |r| r.get(0)).unwrap_or(0);
+        let customers_count: i64 = conn.query_row("SELECT COUNT(*) FROM customer_attendants", [], |r| r.get(0)).unwrap_or(0);
+
+        serde_json::json!({
+            "total_directed": total,
+            "today_directed": today,
+            "tracked_customers": customers_count,
+        })
     }
 }
 

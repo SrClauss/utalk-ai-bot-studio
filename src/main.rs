@@ -65,6 +65,34 @@ async fn render_dashboard() -> Html<&'static str> {
     Html(ui::get_dashboard_html())
 }
 
+async fn render_direcionamento() -> Html<&'static str> {
+    Html(ui::get_direcionamento_html())
+}
+
+async fn get_direction_stats_handler(State(state): State<AppState>) -> Json<Value> {
+    Json(state.db.get_direction_stats())
+}
+
+async fn get_direction_logs_handler(State(state): State<AppState>) -> Json<Value> {
+    Json(state.db.get_direction_logs(100))
+}
+
+#[derive(serde::Deserialize)]
+struct DirectionToggleRequest {
+    enabled: bool,
+}
+
+async fn direction_toggle_handler(
+    State(state): State<AppState>,
+    Json(req): Json<DirectionToggleRequest>,
+) -> (StatusCode, Json<Value>) {
+    let mut cfg = state.db.get_config();
+    cfg.direction_enabled = req.enabled;
+    state.db.save_config(&cfg);
+    println!("🔄 [DIRECIONAMENTO] Status alterado para: {}", if req.enabled { "LIGADO" } else { "DESLIGADO" });
+    (StatusCode::OK, Json(serde_json::json!({ "success": true, "enabled": req.enabled })))
+}
+
 async fn get_logo_asset() -> (HeaderMap, &'static [u8]) {
     let mut headers = HeaderMap::new();
     if let Ok(v) = "image/png".parse() {
@@ -250,15 +278,46 @@ async fn handle_webhook(
 
             let tags_info = if tag_names.is_empty() { "Nenhuma".to_string() } else { tag_names.join(", ") };
 
-            let has_human_member = chat_obj["OrganizationMember"].is_object()
-                || chat_obj["organizationMember"].is_object()
-                || chat_obj["Member"].is_object()
-                || content_obj["OrganizationMember"].is_object()
-                || content_obj["organizationMember"].is_object()
-                || chat_obj["MemberId"].as_str().map(|s| !s.is_empty()).unwrap_or(false)
-                || chat_obj["memberId"].as_str().map(|s| !s.is_empty()).unwrap_or(false);
+            let member_obj = chat_obj.get("OrganizationMember")
+                .or_else(|| chat_obj.get("organizationMember"))
+                .or_else(|| chat_obj.get("Member"))
+                .or_else(|| content_obj.get("OrganizationMember"))
+                .or_else(|| content_obj.get("organizationMember"))
+                .or_else(|| chat_obj.get("LastAttendant"))
+                .or_else(|| chat_obj.get("FirstAttendant"));
 
-            let attendant_info = if has_human_member { "👤 Atendente Humano Atribuído no uTalk" } else { "✅ Nenhum (Chat Livre)" };
+            let extracted_member_id = member_obj.and_then(|m| m.get("Id").or_else(|| m.get("id"))).and_then(|v| v.as_str())
+                .or_else(|| chat_obj["MemberId"].as_str())
+                .or_else(|| chat_obj["memberId"].as_str());
+
+            let extracted_member_name = member_obj.and_then(|m| m.get("Name").or_else(|| m.get("name"))).and_then(|v| v.as_str())
+                .unwrap_or("Atendente uTalk");
+
+            let target_chat_id = if payload_type == "Chat" {
+                content_obj["Id"].as_str().unwrap_or_default()
+            } else {
+                msg_obj["Chat"]["Id"].as_str().or_else(|| content_obj["Chat"]["Id"].as_str()).unwrap_or_default()
+            };
+
+            let has_human_member = extracted_member_id.map(|s| !s.is_empty()).unwrap_or(false);
+
+            // Salva no banco o último atendente se houver membro associado nesta interação
+            if let Some(m_id) = extracted_member_id {
+                if !m_id.is_empty() {
+                    state.db.save_customer_last_attendant(phone, target_chat_id, m_id, extracted_member_name);
+                }
+            }
+
+            let last_attendant_record = state.db.get_customer_last_attendant(phone, target_chat_id);
+            let has_previous_human_attendant = last_attendant_record.is_some();
+
+            let attendant_info = if let Some((_, ref m_name)) = last_attendant_record {
+                format!("👤 Último Atendente Registrado: {}", m_name)
+            } else if has_human_member {
+                format!("👤 Atendente Humano Atual: {}", extracted_member_name)
+            } else {
+                "✅ Nenhum (Cliente Novo / Nunca Atendido)".to_string()
+            };
 
             // Salvar o último payload bruto em arquivo na VPS para inspeção
             if let Ok(pretty_json) = serde_json::to_string_pretty(&payload) {
@@ -272,6 +331,7 @@ async fn handle_webhook(
             println!("💬 Conteúdo Texto  : \"{}\"", text);
             println!("🏷️ Tags no uTalk    : {}", tags_info);
             println!("👤 Status Atendente: {}", attendant_info);
+            println!("🔄 Direcionamento  : {}", if config_snapshot.direction_enabled { "LIGADO" } else { "DESLIGADO" });
 
             // 🎯 TRAVA ESTRITA DE CANAIS SINCRONIZADOS DO UTALK:
             let synced_webhooks_json = state.db.get_synced_webhooks();
@@ -292,13 +352,6 @@ async fn handle_webhook(
             }
 
             let channel_allowed = allowed_channels.is_empty() || allowed_channels.contains(&channel_id.to_string());
-
-            let target_chat_id = if payload_type == "Chat" {
-                content_obj["Id"].as_str().unwrap_or_default()
-            } else {
-                msg_obj["Chat"]["Id"].as_str().or_else(|| content_obj["Chat"]["Id"].as_str()).unwrap_or_default()
-            };
-
             let is_vps_transferred = state.db.is_chat_transferred(target_chat_id);
 
             // Sanitiza o número do remetente para verificação de permissão de teste
@@ -308,18 +361,58 @@ async fn handle_webhook(
                 !clean_p.is_empty() && (clean_phone.ends_with(&clean_p) || clean_p.ends_with(&clean_phone))
             });
 
+            // 🎯 SISTEMA PARALELO: DIRECIONAMENTO AO ÚLTIMO ATENDENTE (direcionamentoumbler)
+            if config_snapshot.direction_enabled {
+                if let Some((last_m_id, last_m_name)) = &last_attendant_record {
+                    let current_m_id = extracted_member_id.unwrap_or_default();
+                    if current_m_id != last_m_id && !last_m_id.is_empty() && !target_chat_id.is_empty() {
+                        let state_dir = state.clone();
+                        let target_chat_id_owned = target_chat_id.to_string();
+                        let last_m_id_owned = last_m_id.clone();
+                        let last_m_name_owned = last_m_name.clone();
+                        let phone_owned = phone.to_string();
+                        let contact_name_owned = contact_name.to_string();
+                        let channel_name_owned = channel_name.to_string();
+
+                        tokio::spawn(async move {
+                            let cfg = state_dir.db.get_config();
+                            let res = crate::utalk::transfer_chat_to_member(
+                                &cfg.utalk_api_url,
+                                &cfg.utalk_api_token,
+                                &cfg.utalk_organization_id,
+                                &target_chat_id_owned,
+                                &last_m_id_owned,
+                            ).await;
+
+                            let status_str = if res.is_ok() { "Sucesso" } else { "Falha na API" };
+                            state_dir.db.add_direction_log(
+                                &target_chat_id_owned,
+                                &phone_owned,
+                                &contact_name_owned,
+                                &last_m_id_owned,
+                                &last_m_name_owned,
+                                &channel_name_owned,
+                                status_str,
+                            );
+                            println!("🔄 [DIRECIONAMENTO UMBLER] Chat {} direcionado automaticamente para o último atendente '{}' ({})", target_chat_id_owned, last_m_name_owned, status_str);
+                        });
+                    }
+                }
+            }
+
+            // 🎯 SISTEMA DE ATENDIMENTO DE IA (CHAT AI UMBLER - SOMENTE CLIENTES NUNCA ATENDIDOS):
             if config_snapshot.bot_enabled {
                 if !channel_allowed {
                     println!("⚡ Decisão da IA    : ⏸️ [IGNORADO] Canal '{}' (ID: {}) não está na lista de canais permitidos do Webhook.", channel_name, channel_id);
                 } else if config_snapshot.test_mode_enabled && !is_tester {
                     println!("⚡ Decisão da IA    : ⏸️ [MODO DE TESTE ATIVO] Mensagem ignorada pois o remetente '{}' não está na lista VIP de testes (Claus/Lucas).", phone);
-                } else if !is_tester && (has_human_member || is_vps_transferred) {
-                    println!("⚡ Decisão da IA    : ⏸️ [SILÊNCIOSO] Atendente humano atribuído no uTalk/VPS (HasHumanMember: {}). IA pausada.", has_human_member);
+                } else if !is_tester && (has_human_member || is_vps_transferred || has_previous_human_attendant) {
+                    println!("⚡ Decisão da IA    : ⏸️ [SILÊNCIOSO] Cliente já possui histórico de atendimento humano (Último Atendente Registrado). A IA atende SOMENTE clientes novos nunca atendidos.");
                 } else {
                     if is_tester {
                         println!("🧪 Decisão da IA    : 🧪 [MODO TESTE VIP] Atendimento FORÇADO para o testador '{}' (Ignorando travas de atendente do uTalk).", phone);
                     } else {
-                        println!("⚡ Decisão da IA    : 🤖 [LIGADO] Processando com DeepSeek...");
+                        println!("⚡ Decisão da IA    : 🤖 [LIGADO] Cliente NOVO (Nunca Atendido). Processando com DeepSeek...");
                     }
                     let state_clone = state.clone();
                     tokio::spawn(async move {
@@ -1135,6 +1228,8 @@ async fn main() {
 
     let app = Router::new()
         .route("/", get(render_dashboard))
+        .route("/direcionamento", get(render_direcionamento))
+        .route("/direcionamentoumbler", get(render_direcionamento))
         .route("/assets/logo.png", get(get_logo_asset))
         .route("/assets/banner.png", get(get_banner_asset))
         .route("/assets/banner.jpg", get(get_banner_asset))
@@ -1155,12 +1250,16 @@ async fn main() {
         .route("/api/audio-bank", get(get_audio_bank_handler).post(save_audio_bank_handler))
         .route("/api/upload-audio", axum::routing::post(upload_audio_handler))
         .route("/api/simulate", axum::routing::post(simulate_chat_handler))
+        .route("/api/direction-stats", get(get_direction_stats_handler))
+        .route("/api/direction-logs", get(get_direction_logs_handler))
+        .route("/api/direction-toggle", axum::routing::post(direction_toggle_handler))
         .route("/webhook", any(handle_webhook))
         .with_state(state);
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
-    println!("🚀 uTalk AI Bot Studio rodando com Rodízio de Atendentes + Dashboard em Abas!");
-    println!("📊 Dashboard Web de Controle: http://localhost:3000/");
+    println!("🚀 uTalk AI Bot Studio & Direcionamento uTalk rodando!");
+    println!("📊 Dashboard Web de Controle (IA): http://localhost:3000/");
+    println!("🔀 Dashboard Direcionamento uTalk : http://localhost:3000/direcionamento");
     println!("📍 Endpoint do Webhook: http://localhost:3000/webhook");
 
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
