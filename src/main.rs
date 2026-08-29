@@ -1254,6 +1254,8 @@ async fn main() {
         .route("/api/direction-logs", get(get_direction_logs_handler))
         .route("/api/direction-toggle", axum::routing::post(direction_toggle_handler))
         .route("/webhook", any(handle_webhook))
+        .route("/webhook/direction", any(handle_webhook))
+        .route("/webhook/direcionamento", any(handle_webhook))
         .with_state(state);
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
