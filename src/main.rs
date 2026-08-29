@@ -74,7 +74,24 @@ async fn get_direction_stats_handler(State(state): State<AppState>) -> Json<Valu
 }
 
 async fn get_direction_logs_handler(State(state): State<AppState>) -> Json<Value> {
-    Json(state.db.get_direction_logs(100))
+    let mut logs = state.db.get_direction_logs(100);
+    let cfg = state.db.get_config();
+
+    if let Ok(operators) = crate::utalk::fetch_human_operators(&cfg.utalk_api_url, &cfg.utalk_api_token, &cfg.utalk_organization_id).await {
+        let op_map: std::collections::HashMap<String, String> = operators.into_iter().map(|op| (op.id, op.name)).collect();
+
+        if let Some(arr) = logs.as_array_mut() {
+            for item in arr {
+                if let Some(m_id) = item.get("member_id").and_then(|v| v.as_str()) {
+                    if let Some(real_name) = op_map.get(m_id) {
+                        item["member_name"] = serde_json::json!(real_name);
+                    }
+                }
+            }
+        }
+    }
+
+    Json(logs)
 }
 
 #[derive(serde::Deserialize)]
