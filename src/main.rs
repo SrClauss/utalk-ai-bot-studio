@@ -233,12 +233,14 @@ async fn get_stats_handler(
 async fn handle_webhook(
     State(state): State<AppState>,
     method: Method,
+    uri: axum::http::Uri,
     _headers: HeaderMap,
     Query(params): Query<HashMap<String, String>>,
     bytes: Bytes,
 ) -> (StatusCode, &'static str) {
+    let is_direction_endpoint = uri.path().contains("direction") || uri.path().contains("direcionamento");
     println!("\n========================================================");
-    println!("📩 NOVO EVENTO DE WEBHOOK RECEBIDO [{}]", method);
+    println!("📩 NOVO EVENTO DE WEBHOOK RECEBIDO [{}] no path: {}", method, uri.path());
     println!("========================================================");
 
     if !params.is_empty() {
@@ -325,7 +327,7 @@ async fn handle_webhook(
             }
 
             println!("\n========================================================");
-            println!("📩 MENSAGEM RECEBIDA NO WEBHOOK [uTalk]");
+            println!("📩 MENSAGEM RECEBIDA NO WEBHOOK [uTalk] ({})", uri.path());
             println!("📡 Canal Receptor  : {} (ID: {})", channel_name, channel_id);
             println!("👤 Cliente / Remet. : {} ({})", contact_name, phone);
             println!("💬 Conteúdo Texto  : \"{}\"", text);
@@ -400,8 +402,10 @@ async fn handle_webhook(
                 }
             }
 
-            // 🎯 SISTEMA DE ATENDIMENTO DE IA (CHAT AI UMBLER - SOMENTE CLIENTES NUNCA ATENDIDOS):
-            if config_snapshot.bot_enabled {
+            // 🎯 SISTEMA DE ATENDIMENTO DE IA (CHAT AI UMBLER):
+            if is_direction_endpoint {
+                println!("📌 Webhook exclusivo de DIREIONAMENTO (Ignorando resposta por IA DeepSeek).");
+            } else if config_snapshot.bot_enabled {
                 if !channel_allowed {
                     println!("⚡ Decisão da IA    : ⏸️ [IGNORADO] Canal '{}' (ID: {}) não está na lista de canais permitidos do Webhook.", channel_name, channel_id);
                 } else if config_snapshot.test_mode_enabled && !is_tester {
