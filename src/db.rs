@@ -865,7 +865,7 @@ impl Database {
         if target_key.is_empty() { return None; }
 
         let conn = self.conn.lock().unwrap();
-        let mut stmt = conn.prepare("SELECT member_id, member_name FROM customer_attendants WHERE phone = ?1 OR chat_id = ?2 ORDER BY updated_at DESC LIMIT 1").ok()?;
+        let mut stmt = conn.prepare("SELECT member_id, member_name FROM customer_attendants WHERE phone = ?1 OR (?2 != '' AND chat_id = ?2) ORDER BY updated_at DESC LIMIT 1").ok()?;
         stmt.query_row(params![target_key, chat_id], |row| {
             Ok((row.get(0)?, row.get(1)?))
         }).ok()

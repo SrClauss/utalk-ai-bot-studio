@@ -320,15 +320,21 @@ async fn handle_webhook(
 
             let has_human_member = extracted_member_id.map(|s| !s.is_empty()).unwrap_or(false);
 
-            // Salva no banco o último atendente se houver membro associado nesta interação
-            if let Some(m_id) = extracted_member_id {
-                if !m_id.is_empty() {
-                    state.db.save_customer_last_attendant(phone, target_chat_id, m_id, extracted_member_name);
-                }
-            }
-
+            // 🎯 BANCO DE DADOS LOCAL COMO ÚNICA FONTE DA VERDADE:
+            // Busca o último atendente humano registrado para o telefone do cliente ANTES de processar este evento
             let last_attendant_record = state.db.get_customer_last_attendant(phone, target_chat_id);
             let has_previous_human_attendant = last_attendant_record.is_some();
+
+            // Atualiza o registro no banco local APENAS se esta mensagem for enviada por um atendente humano (Source == "Member")
+            let msg_source = msg_obj["Source"].as_str().unwrap_or_default();
+            let is_member_sender = msg_source == "Member" || msg_obj.get("SentByOrganizationMember").and_then(|v| v.as_object()).is_some();
+            if is_member_sender {
+                if let Some(m_id) = extracted_member_id {
+                    if !m_id.is_empty() {
+                        state.db.save_customer_last_attendant(phone, target_chat_id, m_id, extracted_member_name);
+                    }
+                }
+            }
 
             let attendant_info = if let Some((_, ref m_name)) = last_attendant_record {
                 format!("👤 Último Atendente Registrado: {}", m_name)
