@@ -1,6 +1,7 @@
 mod config;
 mod db;
 mod deepseek;
+mod gemini;
 mod ui;
 mod utalk;
 
@@ -72,26 +73,15 @@ async fn get_direction_stats_handler(State(state): State<AppState>) -> Json<Valu
     Json(state.db.get_direction_stats())
 }
 
-#[derive(serde::Deserialize)]
-struct LogQuery {
-    page: Option<usize>,
-    limit: Option<usize>,
-}
-
-async fn get_direction_logs_handler(
-    State(state): State<AppState>,
-    Query(params): Query<LogQuery>,
-) -> Json<Value> {
-    let page = params.page.unwrap_or(1);
-    let limit = params.limit.unwrap_or(10);
-    let mut data = state.db.get_direction_logs_paginated(page, limit);
+async fn get_direction_logs_handler(State(state): State<AppState>) -> Json<Value> {
+    let mut logs = state.db.get_direction_logs(100);
     let cfg = state.db.get_config();
 
     if let Ok(operators) = crate::utalk::fetch_human_operators(&cfg.utalk_api_url, &cfg.utalk_api_token, &cfg.utalk_organization_id).await {
         let op_map: std::collections::HashMap<String, String> = operators.into_iter().map(|op| (op.id, op.name)).collect();
 
-        if let Some(logs_arr) = data.get_mut("logs").and_then(|v| v.as_array_mut()) {
-            for item in logs_arr {
+        if let Some(arr) = logs.as_array_mut() {
+            for item in arr {
                 if let Some(m_id) = item.get("member_id").and_then(|v| v.as_str()) {
                     if let Some(real_name) = op_map.get(m_id) {
                         item["member_name"] = serde_json::json!(real_name);
@@ -101,7 +91,7 @@ async fn get_direction_logs_handler(
         }
     }
 
-    Json(data)
+    Json(logs)
 }
 
 #[derive(serde::Deserialize)]
@@ -207,54 +197,11 @@ async fn get_config_handler(
 async fn save_config_handler(
     State(state): State<AppState>,
     headers: HeaderMap,
-    Json(payload): Json<Value>,
+    Json(new_config): Json<AppConfig>,
 ) -> StatusCode {
     if let Some(token) = extract_token(&headers) {
         if state.db.validate_session(&token) {
-            let mut current_cfg = state.db.get_config();
-
-            if let Ok(full_cfg) = serde_json::from_value::<AppConfig>(payload.clone()) {
-                if !full_cfg.utalk_api_token.trim().is_empty() {
-                    current_cfg.utalk_api_token = full_cfg.utalk_api_token;
-                }
-                if !full_cfg.utalk_organization_id.trim().is_empty() {
-                    current_cfg.utalk_organization_id = full_cfg.utalk_organization_id;
-                }
-                if !full_cfg.deepseek_api_key.trim().is_empty() {
-                    current_cfg.deepseek_api_key = full_cfg.deepseek_api_key;
-                }
-                current_cfg.bot_enabled = full_cfg.bot_enabled;
-                current_cfg.direction_enabled = full_cfg.direction_enabled;
-                current_cfg.test_mode_enabled = full_cfg.test_mode_enabled;
-                current_cfg.system_prompt = full_cfg.system_prompt;
-                current_cfg.test_allowed_phones = full_cfg.test_allowed_phones;
-                current_cfg.external_apis = full_cfg.external_apis;
-                current_cfg.rotation_enabled = full_cfg.rotation_enabled;
-                current_cfg.rotation_operator_ids = full_cfg.rotation_operator_ids;
-                current_cfg.rotation_strategy = full_cfg.rotation_strategy;
-                current_cfg.rotation_trigger_keyword = full_cfg.rotation_trigger_keyword;
-            } else {
-                // Atualização Parcial (PATCH style)
-                if let Some(b) = payload.get("direction_enabled").and_then(|v| v.as_bool()) {
-                    current_cfg.direction_enabled = b;
-                    println!("🔄 [DIRECIONAMENTO] Status alterado via PATCH para: {}", if b { "LIGADO" } else { "DESLIGADO" });
-                }
-                if let Some(b) = payload.get("test_mode_enabled").and_then(|v| v.as_bool()) {
-                    current_cfg.test_mode_enabled = b;
-                    println!("🧪 [MODO TESTE] Status alterado via PATCH para: {}", if b { "LIGADO" } else { "DESLIGADO (PRODUÇÃO)" });
-                }
-                if let Some(b) = payload.get("bot_enabled").and_then(|v| v.as_bool()) {
-                    current_cfg.bot_enabled = b;
-                }
-                if let Some(s) = payload.get("utalk_api_token").and_then(|v| v.as_str()) {
-                    if !s.trim().is_empty() { current_cfg.utalk_api_token = s.to_string(); }
-                }
-                if let Some(s) = payload.get("utalk_organization_id").and_then(|v| v.as_str()) {
-                    if !s.trim().is_empty() { current_cfg.utalk_organization_id = s.to_string(); }
-                }
-            }
-
-            state.db.save_config(&current_cfg);
+            state.db.save_config(&new_config);
             println!("💾 Novas configurações salvas no SQLite!");
             return StatusCode::OK;
         }
@@ -330,17 +277,6 @@ async fn handle_webhook(
                 &content_obj["LastMessage"]
             };
 
-            let source = msg_obj["Source"].as_str().unwrap_or("Contact");
-            if source == "Bot" || source == "System" {
-                println!("📌 Ignorando mensagem do sistema/bot (Source: {})", source);
-                return (StatusCode::OK, "Ignorado");
-            }
-            if source == "Member" && uri.path() == "/webhook/direction" {
-                // Se for o atendente respondendo, não há necessidade de redirecionar nada
-                println!("📌 Ignorando mensagem do atendente (Source: Member) no webhook de direcionamento");
-                return (StatusCode::OK, "Ignorado");
-            }
-
             let chat_obj = if payload_type == "Chat" { content_obj } else { &content_obj["Chat"] };
             let channel_name = chat_obj["Channel"]["Name"].as_str().or_else(|| content_obj["Channel"]["Name"].as_str()).unwrap_or("Canal Geral");
             let channel_id = chat_obj["Channel"]["Id"].as_str().or_else(|| content_obj["Channel"]["Id"].as_str()).unwrap_or("N/A");
@@ -361,9 +297,7 @@ async fn handle_webhook(
 
             let tags_info = if tag_names.is_empty() { "Nenhuma".to_string() } else { tag_names.join(", ") };
 
-            let member_obj = chat_obj.get("LastOrganizationMember")
-                .or_else(|| content_obj.get("LastOrganizationMember"))
-                .or_else(|| chat_obj.get("OrganizationMember"))
+            let member_obj = chat_obj.get("OrganizationMember")
                 .or_else(|| chat_obj.get("organizationMember"))
                 .or_else(|| chat_obj.get("Member"))
                 .or_else(|| content_obj.get("OrganizationMember"))
@@ -384,23 +318,17 @@ async fn handle_webhook(
                 msg_obj["Chat"]["Id"].as_str().or_else(|| content_obj["Chat"]["Id"].as_str()).unwrap_or_default()
             };
 
-            // 🎯 BANCO DE DADOS LOCAL COMO ÚNICA FONTE DA VERDADE:
-            // Busca o último atendente registrado para este cliente ANTES de processar o evento atual
-            let last_attendant_record = state.db.get_customer_last_attendant(phone, target_chat_id);
-            let has_previous_human_attendant = last_attendant_record.is_some();
+            let has_human_member = extracted_member_id.map(|s| !s.is_empty()).unwrap_or(false);
 
-            // Atualiza o registro no banco local APENAS se esta mensagem for enviada diretamente por um atendente humano
-            let msg_source = msg_obj["Source"].as_str().unwrap_or_default();
-            let is_member_sender = msg_source == "Member" || msg_obj.get("SentByOrganizationMember").and_then(|v| v.as_object()).is_some();
-            if is_member_sender {
-                if let Some(m_id) = extracted_member_id {
-                    if !m_id.is_empty() {
-                        state.db.save_customer_last_attendant(phone, target_chat_id, m_id, extracted_member_name);
-                    }
+            // Salva no banco o último atendente se houver membro associado nesta interação
+            if let Some(m_id) = extracted_member_id {
+                if !m_id.is_empty() {
+                    state.db.save_customer_last_attendant(phone, target_chat_id, m_id, extracted_member_name);
                 }
             }
 
-            let has_human_member = extracted_member_id.map(|s| !s.is_empty()).unwrap_or(false);
+            let last_attendant_record = state.db.get_customer_last_attendant(phone, target_chat_id);
+            let has_previous_human_attendant = last_attendant_record.is_some();
 
             let attendant_info = if let Some((_, ref m_name)) = last_attendant_record {
                 format!("👤 Último Atendente Registrado: {}", m_name)
@@ -447,38 +375,36 @@ async fn handle_webhook(
 
             // Sanitiza o número do remetente para verificação de permissão de teste
             let clean_phone: String = phone.chars().filter(|c| c.is_ascii_digit()).collect();
-            let raw_is_tester = config_snapshot.test_allowed_phones.iter().any(|p| {
+            let is_tester = config_snapshot.test_allowed_phones.iter().any(|p| {
                 let clean_p: String = p.chars().filter(|c| c.is_ascii_digit()).collect();
                 !clean_p.is_empty() && (clean_phone.ends_with(&clean_p) || clean_p.ends_with(&clean_phone))
             });
-            // O Modo Teste VIP só é considerado ativo se o botão no painel estiver LIGADO
-            let is_tester = config_snapshot.test_mode_enabled && raw_is_tester;
 
             // 🎯 SISTEMA PARALELO: DIRECIONAMENTO AO ÚLTIMO ATENDENTE (direcionamentoumbler)
             if config_snapshot.direction_enabled {
                 if let Some((last_m_id, last_m_name)) = &last_attendant_record {
-                    let current_m_id = chat_obj.get("OrganizationMember")
-                        .or_else(|| content_obj.get("OrganizationMember"))
-                        .and_then(|m| m.get("Id").or_else(|| m.get("id")))
-                        .and_then(|v| v.as_str())
-                        .unwrap_or("");
-
-                    if current_m_id != last_m_id {
+                    let current_m_id = extracted_member_id.unwrap_or_default();
+                    if current_m_id != last_m_id && !last_m_id.is_empty() && !target_chat_id.is_empty() {
+                        let state_dir = state.clone();
                         let target_chat_id_owned = target_chat_id.to_string();
+                        let last_m_id_owned = last_m_id.clone();
+                        let last_m_name_owned = last_m_name.clone();
                         let phone_owned = phone.to_string();
                         let contact_name_owned = contact_name.to_string();
                         let channel_name_owned = channel_name.to_string();
-                        let last_m_id_owned = last_m_id.clone();
-                        let last_m_name_owned = last_m_name.clone();
-                        let api_url = config_snapshot.utalk_api_url.clone();
-                        let api_token = config_snapshot.utalk_api_token.clone();
-                        let org_id = config_snapshot.utalk_organization_id.clone();
-                        let db_clone = state.db.clone();
 
                         tokio::spawn(async move {
-                            let res = crate::utalk::transfer_chat_to_member(&api_url, &api_token, &org_id, &target_chat_id_owned, &last_m_id_owned).await;
-                            let status_str = if res.is_ok() { "✅ Sucesso" } else { "❌ Erro" };
-                            db_clone.add_direction_log(
+                            let cfg = state_dir.db.get_config();
+                            let res = crate::utalk::transfer_chat_to_member(
+                                &cfg.utalk_api_url,
+                                &cfg.utalk_api_token,
+                                &cfg.utalk_organization_id,
+                                &target_chat_id_owned,
+                                &last_m_id_owned,
+                            ).await;
+
+                            let status_str = if res.is_ok() { "Sucesso" } else { "Falha na API" };
+                            state_dir.db.add_direction_log(
                                 &target_chat_id_owned,
                                 &phone_owned,
                                 &contact_name_owned,
@@ -487,7 +413,7 @@ async fn handle_webhook(
                                 &channel_name_owned,
                                 status_str,
                             );
-                            println!("🔄 [DIRECIONAMENTO UMBLER] Chat {} (Canal: {}) direcionado automaticamente para o último atendente registrado '{}' ({})", target_chat_id_owned, channel_name_owned, last_m_name_owned, status_str);
+                            println!("🔄 [DIRECIONAMENTO UMBLER] Chat {} direcionado automaticamente para o último atendente '{}' ({})", target_chat_id_owned, last_m_name_owned, status_str);
                         });
                     }
                 }
@@ -505,9 +431,9 @@ async fn handle_webhook(
                     println!("⚡ Decisão da IA    : ⏸️ [SILÊNCIOSO] Cliente já possui histórico de atendimento humano (Último Atendente Registrado). A IA atende SOMENTE clientes novos nunca atendidos.");
                 } else {
                     if is_tester {
-                        println!("🧪 Decisão da IA    : 🧪 [MODO TESTE VIP ATIVO] Atendimento FORÇADO para o testador '{}' (Ignorando travas de atendente do uTalk).", phone);
+                        println!("🧪 Decisão da IA    : 🧪 [MODO TESTE VIP] Atendimento FORÇADO para o testador '{}' (Ignorando travas de atendente do uTalk).", phone);
                     } else {
-                        println!("⚡ Decisão da IA    : 🤖 [LIGADO - PRODUÇÃO REAL] Cliente NOVO (Nunca Atendido). Processando com DeepSeek...");
+                        println!("⚡ Decisão da IA    : 🤖 [LIGADO] Cliente NOVO (Nunca Atendido). Processando com DeepSeek...");
                     }
                     let state_clone = state.clone();
                     tokio::spawn(async move {
@@ -800,7 +726,7 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
                     && ai_reply.contains(&cfg_snapshot.rotation_trigger_keyword);
 
                 if should_transfer {
-                    println!("🔄 Gatilho de Rodízio detectado na resposta da IA!");
+                    println!("🔄 Gatilho de Rodízio detectado na resposta do Gemini!");
                     ai_reply = ai_reply.replace(&cfg_snapshot.rotation_trigger_keyword, "").trim().to_string();
                 }
 
@@ -937,7 +863,7 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
                 }
             }
             Err(err) => {
-                println!("❌ Erro ao gerar resposta do DeepSeek: {}", err);
+                println!("❌ Erro ao gerar resposta do Gemini: {}", err);
             }
         }
     }
@@ -1086,34 +1012,6 @@ async fn sync_webhooks_handler(
                     );
                 }
             }
-        }
-    }
-    (StatusCode::UNAUTHORIZED, Json(serde_json::json!({ "error": "Não autorizado" })))
-}
-
-async fn sync_history_handler(
-    State(state): State<AppState>,
-    headers: HeaderMap,
-) -> (StatusCode, Json<Value>) {
-    if let Some(token) = extract_token(&headers) {
-        if state.db.validate_session(&token) {
-            let cfg = state.db.get_config();
-            let db_clone = state.db.clone();
-            tokio::spawn(async move {
-                let _ = utalk::sync_all_historical_chats(
-                    &cfg.utalk_api_url,
-                    &cfg.utalk_api_token,
-                    &cfg.utalk_organization_id,
-                    db_clone,
-                ).await;
-            });
-            return (
-                StatusCode::OK,
-                Json(serde_json::json!({
-                    "success": true,
-                    "message": "Carga total do histórico iniciada em segundo plano com sucesso!"
-                })),
-            );
         }
     }
     (StatusCode::UNAUTHORIZED, Json(serde_json::json!({ "error": "Não autorizado" })))
@@ -1361,9 +1259,6 @@ async fn main() {
         .route("/api/logout", axum::routing::post(logout_handler))
         .route("/api/config", get(get_config_handler).post(save_config_handler))
         .route("/api/operators", get(get_operators_handler))
-        .route("/api/sync-webhooks", axum::routing::post(sync_webhooks_handler))
-        .route("/api/sync-history", axum::routing::post(sync_history_handler))
-        .route("/api/synced-webhooks", get(get_synced_webhooks_handler))
         .route("/api/stats", get(get_stats_handler))
         .route("/api/chats", get(get_chats_handler))
         .route("/api/chats/:chat_id", axum::routing::delete(delete_chat_handler))

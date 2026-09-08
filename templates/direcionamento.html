@@ -242,48 +242,17 @@
                                     <span class="px-2.5 py-1 rounded-full text-[10px] font-mono font-bold border"
                                         :class="log.status === 'Sucesso' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border-rose-500/30'"
                                         x-text="log.status"></span>
-                                             <tr x-show="filteredLogs.length === 0">
+                                </td>
+                            </tr>
+                        </template>
+
+                        <tr x-show="filteredLogs.length === 0">
                             <td colspan="5" class="py-8 text-center text-xs text-slate-500">
                                 Nenhum registro de direcionamento encontrado. Os direcionamentos aparecerão aqui assim que as conversas forem roteadas.
                             </td>
                         </tr>
                     </tbody>
                 </table>
-            </div>
-
-            <!-- CONTROLES DE PAGINAÇÃO DA TABELA -->
-            <div class="flex flex-col sm:flex-row justify-between items-center gap-4 pt-4 border-t border-slate-800 text-xs text-slate-400">
-                <div class="flex items-center gap-2">
-                    <span>Exibindo página</span>
-                    <span class="font-bold text-cyan-400" x-text="page"></span>
-                    <span>de</span>
-                    <span class="font-bold text-slate-200" x-text="totalPages"></span>
-                    <span class="text-slate-500">(<span x-text="total"></span> registros no total)</span>
-                </div>
-
-                <div class="flex items-center gap-3">
-                    <div class="flex items-center gap-1.5">
-                        <span class="text-[11px] text-slate-400">Por página:</span>
-                        <select x-model.number="limit" @change="page = 1; loadData()"
-                            class="bg-slate-950 border border-slate-800 rounded-lg px-2 py-1 text-xs text-slate-300 focus:outline-none focus:border-cyan-500">
-                            <option value="10">10</option>
-                            <option value="25">25</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
-                        </select>
-                    </div>
-
-                    <div class="flex items-center gap-1">
-                        <button @click="changePage(page - 1)" :disabled="page <= 1"
-                            class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 disabled:opacity-40 disabled:hover:bg-slate-900 text-slate-200 font-bold rounded-lg border border-slate-800 transition-all">
-                            <i class="fa-solid fa-chevron-left"></i>
-                        </button>
-                        <button @click="changePage(page + 1)" :disabled="page >= totalPages"
-                            class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 disabled:opacity-40 disabled:hover:bg-slate-900 text-slate-200 font-bold rounded-lg border border-slate-800 transition-all">
-                            <i class="fa-solid fa-chevron-right"></i>
-                        </button>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -308,10 +277,6 @@
                 },
                 logs: [],
                 alerts: [],
-                page: 1,
-                limit: 10,
-                total: 0,
-                totalPages: 1,
 
                 get filteredLogs() {
                     if (!this.searchQuery.trim()) return this.logs;
@@ -388,7 +353,7 @@
                         const [cfgRes, statsRes, logsRes] = await Promise.all([
                             fetch('/api/config'),
                             fetch('/api/direction-stats'),
-                            fetch(`/api/direction-logs?page=${this.page}&limit=${this.limit}`)
+                            fetch('/api/direction-logs')
                         ]);
 
                         if (cfgRes.ok) {
@@ -401,28 +366,10 @@
                         }
 
                         if (logsRes.ok) {
-                            const logsData = await logsRes.json();
-                            if (Array.isArray(logsData)) {
-                                this.logs = logsData;
-                                this.total = logsData.length;
-                                this.totalPages = 1;
-                            } else {
-                                this.logs = logsData.logs || [];
-                                this.page = logsData.page || 1;
-                                this.limit = logsData.limit || 10;
-                                this.total = logsData.total || 0;
-                                this.totalPages = logsData.total_pages || 1;
-                            }
+                            this.logs = await logsRes.json();
                         }
                     } catch (err) {
                         console.error('Erro ao carregar dados de direcionamento:', err);
-                    }
-                },
-
-                changePage(newPage) {
-                    if (newPage >= 1 && newPage <= this.totalPages) {
-                        this.page = newPage;
-                        this.loadData();
                     }
                 },
 

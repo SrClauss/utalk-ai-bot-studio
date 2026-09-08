@@ -102,10 +102,6 @@ impl Database {
                 updated_at TEXT NOT NULL
             );
 
-            CREATE INDEX IF NOT EXISTS idx_cust_att_phone ON customer_attendants(phone);
-            CREATE INDEX IF NOT EXISTS idx_cust_att_chat_id ON customer_attendants(chat_id);
-            CREATE INDEX IF NOT EXISTS idx_cust_att_updated ON customer_attendants(updated_at);
-
             CREATE TABLE IF NOT EXISTS direction_logs (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 chat_id TEXT NOT NULL,
@@ -863,58 +859,14 @@ impl Database {
         );
     }
 
-    pub fn bulk_save_customer_attendants(&self, records: &[(String, String, String, String, String)]) -> usize {
-        let mut conn = self.conn.lock().unwrap();
-        let tx = match conn.transaction() {
-            Ok(t) => t,
-            Err(_) => return 0,
-        };
-
-        let mut saved = 0;
-        {
-            let mut stmt = match tx.prepare(
-                "INSERT INTO customer_attendants (phone, chat_id, member_id, member_name, updated_at) 
-                 VALUES (?1, ?2, ?3, ?4, ?5)
-                 ON CONFLICT(phone) DO UPDATE SET 
-                 chat_id = excluded.chat_id,
-                 member_id = excluded.member_id,
-                 member_name = excluded.member_name,
-                 updated_at = excluded.updated_at
-                 WHERE excluded.updated_at >= customer_attendants.updated_at"
-            ) {
-                Ok(s) => s,
-                Err(_) => return 0,
-            };
-
-            for (phone, chat_id, member_id, member_name, updated_at) in records {
-                let clean_phone: String = phone.chars().filter(|c| c.is_ascii_digit()).collect();
-                let target_key = if !clean_phone.is_empty() { clean_phone.clone() } else { chat_id.to_string() };
-                if target_key.is_empty() || member_id.is_empty() { continue; }
-
-                let dt = if updated_at.is_empty() { "1970-01-01T00:00:00Z".to_string() } else { updated_at.clone() };
-                if stmt.execute(params![target_key, chat_id, member_id, member_name, dt]).is_ok() {
-                    saved += 1;
-                }
-            }
-        }
-
-        let _ = tx.commit();
-        saved
-    }
-
     pub fn get_customer_last_attendant(&self, phone: &str, chat_id: &str) -> Option<(String, String)> {
         let clean_phone: String = phone.chars().filter(|c| c.is_ascii_digit()).collect();
-        if clean_phone.is_empty() && chat_id.is_empty() { return None; }
+        let target_key = if !clean_phone.is_empty() { clean_phone } else { chat_id.to_string() };
+        if target_key.is_empty() { return None; }
 
         let conn = self.conn.lock().unwrap();
-        // Busca priorizando primeiramente o chat_id do canal e, em seguida, o telefone do cliente
-        let mut stmt = conn.prepare(
-            "SELECT member_id, member_name FROM customer_attendants 
-             WHERE (chat_id = ?2 AND ?2 != '') OR (phone = ?1 AND ?1 != '') 
-             ORDER BY CASE WHEN chat_id = ?2 THEN 0 ELSE 1 END, updated_at DESC LIMIT 1"
-        ).ok()?;
-        
-        stmt.query_row(params![clean_phone, chat_id], |row| {
+        let mut stmt = conn.prepare("SELECT member_id, member_name FROM customer_attendants WHERE phone = ?1 OR chat_id = ?2 ORDER BY updated_at DESC LIMIT 1").ok()?;
+        stmt.query_row(params![target_key, chat_id], |row| {
             Ok((row.get(0)?, row.get(1)?))
         }).ok()
     }
@@ -938,29 +890,13 @@ impl Database {
     }
 
     pub fn get_direction_logs(&self, limit: usize) -> serde_json::Value {
-        self.get_direction_logs_paginated(1, limit)
-    }
-
-    pub fn get_direction_logs_paginated(&self, page: usize, limit: usize) -> serde_json::Value {
         let conn = self.conn.lock().unwrap();
-        let page = if page < 1 { 1 } else { page };
-        let offset = (page - 1) * limit;
-
-        let total: i64 = conn.query_row("SELECT COUNT(*) FROM direction_logs", [], |r| r.get(0)).unwrap_or(0);
-        let total_pages = if total == 0 { 1 } else { ((total as f64) / (limit as f64)).ceil() as usize };
-
-        let mut stmt = match conn.prepare("SELECT id, chat_id, phone, customer_name, member_id, member_name, channel_name, status, created_at FROM direction_logs ORDER BY id DESC LIMIT ?1 OFFSET ?2") {
+        let mut stmt = match conn.prepare("SELECT id, chat_id, phone, customer_name, member_id, member_name, channel_name, status, created_at FROM direction_logs ORDER BY id DESC LIMIT ?1") {
             Ok(s) => s,
-            Err(_) => return serde_json::json!({
-                "logs": [],
-                "page": page,
-                "limit": limit,
-                "total": 0,
-                "total_pages": 1
-            }),
+            Err(_) => return serde_json::json!([]),
         };
 
-        let rows = stmt.query_map(params![limit as i64, offset as i64], |row| {
+        let rows = stmt.query_map(params![limit as i64], |row| {
             Ok(serde_json::json!({
                 "id": row.get::<_, i64>(0)?,
                 "chat_id": row.get::<_, String>(1)?,
@@ -980,14 +916,7 @@ impl Database {
                 list.push(item);
             }
         }
-
-        serde_json::json!({
-            "logs": list,
-            "page": page,
-            "limit": limit,
-            "total": total,
-            "total_pages": total_pages
-        })
+        serde_json::json!(list)
     }
 
     pub fn get_direction_stats(&self) -> serde_json::Value {

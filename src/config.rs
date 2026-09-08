@@ -25,7 +25,9 @@ pub struct AppConfig {
     pub bot_enabled: bool,
     pub admin_username: String,
     pub admin_password: String,
+    pub gemini_api_key: String,
     pub deepseek_api_key: String,
+    pub gemini_model: String,
     pub utalk_api_token: String,
     pub utalk_organization_id: String,
     pub utalk_api_url: String,
@@ -52,7 +54,9 @@ impl Default for AppConfig {
 
         let admin_user = std::env::var("ADMIN_USERNAME").unwrap_or_else(|_| "admin".to_string());
         let admin_pass = std::env::var("ADMIN_PASSWORD").unwrap_or_else(|_| "admin123".to_string());
+        let gemini_key = std::env::var("GEMINI_API_KEY").unwrap_or_default();
         let deepseek_key = std::env::var("DEEPSEEK_API_KEY").unwrap_or_default();
+        let gemini_model = std::env::var("GEMINI_MODEL").unwrap_or_else(|_| "gemini-3.1-flash-lite".to_string());
         let utalk_token = std::env::var("UTALK_API_TOKEN").unwrap_or_default();
         let utalk_org = std::env::var("UTALK_ORGANIZATION_ID").unwrap_or_default();
         let utalk_url = std::env::var("UTALK_API_URL").unwrap_or_else(|_| "https://app-utalk.umbler.com/api/v1".to_string());
@@ -62,7 +66,9 @@ impl Default for AppConfig {
             direction_enabled: true,
             admin_username: admin_user,
             admin_password: admin_pass,
+            gemini_api_key: gemini_key,
             deepseek_api_key: deepseek_key,
+            gemini_model: gemini_model,
             utalk_api_token: utalk_token,
             utalk_organization_id: utalk_org,
             utalk_api_url: utalk_url,
