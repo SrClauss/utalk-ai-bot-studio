@@ -426,9 +426,7 @@ async fn handle_webhook(
             }
 
             // 🎯 SISTEMA DE ATENDIMENTO DE IA (CHAT AI UMBLER):
-            if is_direction_endpoint {
-                println!("📌 Webhook exclusivo de DIREIONAMENTO (Ignorando resposta por IA DeepSeek).");
-            } else if config_snapshot.bot_enabled {
+            if config_snapshot.bot_enabled {
                 if !channel_allowed {
                     println!("⚡ Decisão da IA    : ⏸️ [IGNORADO] Canal '{}' (ID: {}) não está na lista de canais permitidos do Webhook.", channel_name, channel_id);
                 } else if config_snapshot.test_mode_enabled && !is_tester {
