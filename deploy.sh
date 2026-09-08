@@ -34,9 +34,8 @@ fi
 echo "✅ Binário compilado com sucesso!"
 
 # 3. Transferência para o Servidor VPS via SCP/Rsync
-echo "📤 Enviando executável, .env e assets para a VPS..."
+echo "📤 Enviando executável e assets para a VPS..."
 scp "$BINARY_PATH" "$SERVER_USER@$SERVER_IP:$REMOTE_PATH/chat_ai_umbler.new"
-scp .env "$SERVER_USER@$SERVER_IP:$REMOTE_PATH/.env"
 rsync -avz assets/ "$SERVER_USER@$SERVER_IP:$REMOTE_PATH/assets/"
 
 # 4. Reinicialização do Serviço no Servidor Remoto

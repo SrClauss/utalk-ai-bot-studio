@@ -135,7 +135,6 @@ impl Database {
     }
 
     pub fn get_config(&self) -> AppConfig {
-        dotenvy::dotenv().ok();
         {
             let conn = self.conn.lock().unwrap();
             let mut stmt = conn
@@ -144,19 +143,7 @@ impl Database {
 
             if let Some(ref mut stmt) = stmt {
                 if let Ok(value_str) = stmt.query_row([], |row| row.get::<_, String>(0)) {
-                    if let Ok(mut config) = serde_json::from_str::<AppConfig>(&value_str) {
-                        if let Ok(env_token) = std::env::var("UTALK_API_TOKEN") {
-                            if !env_token.trim().is_empty() && env_token != config.utalk_api_token {
-                                config.utalk_api_token = env_token;
-                                if let Ok(json_str) = serde_json::to_string_pretty(&config) {
-                                    let _ = conn.execute(
-                                        "INSERT INTO settings (key, value) VALUES ('app_config', ?1)
-                                         ON CONFLICT(key) DO UPDATE SET value = ?1",
-                                        params![json_str],
-                                    );
-                                }
-                            }
-                        }
+                    if let Ok(config) = serde_json::from_str::<AppConfig>(&value_str) {
                         return config;
                     }
                 }
