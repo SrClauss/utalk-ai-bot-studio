@@ -41,9 +41,12 @@ rsync -avz assets/ "$SERVER_USER@$SERVER_IP:$REMOTE_PATH/assets/"
 # 4. Reinicialização do Serviço no Servidor Remoto
 echo "🔄 Atualizando serviço no servidor remoto..."
 ssh "$SERVER_USER@$SERVER_IP" "
-    systemctl stop $SERVICE_NAME && \
-    mv $REMOTE_PATH/chat_ai_umbler.new $REMOTE_PATH/chat_ai_umbler && \
-    systemctl start $SERVICE_NAME && \
+    if [ -f $REMOTE_PATH/chat_ai_umbler.new ]; then
+        systemctl stop $SERVICE_NAME || true
+        mv $REMOTE_PATH/chat_ai_umbler.new $REMOTE_PATH/chat_ai_umbler
+        chmod +x $REMOTE_PATH/chat_ai_umbler
+    fi
+    systemctl restart $SERVICE_NAME
     systemctl status $SERVICE_NAME --no-pager
 "
 

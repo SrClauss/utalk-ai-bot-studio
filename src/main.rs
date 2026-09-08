@@ -793,47 +793,69 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
 
                 // Executa a transferência de rodízio se ativada
                 if should_transfer {
-                    let mut candidate_ids = cfg_snapshot.rotation_operator_ids.clone();
+                    let last_attendant_record = state.db.get_customer_last_attendant(phone, chat_id);
 
-                    // Filtra apenas os operadores que estão ONLINE no uTalk no momento
-                    if let Ok(online_ids) = utalk::fetch_online_members(
-                        &cfg_snapshot.utalk_api_url,
-                        &cfg_snapshot.utalk_api_token,
-                        &cfg_snapshot.utalk_organization_id,
-                    )
-                    .await
-                    {
-                        candidate_ids.retain(|id| online_ids.contains(id));
-                    }
-
-                    // DEVE OBRIGATORIAMENTE registrar a transferência para PAUSAR a IA no chat local
-                    let target_op_name = if let Some(target_operator_id) = state.db.get_next_rotation_operator(&candidate_ids) {
-                        let op_name = match utalk::fetch_human_operators(
-                            &cfg_snapshot.utalk_api_url,
-                            &cfg_snapshot.utalk_api_token,
-                            &cfg_snapshot.utalk_organization_id,
-                        )
-                        .await
-                        {
-                            Ok(ops) => ops
-                                .into_iter()
-                                .find(|o| o.id == target_operator_id)
-                                .map(|o| o.name)
-                                .unwrap_or_else(|| target_operator_id.clone()),
-                            Err(_) => target_operator_id.clone(),
-                        };
-
+                    let target_op_name = if let Some((last_m_id, last_m_name)) = last_attendant_record {
                         let _ = utalk::transfer_chat_to_member(
                             &cfg_snapshot.utalk_api_url,
                             &cfg_snapshot.utalk_api_token,
                             &cfg_snapshot.utalk_organization_id,
                             chat_id,
-                            &target_operator_id,
+                            &last_m_id,
                         ).await;
-
-                        op_name
+                        last_m_name
                     } else {
-                        "Equipe de Vendas".to_string()
+                        let mut candidate_ids = cfg_snapshot.rotation_operator_ids.clone();
+
+                        // Se a lista de operadores no painel estiver vazia, busca todos os operadores humanos da organizacao uTalk
+                        if candidate_ids.is_empty() {
+                            if let Ok(ops) = utalk::fetch_human_operators(
+                                &cfg_snapshot.utalk_api_url,
+                                &cfg_snapshot.utalk_api_token,
+                                &cfg_snapshot.utalk_organization_id,
+                            ).await {
+                                candidate_ids = ops.into_iter().filter(|o| o.active).map(|o| o.id).collect();
+                            }
+                        }
+
+                        // Filtra apenas os operadores que estão ONLINE no uTalk no momento
+                        if let Ok(online_ids) = utalk::fetch_online_members(
+                            &cfg_snapshot.utalk_api_url,
+                            &cfg_snapshot.utalk_api_token,
+                            &cfg_snapshot.utalk_organization_id,
+                        ).await {
+                            let filtered: Vec<String> = candidate_ids.iter().filter(|id| online_ids.contains(id)).cloned().collect();
+                            if !filtered.is_empty() {
+                                candidate_ids = filtered;
+                            }
+                        }
+
+                        if let Some(target_operator_id) = state.db.get_next_rotation_operator(&candidate_ids) {
+                            let op_name = match utalk::fetch_human_operators(
+                                &cfg_snapshot.utalk_api_url,
+                                &cfg_snapshot.utalk_api_token,
+                                &cfg_snapshot.utalk_organization_id,
+                            ).await {
+                                Ok(ops) => ops
+                                    .into_iter()
+                                    .find(|o| o.id == target_operator_id)
+                                    .map(|o| o.name)
+                                    .unwrap_or_else(|| target_operator_id.clone()),
+                                Err(_) => target_operator_id.clone(),
+                            };
+
+                            let _ = utalk::transfer_chat_to_member(
+                                &cfg_snapshot.utalk_api_url,
+                                &cfg_snapshot.utalk_api_token,
+                                &cfg_snapshot.utalk_organization_id,
+                                chat_id,
+                                &target_operator_id,
+                            ).await;
+
+                            op_name
+                        } else {
+                            "Equipe de Vendas".to_string()
+                        }
                     };
 
                     // Grava obrigatoriamente a transferencia para pausar a IA localmente
