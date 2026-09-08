@@ -255,7 +255,7 @@ async fn handle_webhook(
     Query(params): Query<HashMap<String, String>>,
     bytes: Bytes,
 ) -> (StatusCode, &'static str) {
-    let is_direction_endpoint = uri.path().contains("direction") || uri.path().contains("direcionamento");
+    let is_direction_endpoint = false;
     println!("\n========================================================");
     println!("📩 NOVO EVENTO DE WEBHOOK RECEBIDO [{}] no path: {}", method, uri.path());
     println!("========================================================");
