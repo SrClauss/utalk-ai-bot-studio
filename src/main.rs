@@ -427,7 +427,9 @@ async fn handle_webhook(
 
             // 🎯 SISTEMA DE ATENDIMENTO DE IA (CHAT AI UMBLER):
             if config_snapshot.bot_enabled {
-                if !channel_allowed {
+                if msg_source == "Member" || msg_source == "Bot" || is_member_sender {
+                    println!("⚡ Decisão da IA    : ⏸️ [IGNORADO] Mensagem enviada pelo próprio Atendente/Bot no uTalk (Source: '{}').", msg_source);
+                } else if !channel_allowed {
                     println!("⚡ Decisão da IA    : ⏸️ [IGNORADO] Canal '{}' (ID: {}) não está na lista de canais permitidos do Webhook.", channel_name, channel_id);
                 } else if config_snapshot.test_mode_enabled && !is_tester {
                     println!("⚡ Decisão da IA    : ⏸️ [MODO DE TESTE ATIVO] Mensagem ignorada pois o remetente '{}' não está na lista VIP de testes (Claus/Lucas).", phone);

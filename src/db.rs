@@ -278,6 +278,7 @@ impl Database {
         let _ = conn.execute("DELETE FROM messages_fts WHERE chat_id = ?1", params![chat_id]);
         let _ = conn.execute("DELETE FROM transfers WHERE chat_id = ?1", params![chat_id]);
         let _ = conn.execute("DELETE FROM sessions WHERE chat_id = ?1 OR token = ?1", params![chat_id]);
+        let _ = conn.execute("DELETE FROM customer_attendants WHERE chat_id = ?1", params![chat_id]);
     }
 
     pub fn is_chat_transferred(&self, chat_id: &str) -> bool {
