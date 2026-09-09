@@ -16,15 +16,19 @@ use axum::{
 };
 use serde::Deserialize;
 use config::AppConfig;
+use dashmap::DashMap;
 use db::{Database, SharedDatabase};
 use serde_json::Value;
 use std::collections::HashMap;
 use std::net::SocketAddr;
 use std::sync::Arc;
+use std::time::Instant;
 
 #[derive(Clone)]
 struct AppState {
     db: SharedDatabase,
+    /// Lock de deduplicação: chat_id -> último instante em que foi processado pela IA
+    processing_lock: Arc<DashMap<String, Instant>>,
 }
 
 #[derive(serde::Deserialize)]
@@ -329,7 +333,15 @@ async fn handle_webhook(
             let msg_source = msg_obj["Source"].as_str().unwrap_or_default();
             let is_member_sender = msg_source == "Member" || msg_obj.get("SentByOrganizationMember").and_then(|v| v.as_object()).is_some();
             if is_member_sender {
-                if let Some(m_id) = extracted_member_id {
+                // 🛡️ Não grava no banco se o chat está sendo processado pela IA.
+                // Quando o bot envia mensagem via API, o uTalk ecoa de volta como Source: "Member",
+                // o que gravava o BOT como "último atendente" e impedia o round-robin.
+                let is_bot_echo = state.processing_lock.get(target_chat_id)
+                    .map(|t| t.elapsed().as_secs() < 30)
+                    .unwrap_or(false);
+                if is_bot_echo {
+                    println!("🛡️ [PROTEÇÃO] Ignorando gravação de atendente para chat {} — echo do bot detectado (processing_lock ativo).", target_chat_id);
+                } else if let Some(m_id) = extracted_member_id {
                     if !m_id.is_empty() {
                         state.db.save_customer_last_attendant(phone, target_chat_id, m_id, extracted_member_name);
                     }
@@ -379,13 +391,6 @@ async fn handle_webhook(
             let channel_allowed = allowed_channels.is_empty() || allowed_channels.contains(&channel_id.to_string());
             let is_vps_transferred = state.db.is_chat_transferred(target_chat_id);
 
-            // Sanitiza o número do remetente para verificação de permissão de teste
-            let clean_phone: String = phone.chars().filter(|c| c.is_ascii_digit()).collect();
-            let is_tester = config_snapshot.test_allowed_phones.iter().any(|p| {
-                let clean_p: String = p.chars().filter(|c| c.is_ascii_digit()).collect();
-                !clean_p.is_empty() && (clean_phone.ends_with(&clean_p) || clean_p.ends_with(&clean_phone))
-            });
-
             // 🎯 SISTEMA PARALELO: DIRECIONAMENTO AO ÚLTIMO ATENDENTE (direcionamentoumbler)
             if config_snapshot.direction_enabled {
                 if let Some((last_m_id, last_m_name)) = &last_attendant_record {
@@ -431,20 +436,32 @@ async fn handle_webhook(
                     println!("⚡ Decisão da IA    : ⏸️ [IGNORADO] Mensagem enviada pelo próprio Atendente/Bot no uTalk (Source: '{}').", msg_source);
                 } else if !channel_allowed {
                     println!("⚡ Decisão da IA    : ⏸️ [IGNORADO] Canal '{}' (ID: {}) não está na lista de canais permitidos do Webhook.", channel_name, channel_id);
-                } else if config_snapshot.test_mode_enabled && !is_tester {
-                    println!("⚡ Decisão da IA    : ⏸️ [MODO DE TESTE ATIVO] Mensagem ignorada pois o remetente '{}' não está na lista VIP de testes (Claus/Lucas).", phone);
-                } else if !is_tester && (has_human_member || is_vps_transferred || has_previous_human_attendant) {
+
+                } else if has_human_member || is_vps_transferred || has_previous_human_attendant {
                     println!("⚡ Decisão da IA    : ⏸️ [SILÊNCIOSO] Cliente já possui histórico de atendimento humano (Último Atendente Registrado). A IA atende SOMENTE clientes novos nunca atendidos.");
                 } else {
-                    if is_tester {
-                        println!("🧪 Decisão da IA    : 🧪 [MODO TESTE VIP] Atendimento FORÇADO para o testador '{}' (Ignorando travas de atendente do uTalk).", phone);
+                    // 🔒 DEDUPLICAÇÃO: Impede processamento paralelo do mesmo chat por webhooks múltiplos do uTalk
+                    const DEDUP_WINDOW_SECS: u64 = 5;
+                    let should_process = if let Some(last_processed) = state.processing_lock.get(target_chat_id) {
+                        if last_processed.elapsed().as_secs() < DEDUP_WINDOW_SECS {
+                            println!("⚡ Decisão da IA    : 🔒 [DEDUPLICADO] Chat {} já está sendo processado (há {:.1}s). Ignorando webhook duplicado do uTalk.",
+                                target_chat_id, last_processed.elapsed().as_secs_f32());
+                            false
+                        } else {
+                            true
+                        }
                     } else {
+                        true
+                    };
+
+                    if should_process {
+                        state.processing_lock.insert(target_chat_id.to_string(), Instant::now());
                         println!("⚡ Decisão da IA    : 🤖 [LIGADO] Cliente NOVO (Nunca Atendido). Processando com DeepSeek...");
+                        let state_clone = state.clone();
+                        tokio::spawn(async move {
+                            process_incoming_webhook(state_clone, payload).await;
+                        });
                     }
-                    let state_clone = state.clone();
-                    tokio::spawn(async move {
-                        process_incoming_webhook(state_clone, payload).await;
-                    });
                 }
             } else {
                 println!("⚡ Decisão da IA    : ⏸️ [PAUSADO] Robô inativo no Dashboard.");
@@ -646,22 +663,6 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
 
         let phone = content_obj["Contact"]["PhoneNumber"].as_str().or_else(|| msg_obj["Chat"]["Contact"]["PhoneNumber"].as_str()).unwrap_or("N/A");
 
-        // 🧪 COMANDO DE RESET AUTOMÁTICO EXCLUSIVO PARA TESTADORES VIP (Claus e Lucas)
-        let clean_phone: String = phone.chars().filter(|c: &char| c.is_ascii_digit()).collect();
-        let is_tester = cfg_snapshot.test_allowed_phones.iter().any(|p| {
-            let clean_p: String = p.chars().filter(|c: &char| c.is_ascii_digit()).collect();
-            !clean_p.is_empty() && (clean_phone.ends_with(&clean_p) || clean_p.ends_with(&clean_phone))
-        });
-
-        if is_tester && user_prompt.to_lowercase().contains("tubarao_testes") {
-            println!("🔄 [MODO TESTE RESET] Comando 'tubarao_testes' recebido de testador VIP ({}). Zerando histórico e reiniciando atendimento...", phone);
-            state.db.reset_chat_state(chat_id);
-            state.db.set_chat_stage(chat_id, "STAGE_1");
-            
-            let confirm_msg = "🧪 *[MODO DE TESTE REINICIADO]*\nO seu histórico de testes foi completamente zerado! Olá! Sou o Leandro da equipe da Tubarão Bombas. Qual é a fonte de água que você vai utilizar no seu projeto (ex: poço artesiano, rio, açude)?";
-            let _ = utalk::send_utalk_message(&cfg_snapshot.utalk_api_url, &cfg_snapshot.utalk_api_token, &cfg_snapshot.utalk_organization_id, chat_id, confirm_msg).await;
-            return;
-        }
 
         // 🎯 LÓGICA DE ESPELHAMENTO DE MÍDIA E ETAPAS (STATE-MACHINE):
         let is_client_audio = msg_type == "Audio";
@@ -791,71 +792,71 @@ async fn process_incoming_webhook(state: AppState, payload: Value) {
                     }
                 }
 
-                // Executa a transferência de rodízio se ativada
+                // 🔄 Executa a transferência por RODÍZIO (round-robin) se ativada.
+                // SEMPRE faz round-robin aqui porque:
+                // 1. Se chegamos neste ponto, o cliente é NOVO (nunca atendido por humano) ou é um testador VIP.
+                // 2. O redirecionamento para o ÚLTIMO atendente humano já é tratado pelo sistema de
+                //    direcionamento (linhas 394-429) que roda ANTES do processamento da IA.
+                // 3. Usar get_customer_last_attendant aqui causava um bug: o echo da mensagem do bot
+                //    gravava o próprio bot como "último atendente", impedindo o round-robin de executar.
                 if should_transfer {
-                    let last_attendant_record = state.db.get_customer_last_attendant(phone, chat_id);
+                    let mut candidate_ids = cfg_snapshot.rotation_operator_ids.clone();
 
-                    let target_op_name = if let Some((last_m_id, last_m_name)) = last_attendant_record {
+                    // Se a lista de operadores no painel estiver vazia, busca todos os operadores humanos da organizacao uTalk
+                    if candidate_ids.is_empty() {
+                        if let Ok(ops) = utalk::fetch_human_operators(
+                            &cfg_snapshot.utalk_api_url,
+                            &cfg_snapshot.utalk_api_token,
+                            &cfg_snapshot.utalk_organization_id,
+                        ).await {
+                            candidate_ids = ops.into_iter().filter(|o| o.active).map(|o| o.id).collect();
+                        }
+                    }
+
+                    // Filtra apenas os operadores que estão ONLINE no uTalk no momento
+                    if let Ok(online_ids) = utalk::fetch_online_members(
+                        &cfg_snapshot.utalk_api_url,
+                        &cfg_snapshot.utalk_api_token,
+                        &cfg_snapshot.utalk_organization_id,
+                    ).await {
+                        let filtered: Vec<String> = candidate_ids.iter().filter(|id| online_ids.contains(id)).cloned().collect();
+                        if !filtered.is_empty() {
+                            candidate_ids = filtered;
+                        }
+                    }
+
+                    println!("🔄 [RODÍZIO] Candidatos para round-robin: {} operadores", candidate_ids.len());
+
+                    let target_op_name = if let Some(target_operator_id) = state.db.get_next_rotation_operator(&candidate_ids) {
+                        let op_name = match utalk::fetch_human_operators(
+                            &cfg_snapshot.utalk_api_url,
+                            &cfg_snapshot.utalk_api_token,
+                            &cfg_snapshot.utalk_organization_id,
+                        ).await {
+                            Ok(ops) => ops
+                                .into_iter()
+                                .find(|o| o.id == target_operator_id)
+                                .map(|o| o.name)
+                                .unwrap_or_else(|| target_operator_id.clone()),
+                            Err(_) => target_operator_id.clone(),
+                        };
+
+                        println!("🔄 [RODÍZIO] Transferindo para: {} (ID: {})", op_name, target_operator_id);
+
                         let _ = utalk::transfer_chat_to_member(
                             &cfg_snapshot.utalk_api_url,
                             &cfg_snapshot.utalk_api_token,
                             &cfg_snapshot.utalk_organization_id,
                             chat_id,
-                            &last_m_id,
+                            &target_operator_id,
                         ).await;
-                        last_m_name
+                        
+                        state.db.save_customer_last_attendant(phone, chat_id, &target_operator_id, &op_name);
+
+                        op_name
                     } else {
-                        let mut candidate_ids = cfg_snapshot.rotation_operator_ids.clone();
-
-                        // Se a lista de operadores no painel estiver vazia, busca todos os operadores humanos da organizacao uTalk
-                        if candidate_ids.is_empty() {
-                            if let Ok(ops) = utalk::fetch_human_operators(
-                                &cfg_snapshot.utalk_api_url,
-                                &cfg_snapshot.utalk_api_token,
-                                &cfg_snapshot.utalk_organization_id,
-                            ).await {
-                                candidate_ids = ops.into_iter().filter(|o| o.active).map(|o| o.id).collect();
-                            }
-                        }
-
-                        // Filtra apenas os operadores que estão ONLINE no uTalk no momento
-                        if let Ok(online_ids) = utalk::fetch_online_members(
-                            &cfg_snapshot.utalk_api_url,
-                            &cfg_snapshot.utalk_api_token,
-                            &cfg_snapshot.utalk_organization_id,
-                        ).await {
-                            let filtered: Vec<String> = candidate_ids.iter().filter(|id| online_ids.contains(id)).cloned().collect();
-                            if !filtered.is_empty() {
-                                candidate_ids = filtered;
-                            }
-                        }
-
-                        if let Some(target_operator_id) = state.db.get_next_rotation_operator(&candidate_ids) {
-                            let op_name = match utalk::fetch_human_operators(
-                                &cfg_snapshot.utalk_api_url,
-                                &cfg_snapshot.utalk_api_token,
-                                &cfg_snapshot.utalk_organization_id,
-                            ).await {
-                                Ok(ops) => ops
-                                    .into_iter()
-                                    .find(|o| o.id == target_operator_id)
-                                    .map(|o| o.name)
-                                    .unwrap_or_else(|| target_operator_id.clone()),
-                                Err(_) => target_operator_id.clone(),
-                            };
-
-                            let _ = utalk::transfer_chat_to_member(
-                                &cfg_snapshot.utalk_api_url,
-                                &cfg_snapshot.utalk_api_token,
-                                &cfg_snapshot.utalk_organization_id,
-                                chat_id,
-                                &target_operator_id,
-                            ).await;
-
-                            op_name
-                        } else {
-                            "Equipe de Vendas".to_string()
-                        }
+                        println!("⚠️ [RODÍZIO] Nenhum operador disponível! Transferindo para 'Equipe de Vendas'.");
+                        "Equipe de Vendas".to_string()
                     };
 
                     // Grava obrigatoriamente a transferencia para pausar a IA localmente
@@ -1273,7 +1274,22 @@ async fn main() {
     let db = Database::open("chat_ai_bot.db").expect("Falha ao inicializar SQLite FTS5");
     let state = AppState {
         db: Arc::new(db),
+        processing_lock: Arc::new(DashMap::new()),
     };
+
+    // Limpeza periódica do mapa de deduplicação (a cada 5 minutos, remove entradas > 60s)
+    let lock_cleanup = state.processing_lock.clone();
+    tokio::spawn(async move {
+        loop {
+            tokio::time::sleep(tokio::time::Duration::from_secs(300)).await;
+            let before = lock_cleanup.len();
+            lock_cleanup.retain(|_, v| v.elapsed().as_secs() < 60);
+            let after = lock_cleanup.len();
+            if before > after {
+                println!("🧹 Limpeza do mapa de deduplicação: {} -> {} entradas", before, after);
+            }
+        }
+    });
 
     let app = Router::new()
         .route("/", get(render_dashboard))
