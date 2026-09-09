@@ -331,13 +331,20 @@ async fn handle_webhook(
             // Atualiza o registro no banco local APENAS se esta mensagem for enviada por um atendente humano (Source == "Member")
             let msg_source = msg_obj["Source"].as_str().unwrap_or_default();
             let is_member_sender = msg_source == "Member" || msg_obj.get("SentByOrganizationMember").and_then(|v| v.as_object()).is_some();
+
+            let is_bot_echo = state.processing_lock.get(target_chat_id)
+                .map(|t| t.elapsed().as_secs() < 30)
+                .unwrap_or(false);
+
+            // 💾 REGISTRO UNIVERSAL DA MENSAGEM NO SQLITE (FONTE ÚNICA DA VERDADE):
+            // Salva todas as conversas do cliente e atendente no banco local mesmo com bot_enabled = false
+            if !target_chat_id.is_empty() && !text.is_empty() && text != "[Mídia / Áudio / Sistema]" && !is_bot_echo {
+                let role = if is_member_sender || msg_source == "Bot" { "assistant" } else { "user" };
+                state.db.save_message(target_chat_id, role, text);
+                println!("💾 [SQLITE PERSISTÊNCIA] Mensagem salva no banco (Role: '{}', Chat: '{}')", role, target_chat_id);
+            }
+
             if is_member_sender {
-                // 🛡️ Não grava no banco se o chat está sendo processado pela IA.
-                // Quando o bot envia mensagem via API, o uTalk ecoa de volta como Source: "Member",
-                // o que gravava o BOT como "último atendente" e impedia o round-robin.
-                let is_bot_echo = state.processing_lock.get(target_chat_id)
-                    .map(|t| t.elapsed().as_secs() < 30)
-                    .unwrap_or(false);
                 if is_bot_echo {
                     println!("🛡️ [PROTEÇÃO] Ignorando gravação de atendente para chat {} — echo do bot detectado (processing_lock ativo).", target_chat_id);
                 } else if let Some(m_id) = extracted_member_id {
@@ -1228,6 +1235,35 @@ async fn simulate_chat_handler(
     }
 }
 
+async fn search_customer_handler(
+    State(state): State<AppState>,
+    Query(query): Query<SearchCustomerQuery>,
+) -> Json<Value> {
+    let q = query.q.unwrap_or_default();
+    let results = state.db.search_customer_records(&q);
+    Json(serde_json::json!(results))
+}
+
+#[derive(serde::Deserialize)]
+struct DeleteCustomerRequest {
+    query: String,
+}
+
+async fn delete_customer_handler(
+    State(state): State<AppState>,
+    Json(req): Json<DeleteCustomerRequest>,
+) -> (StatusCode, Json<Value>) {
+    match state.db.delete_customer_records(&req.query) {
+        Ok(count) => (StatusCode::OK, Json(serde_json::json!({ "success": true, "deleted_count": count }))),
+        Err(err) => (StatusCode::BAD_REQUEST, Json(serde_json::json!({ "success": false, "error": err }))),
+    }
+}
+
+#[derive(serde::Deserialize)]
+struct SearchCustomerQuery {
+    q: Option<String>,
+}
+
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt::init();
@@ -1280,6 +1316,8 @@ async fn main() {
         .route("/api/direction-stats", get(get_direction_stats_handler))
         .route("/api/direction-logs", get(get_direction_logs_handler))
         .route("/api/direction-toggle", axum::routing::post(direction_toggle_handler))
+        .route("/api/search-customer", get(search_customer_handler))
+        .route("/api/delete-customer", axum::routing::post(delete_customer_handler))
         .route("/webhook", any(handle_webhook))
         .route("/webhook/direction", any(handle_webhook))
         .route("/webhook/direcionamento", any(handle_webhook))

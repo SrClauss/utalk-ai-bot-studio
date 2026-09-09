@@ -932,6 +932,107 @@ impl Database {
             "tracked_customers": customers_count,
         })
     }
+
+    pub fn search_customer_records(&self, query: &str) -> Vec<serde_json::Value> {
+        let clean_q: String = query.chars().filter(|c| c.is_ascii_digit()).collect();
+        let conn = self.conn.lock().unwrap();
+
+        let pattern = if !clean_q.is_empty() {
+            format!("%{}%", clean_q)
+        } else {
+            format!("%{}%", query.trim())
+        };
+
+        let mut results = Vec::new();
+
+        let mut stmt = match conn.prepare(
+            "SELECT phone, chat_id, member_id, member_name, updated_at 
+             FROM customer_attendants 
+             WHERE phone LIKE ?1 OR chat_id LIKE ?1 OR member_name LIKE ?1
+             ORDER BY updated_at DESC LIMIT 50"
+        ) {
+            Ok(s) => s,
+            Err(_) => return results,
+        };
+
+        let rows = stmt.query_map(params![pattern], |row| {
+            let phone: String = row.get(0)?;
+            let chat_id: String = row.get(1)?;
+            let member_id: String = row.get(2)?;
+            let member_name: String = row.get(3)?;
+            let updated_at: String = row.get(4)?;
+            Ok((phone, chat_id, member_id, member_name, updated_at))
+        });
+
+        if let Ok(iter) = rows {
+            for item in iter.flatten() {
+                let (phone, chat_id, member_id, member_name, updated_at) = item;
+
+                let msg_count: i64 = conn.query_row(
+                    "SELECT COUNT(*) FROM messages WHERE chat_id = ?1",
+                    params![chat_id],
+                    |r| r.get(0),
+                ).unwrap_or(0);
+
+                results.push(serde_json::json!({
+                    "phone": phone,
+                    "chat_id": chat_id,
+                    "member_id": member_id,
+                    "member_name": member_name,
+                    "updated_at": updated_at,
+                    "messages_count": msg_count
+                }));
+            }
+        }
+
+        results
+    }
+
+    pub fn delete_customer_records(&self, query: &str) -> Result<usize, String> {
+        let clean_q: String = query.chars().filter(|c| c.is_ascii_digit()).collect();
+        let target_key = if !clean_q.is_empty() { clean_q } else { query.trim().to_string() };
+
+        if target_key.is_empty() {
+            return Err("Número de telefone ou ID inválido para exclusão.".to_string());
+        }
+
+        let conn = self.conn.lock().unwrap();
+
+        let pattern = format!("%{}%", target_key);
+        let mut chat_ids: Vec<String> = Vec::new();
+
+        if let Ok(mut stmt) = conn.prepare("SELECT chat_id FROM customer_attendants WHERE phone LIKE ?1 OR chat_id = ?2") {
+            if let Ok(rows) = stmt.query_map(params![pattern, target_key], |r| r.get(0)) {
+                for id in rows.flatten() {
+                    chat_ids.push(id);
+                }
+            }
+        }
+
+        let mut deleted_total = 0;
+
+        if let Ok(cnt) = conn.execute("DELETE FROM customer_attendants WHERE phone LIKE ?1 OR chat_id = ?2", params![pattern, target_key]) {
+            deleted_total += cnt;
+        }
+
+        if let Ok(cnt) = conn.execute("DELETE FROM direction_logs WHERE phone LIKE ?1 OR chat_id = ?2", params![pattern, target_key]) {
+            deleted_total += cnt;
+        }
+
+        if let Ok(cnt) = conn.execute("DELETE FROM messages WHERE chat_id = ?1", params![target_key]) {
+            deleted_total += cnt;
+        }
+
+        for cid in &chat_ids {
+            if let Ok(cnt) = conn.execute("DELETE FROM messages WHERE chat_id = ?1", params![cid]) {
+                deleted_total += cnt;
+            }
+            let _ = conn.execute("DELETE FROM chat_transfers WHERE chat_id = ?1", params![cid]);
+            let _ = conn.execute("DELETE FROM chat_stages WHERE chat_id = ?1", params![cid]);
+        }
+
+        Ok(deleted_total)
+    }
 }
 
 pub type SharedDatabase = Arc<Database>;

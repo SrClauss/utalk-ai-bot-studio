@@ -521,6 +521,69 @@
                     </div>
                 </div>
 
+                <!-- PAINEL DE BUSCA & PURGA DE REGISTROS DO BANCO DE DADOS (SQLITE) -->
+                <div class="glass-panel p-6 rounded-3xl space-y-4 border border-rose-900/40 bg-slate-900/90 shadow-2xl">
+                    <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-database text-rose-400 text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-extrabold text-slate-100 glow-title">Busca e Expurgo de Registros no SQLite</h3>
+                                <p class="text-xs text-slate-400">Pesquise por número de telefone ou cliente no banco de dados local para visualizar ou excluir permanentemente todas as conversas e históricos do número.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Formulário de Busca -->
+                    <form @submit.prevent="searchCustomer()" class="flex flex-col sm:flex-row gap-3">
+                        <div class="relative flex-1">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                            <input type="text" x-model="searchPhoneQuery" placeholder="Digite o número (ex: 38 9832-8812 ou 5538998328812) ou nome..." required
+                                class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-rose-500 font-mono">
+                        </div>
+                        <button type="submit" :disabled="searchLoading"
+                            class="px-5 py-2.5 bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-800/60 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0">
+                            <i class="fa-solid" :class="searchLoading ? 'fa-circle-notch fa-spin' : 'fa-search'"></i>
+                            <span>Buscar no Banco</span>
+                        </button>
+                    </form>
+
+                    <!-- Resultados da Busca -->
+                    <div x-show="searchResults.length > 0" class="overflow-x-auto pt-2">
+                        <table class="w-full text-left text-xs text-slate-300">
+                            <thead class="bg-slate-950/90 text-slate-400 font-mono uppercase text-[10px] border-b border-slate-800">
+                                <tr>
+                                    <th class="p-3">Telefone Limpo</th>
+                                    <th class="p-3">Chat ID (uTalk)</th>
+                                    <th class="p-3">Último Atendente</th>
+                                    <th class="p-3">Msgs Gravadas</th>
+                                    <th class="p-3">Última Atualização</th>
+                                    <th class="p-3 text-right">Ação de Expurgar</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-800/60">
+                                <template x-for="item in searchResults" :key="item.phone">
+                                    <tr class="hover:bg-slate-900/50 transition-colors">
+                                        <td class="p-3 font-mono font-bold text-emerald-400" x-text="item.phone"></td>
+                                        <td class="p-3 font-mono text-slate-400 text-[11px]" x-text="item.chat_id"></td>
+                                        <td class="p-3 font-bold text-slate-200" x-text="item.member_name"></td>
+                                        <td class="p-3 font-mono text-cyan-400" x-text="item.messages_count + ' mensagens'"></td>
+                                        <td class="p-3 font-mono text-slate-400 text-[11px]" x-text="item.updated_at"></td>
+                                        <td class="p-3 text-right">
+                                            <button @click="deleteCustomer(item.phone)"
+                                                class="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition-all shadow-lg hover:shadow-rose-900/50 flex items-center gap-1.5 ml-auto cursor-pointer">
+                                                <i class="fa-solid fa-trash-can"></i>
+                                                <span>Excluir Tudo deste Número</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <!-- Cards Estatísticos -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div class="glass-card p-5 rounded-2xl space-y-2 border border-slate-800">
@@ -2010,6 +2073,9 @@
                     newPassword: '',
                     confirmPassword: '',
                     passwordUpdating: false,
+                    searchPhoneQuery: '',
+                    searchResults: [],
+                    searchLoading: false,
                     directionStats: { total_directed: 0, today_directed: 0, tracked_customers: 0 },
                     directionLogs: [],
                     directionSearchQuery: '',
@@ -2211,6 +2277,45 @@
                             this.showAlert('Falha de conexão com o servidor.', 'error');
                         } finally {
                             this.passwordUpdating = false;
+                        }
+                    },
+
+                    async searchCustomer() {
+                        if (!this.searchPhoneQuery.trim()) return;
+                        this.searchLoading = true;
+                        try {
+                            const res = await fetch(`/api/search-customer?q=${encodeURIComponent(this.searchPhoneQuery.trim())}`);
+                            if (res.ok) {
+                                this.searchResults = await res.json();
+                                if (this.searchResults.length === 0) {
+                                    this.showAlert('Nenhum registro encontrado no SQLite para este número/termo.', 'error');
+                                }
+                            }
+                        } catch (err) {
+                            this.showAlert('Erro ao pesquisar no banco de dados.', 'error');
+                        } finally {
+                            this.searchLoading = false;
+                        }
+                    },
+
+                    async deleteCustomer(phone) {
+                        if (!confirm(`⚠️ ATENÇÃO: Deseja apagar PERMANENTEMENTE todas as mensagens, atendimentos e históricos do número '${phone}' do SQLite?`)) return;
+                        try {
+                            const res = await fetch('/api/delete-customer', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ query: phone })
+                            });
+                            const data = await res.json();
+                            if (res.ok && data.success) {
+                                this.showAlert(`Sucesso! ${data.deleted_count} registros excluídos do SQLite para o número ${phone}.`);
+                                this.searchResults = this.searchResults.filter(r => r.phone !== phone);
+                                this.loadStats();
+                            } else {
+                                this.showAlert(data.error || 'Erro ao apagar registros.', 'error');
+                            }
+                        } catch (err) {
+                            this.showAlert('Falha ao comunicar com o banco de dados.', 'error');
                         }
                     },
 
