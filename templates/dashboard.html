@@ -491,6 +491,36 @@
 
             <!-- TAB 1: MÉTRICAS & DASHBOARD -->
             <div x-show="activeTab === 'metrics'" class="space-y-6">
+                <!-- BANNER DE DESTAQUE: CONTROLE PRINCIPAL DA IA -->
+                <div class="glass-panel p-5 rounded-3xl border transition-all duration-300 flex flex-wrap items-center justify-between gap-4 shadow-2xl"
+                    :class="config.bot_enabled ? 'border-emerald-500/50 bg-emerald-950/30' : 'border-rose-500/50 bg-rose-950/30'">
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl transition-all shadow-inner shrink-0"
+                            :class="config.bot_enabled ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40' : 'bg-rose-500/20 text-rose-400 border border-rose-500/40'">
+                            <i class="fa-solid" :class="config.bot_enabled ? 'fa-robot animate-bounce' : 'fa-power-off'"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2.5">
+                                <span class="w-3.5 h-3.5 rounded-full" :class="config.bot_enabled ? 'bg-emerald-400 animate-ping' : 'bg-rose-500'"></span>
+                                <h2 class="text-base md:text-xl font-black uppercase tracking-wide"
+                                    :class="config.bot_enabled ? 'text-emerald-300' : 'text-rose-300'"
+                                    x-text="config.bot_enabled ? 'ATENDIMENTO IA: LIGADO E ATIVO' : 'ATENDIMENTO IA: DESLIGADO (PAUSADO)'"></h2>
+                            </div>
+                            <p class="text-xs text-slate-300 mt-1 font-medium" x-text="config.bot_enabled ? 'O assistente de inteligência artificial está respondendo ativamente aos clientes e conduzindo triagens.' : 'O atendimento por IA está totalmente desligado no uTalk. Clique na chave ao lado para ativar.'"></p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 bg-slate-950/90 px-5 py-3 rounded-2xl border border-slate-800 shadow-xl ml-auto md:ml-0">
+                        <span class="text-xs md:text-sm font-black uppercase tracking-wider"
+                            :class="config.bot_enabled ? 'text-emerald-400' : 'text-slate-400'"
+                            x-text="config.bot_enabled ? 'ROBÔ LIGADO' : 'ROBÔ DESLIGADO'"></span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" x-model="config.bot_enabled" @change="saveConfig(false)" class="sr-only peer">
+                            <div class="w-14 h-7 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500 shadow-lg"></div>
+                        </label>
+                    </div>
+                </div>
+
                 <!-- Cards Estatísticos -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div class="glass-card p-5 rounded-2xl space-y-2 border border-slate-800">
@@ -1973,6 +2003,13 @@
 
                     mobileMenuOpen: false,
                     audioBankItems: [],
+                    adminUsers: [],
+                    newAdminUsername: '',
+                    newAdminPassword: '',
+                    currentPassword: '',
+                    newPassword: '',
+                    confirmPassword: '',
+                    passwordUpdating: false,
                     directionStats: { total_directed: 0, today_directed: 0, tracked_customers: 0 },
                     directionLogs: [],
                     directionSearchQuery: '',
@@ -2084,6 +2121,96 @@
                             }
                         } catch (err) {
                             this.showAlert('Erro de conexão no upload do áudio.', 'error');
+                        }
+                    },
+
+                    async loadAdminUsers() {
+                        try {
+                            const res = await fetch('/api/users');
+                            if (res.ok) {
+                                this.adminUsers = await res.json();
+                            }
+                        } catch (err) {
+                            console.error('Erro ao carregar administradores:', err);
+                        }
+                    },
+
+                    async addAdminUser() {
+                        if (!this.newAdminUsername.trim() || !this.newAdminPassword.trim()) {
+                            this.showAlert('Preencha o nome de usuário e a senha.', 'error');
+                            return;
+                        }
+                        try {
+                            const res = await fetch('/api/users', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    username: this.newAdminUsername.trim(),
+                                    password: this.newAdminPassword.trim()
+                                })
+                            });
+                            const data = await res.json();
+                            if (res.ok && data.success) {
+                                this.showAlert('Novo administrador adicionado com sucesso!');
+                                this.newAdminUsername = '';
+                                this.newAdminPassword = '';
+                                this.loadAdminUsers();
+                            } else {
+                                this.showAlert(data.message || data.error || 'Erro ao adicionar administrador.', 'error');
+                            }
+                        } catch (err) {
+                            this.showAlert('Falha ao comunicar com o servidor.', 'error');
+                        }
+                    },
+
+                    async deleteAdminUser(id, username) {
+                        if (!confirm(`Tem certeza que deseja remover o administrador '${username}'?`)) return;
+                        try {
+                            const res = await fetch(`/api/users/${id}`, { method: 'DELETE' });
+                            const data = await res.json();
+                            if (res.ok && data.success) {
+                                this.showAlert(`Administrador '${username}' removido com sucesso!`);
+                                this.loadAdminUsers();
+                            } else {
+                                this.showAlert(data.message || data.error || 'Erro ao remover administrador.', 'error');
+                            }
+                        } catch (err) {
+                            this.showAlert('Falha ao remover administrador.', 'error');
+                        }
+                    },
+
+                    async updatePassword() {
+                        if (!this.newPassword) {
+                            this.showAlert('Digite a nova senha.', 'error');
+                            return;
+                        }
+                        if (this.newPassword !== this.confirmPassword) {
+                            this.showAlert('A confirmação da nova senha não confere.', 'error');
+                            return;
+                        }
+                        this.passwordUpdating = true;
+                        try {
+                            const res = await fetch('/api/change-password', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    current_password: this.currentPassword,
+                                    new_password: this.newPassword
+                                })
+                            });
+                            const data = await res.json();
+                            if (res.ok && data.success) {
+                                this.showAlert('Senha atualizada com sucesso!');
+                                this.currentPassword = '';
+                                this.newPassword = '';
+                                this.confirmPassword = '';
+                            } else {
+                                this.showAlert(data.message || data.error || 'Erro ao alterar senha.', 'error');
+                            }
+                        } catch (err) {
+                            this.showAlert('Falha de conexão com o servidor.', 'error');
+                        } finally {
+                            this.passwordUpdating = false;
                         }
                     },
 
