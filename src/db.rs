@@ -117,6 +117,10 @@ impl Database {
         )
         .map_err(|e| format!("Erro ao inicializar tabelas SQLite/FTS5: {}", e))?;
 
+        // Timeout de 30s para evitar deadlock quando múltiplos webhooks chegam simultaneamente
+        conn.execute_batch("PRAGMA busy_timeout = 30000;")
+            .map_err(|e| format!("Erro ao configurar busy_timeout: {}", e))?;
+
         // Inicializar usuario admin padrao se tabela vazia
         let count: i64 = conn
             .query_row("SELECT COUNT(*) FROM admin_users", [], |row| row.get(0))
@@ -127,6 +131,29 @@ impl Database {
                 "INSERT INTO admin_users (username, password, created_at) VALUES ('admin', 'admin123', datetime('now'))",
                 [],
             );
+        }
+
+        // Garantir que app_config existe na tabela settings durante a inicialização
+        // para evitar que get_config() chame save_config() durante o runtime,
+        // o que causava deadlock no Mutex com rajadas de webhooks simultâneos
+        let config_exists: i64 = conn
+            .query_row(
+                "SELECT COUNT(*) FROM settings WHERE key = 'app_config'",
+                [],
+                |row| row.get(0),
+            )
+            .unwrap_or(0);
+
+        if config_exists == 0 {
+            let default_cfg = AppConfig::default();
+            if let Ok(json_str) = serde_json::to_string_pretty(&default_cfg) {
+                let _ = conn.execute(
+                    "INSERT INTO settings (key, value) VALUES ('app_config', ?1)
+                     ON CONFLICT(key) DO UPDATE SET value = ?1",
+                    params![json_str],
+                );
+                println!("💾 Configuração padrão inicializada no SQLite durante startup!");
+            }
         }
 
         Ok(Self {
