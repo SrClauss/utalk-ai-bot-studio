@@ -59,7 +59,7 @@ impl Default for AppConfig {
 
         Self {
             bot_enabled: true,
-            direction_enabled: true,
+            direction_enabled: false,
             admin_username: admin_user,
             admin_password: admin_pass,
             gemini_api_key: gemini_key,

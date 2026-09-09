@@ -259,7 +259,6 @@ async fn handle_webhook(
     Query(params): Query<HashMap<String, String>>,
     bytes: Bytes,
 ) -> (StatusCode, &'static str) {
-    let is_direction_endpoint = false;
     println!("\n========================================================");
     println!("📩 NOVO EVENTO DE WEBHOOK RECEBIDO [{}] no path: {}", method, uri.path());
     println!("========================================================");
@@ -391,44 +390,7 @@ async fn handle_webhook(
             let channel_allowed = allowed_channels.is_empty() || allowed_channels.contains(&channel_id.to_string());
             let is_vps_transferred = state.db.is_chat_transferred(target_chat_id);
 
-            // 🎯 SISTEMA PARALELO: DIRECIONAMENTO AO ÚLTIMO ATENDENTE (direcionamentoumbler)
-            if config_snapshot.direction_enabled {
-                if let Some((last_m_id, last_m_name)) = &last_attendant_record {
-                    let current_m_id = extracted_member_id.unwrap_or_default();
-                    if current_m_id != last_m_id && !last_m_id.is_empty() && !target_chat_id.is_empty() {
-                        let state_dir = state.clone();
-                        let target_chat_id_owned = target_chat_id.to_string();
-                        let last_m_id_owned = last_m_id.clone();
-                        let last_m_name_owned = last_m_name.clone();
-                        let phone_owned = phone.to_string();
-                        let contact_name_owned = contact_name.to_string();
-                        let channel_name_owned = channel_name.to_string();
-
-                        tokio::spawn(async move {
-                            let cfg = state_dir.db.get_config();
-                            let res = crate::utalk::transfer_chat_to_member(
-                                &cfg.utalk_api_url,
-                                &cfg.utalk_api_token,
-                                &cfg.utalk_organization_id,
-                                &target_chat_id_owned,
-                                &last_m_id_owned,
-                            ).await;
-
-                            let status_str = if res.is_ok() { "Sucesso" } else { "Falha na API" };
-                            state_dir.db.add_direction_log(
-                                &target_chat_id_owned,
-                                &phone_owned,
-                                &contact_name_owned,
-                                &last_m_id_owned,
-                                &last_m_name_owned,
-                                &channel_name_owned,
-                                status_str,
-                            );
-                            println!("🔄 [DIRECIONAMENTO UMBLER] Chat {} direcionado automaticamente para o último atendente '{}' ({})", target_chat_id_owned, last_m_name_owned, status_str);
-                        });
-                    }
-                }
-            }
+            // 🎯 PIVOT: Direcionamento automático desativado. Sistema focado 100% no Atendimento por IA.
 
             // 🎯 SISTEMA DE ATENDIMENTO DE IA (CHAT AI UMBLER):
             if config_snapshot.bot_enabled {
